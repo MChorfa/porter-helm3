@@ -1,0 +1,5 @@
+install:
+  - helm3:
+      description: "Invalid Input Test Case"
+      args:
+      - yarrrr
