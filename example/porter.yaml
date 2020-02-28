@@ -1,0 +1,106 @@
+# This is the configuration for Porter
+# You must define steps for each action, but the rest is optional
+# See https://porter.sh/author-bundles for documentation on how to configure your bundle
+# Uncomment out the sections below to take full advantage of what Porter can do!
+
+name: Postgresql
+version: 0.1.0
+description: "An postgresql Porter configuration"
+# TODO: update the registry to your own, e.g. myregistry/porter-postgresql:v0.1.0
+tag: getporter/porter-postgresql:v0.1.0
+
+# Uncomment the line below to use a template Dockerfile for your invocation image
+#dockerfile: Dockerfile.tmpl
+
+mixins:
+  - exec
+  - helm3
+  - kubernetes
+
+install:
+  - exec:
+      description: "Add stable repositories"
+      command: bash
+      flags:
+        c: "helm3 repo add stable https://kubernetes-charts.storage.googleapis.com/"
+  - exec:
+      description: "Add codecentric repositories"
+      command: bash
+      flags:
+        c: "helm3 repo add codecentric https://codecentric.github.io/helm-charts"
+  - exec:
+      description: "update Helm repositories"
+      command: bash
+      flags:
+        c: "helm3 repo update"
+  - helm3:
+      description: "Install PostgresQL"
+      name: "postgresql"
+      chart: "stable/postgresql"
+      version: "8.4.0"
+      namespace: "{{ bundle.parameters.nanmespace }}"
+      replace: true
+      set:
+        postgresqlUsername: "{{ bundle.parameters.POSTGRESQL_WORKER_USERNAME }}"
+        postgresqlPassword: "{{ bundle.parameters.POSTGRESQL_WORKER_PASSWORD }}"
+        postgresqlDatabase: "{{ bundle.parameters.POSTGRESQL_DATABASE }}"
+        extraEnv[0].name: POSTGRESQL_POSTGRES_PASSWORD,
+        extraEnv[0].value: "{{ bundle.parameters.POSTGRESQL_ADMIN_PASSWORD }}"
+        persistence.enabled: false
+        persistence.storageClass: "azuredisk-standard"
+        persistence.size: "8Gi"
+        image.tag: "12.1.0"
+
+upgrade:
+  - exec:
+      description: "World 2.0"
+      command: bash
+      flags:
+        c: echo World 2.0
+
+uninstall:
+  - exec:
+      description: "Uninstall Hello World"
+      command: bash
+      flags:
+        c: echo Goodbye World
+# See https://porter.sh/author-bundles/#dependencies
+#dependencies:
+#  mysql:
+#    tag: getporter/mysql:v0.1.1
+#    parameters:
+#      database-name: wordpress
+
+# See https://porter.sh/wiring/#credentials
+credentials:
+  - name: kubeconfig
+    path: /root/.kube/config
+parameters:
+  - name: POSTGRESQL_DATABASE
+    type: string
+    default: postgres
+
+  - name: POSTGRESQL_WORKER_USERNAME
+    type: string
+    default: postgres
+
+  - name: POSTGRESQL_WORKER_PASSWORD
+    type: string
+    sensitive: true
+
+  - name: POSTGRESQL_ADMIN_PASSWORD
+    type: string
+    sensitive: true
+
+  - name: KEYCLOAK_USERNAME
+    type: string
+    default: postgres
+
+  - name: KEYCLOAK_PASSWORD
+    type: string
+    sensitive: true
+
+  - name: nanmespace
+    type: string
+    default: "tetris"
+    env: PROJECT_NAMESPACE
