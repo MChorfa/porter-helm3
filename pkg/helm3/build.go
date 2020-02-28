@@ -1,5 +1,7 @@
 package helm3
 
+import "fmt"
+
 // This is an example. Replace the following with whatever steps are needed to
 // install required components into
 // const dockerfileLines = `RUN apt-get update && \
@@ -15,6 +17,16 @@ package helm3
 // Build will generate the necessary Dockerfile lines
 // for an invocation image using this mixin
 func (m *Mixin) Build() error {
-	//fmt.Fprintf(m.Out, dockerfileLines)
+	// Make sure kubectl is available
+	// fmt.Fprintln(m.Out, `RUN apt-get update && apt-get install -y apt-transport-https curl`)
+	// fmt.Fprintln(m.Out, `RUN curl https://storage.googleapis.com/kubernetes-release/release/v1.17.0/bin/linux/amd64/kubectl --output kubectl`)
+	// fmt.Fprintln(m.Out, `RUN mv kubectl /usr/local/bin`)
+	// fmt.Fprintln(m.Out, `RUN chmod a+x /usr/local/bin/kubectl`)
+
+	// Install helm3
+	fmt.Fprintln(m.Out, `RUN apt-get update && apt-get install -y curl`)
+	fmt.Fprintln(m.Out, `RUN curl https://get.helm.sh/helm-v3.1.1-linux-amd64.tar.gz --output helm3.tar.gz`)
+	fmt.Fprintln(m.Out, `RUN tar -xvf helm3.tar.gz`)
+	fmt.Fprintln(m.Out, `RUN mv linux-amd64/helm /usr/local/bin/helm3`)
 	return nil
 }

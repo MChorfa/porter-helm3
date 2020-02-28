@@ -1,10 +1,29 @@
 install:
   - helm3:
-      description: "Summon Minion"
       arguments:
-      - "man-e-faces"
+        - "man-e-faces"
       flags:
         species: "human"
+      description: "Install PostgresQL"
+      name: postgresql
+      chart: stable/postgresql
+      version: 8.4.0
+      namespace: "test-postgresql"
+      replace: true
+      set:
+        postgresqlUsername: "test-123"
+        postgresqlPassword: "test-123"
+        postgresqlDatabase: "test-123"
+        persistence.enabled: false
+        persistence.storageClass: "test-123"
+        persistence.size: "1Gi"
+        image.tag: "12.1.0"
       outputs:
+        - name: postgresql-root-password
+          secret: porter-ci-postgresql
+          key: postgresql-root-password
+        - name: postgresql-password
+          secret: porter-ci-postgresql
+          key: postgresql-password
         - name: "VICTORY"
           jsonPath: "$Id"

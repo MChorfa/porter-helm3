@@ -22,10 +22,8 @@ func main() {
 }
 
 func buildRootCommand(in io.Reader) (*cobra.Command, error) {
-	m, err := helm3.New()
-	if err != nil {
-		return nil, err
-	}
+	m := helm3.New()
+
 	m.In = in
 	cmd := &cobra.Command{
 		Use:  "helm3",
