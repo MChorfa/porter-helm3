@@ -7,7 +7,7 @@ GO = GO111MODULE=on go
 PORTER_HOME ?= $(HOME)/.porter
 
 COMMIT ?= $(shell git rev-parse --short HEAD)
-VERSION ?= $(shell git describe --tags 2> /dev/null || echo v0)
+VERSION ?= $(shell git describe --tags 2> /dev/null || echo v0.1.0)
 PERMALINK ?= $(shell git describe --tags --exact-match &> /dev/null && echo latest || echo canary)
 
 LDFLAGS = -w -X $(PKG)/pkg.Version=$(VERSION) -X $(PKG)/pkg.Commit=$(COMMIT)
@@ -74,16 +74,16 @@ publish: bin/porter$(FILE_EXT)
 	# The porter mixins feed generate command is used to build an ATOM feed for sharing mixins once published
 
 	# AZURE_STORAGE_CONNECTION_STRING will be used for auth in the following commands
-	#if [[ "$(PERMALINK)" == "latest" ]]; then \
-	#	az storage blob upload-batch -d porter/mixins/$(MIXIN)/$(VERSION) -s $(BINDIR)/$(VERSION); \
-	#	az storage blob upload-batch -d porter/mixins/$(MIXIN)/$(PERMALINK) -s $(BINDIR)/$(VERSION); \
-	#else \
-	#	mv $(BINDIR)/$(VERSION) $(BINDIR)/$(PERMALINK); \
-	#	az storage blob upload-batch -d porter/mixins/$(MIXIN)/$(PERMALINK) -s $(BINDIR)/$(PERMALINK); \
-	#fi
+	if [[ "$(PERMALINK)" == "latest" ]]; then \
+		az storage blob upload-batch -d porter/mixins/$(MIXIN)/$(VERSION) -s $(BINDIR)/$(VERSION); \
+		az storage blob upload-batch -d porter/mixins/$(MIXIN)/$(PERMALINK) -s $(BINDIR)/$(VERSION); \
+	else \
+		mv $(BINDIR)/$(VERSION) $(BINDIR)/$(PERMALINK); \
+		az storage blob upload-batch -d porter/mixins/$(MIXIN)/$(PERMALINK) -s $(BINDIR)/$(PERMALINK); \
+	fi
 
 	# Generate the mixin feed
-	#az storage blob download -c porter -n atom.xml -f bin/atom.xml
+	az storage blob download -c porter -n atom.xml -f bin/atom.xml
 	bin/porter mixins feed generate -d bin/mixins -f bin/atom.xml -t build/atom-template.xml
 	#az storage blob upload -c porter -n atom.xml -f bin/atom.xml
 
@@ -92,10 +92,11 @@ bin/porter$(FILE_EXT):
 	chmod +x bin/porter$(FILE_EXT)
 
 install:
+	porter mixin uninstall $(MIXIN)
 	mkdir -p $(PORTER_HOME)/mixins/$(MIXIN)
 	install $(BINDIR)/$(MIXIN)$(FILE_EXT) $(PORTER_HOME)/mixins/$(MIXIN)/$(MIXIN)$(FILE_EXT)
 	install $(BINDIR)/$(MIXIN)-runtime$(FILE_EXT) $(PORTER_HOME)/mixins/$(MIXIN)/$(MIXIN)-runtime$(FILE_EXT)
-
+	porter mixin list
 clean: clean-packr
 	-rm -fr bin/
 

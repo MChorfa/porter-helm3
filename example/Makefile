@@ -1,6 +1,6 @@
 install-k3d:
 	curl -s https://raw.githubusercontent.com/rancher/k3d/master/install.sh | bash
-
+	## porter mixin install helm3 --version v0.1.0 --url  https://github.com/MChorfa/porter-helm3/releases/download
 deploy-cluster:
 	# Create
 	k3d create \
@@ -41,3 +41,4 @@ uninstall-porter:
 	--param POSTGRESQL_ADMIN_PASSWORD="password123" \
 	--param KEYCLOAK_USERNAME="password123" \
 	--param KEYCLOAK_PASSWORD="password123"
+

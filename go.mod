@@ -18,7 +18,7 @@ require (
 	github.com/xeipuuv/gojsonschema v1.2.0
 	golang.org/x/crypto v0.0.0-20200221231518-2aa609cf4a9d // indirect
 	golang.org/x/sys v0.0.0-20200223170610-d5e6a3e2c0ae // indirect
-	golang.org/x/tools v0.0.0-20200227193342-b3f10971cb29 // indirect
+	golang.org/x/tools v0.0.0-20200228135638-5c7c66ced534 // indirect
 	gopkg.in/yaml.v2 v2.2.4
 	k8s.io/apimachinery v0.0.0-20191004115801-a2eda9f80ab8
 	k8s.io/client-go v0.0.0-20191016111102-bec269661e48
