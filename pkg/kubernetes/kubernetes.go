@@ -16,9 +16,11 @@ type ClientFactory interface {
 	GetClient(configPath string) (k8s.Interface, error)
 }
 
+// ClientFactory struct
 type clientFactory struct {
 }
 
+// GetClient: Read the config and create Kubernetes Clients
 func (f *clientFactory) GetClient(configPath string) (k8s.Interface, error) {
 
 	config, err := clientcmd.BuildConfigFromFlags("", configPath)
