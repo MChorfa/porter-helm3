@@ -7,7 +7,7 @@ GO = GO111MODULE=on go
 PORTER_HOME ?= $(HOME)/.porter
 
 COMMIT ?= $(shell git rev-parse --short HEAD)
-VERSION ?= $(shell git describe --tags 2> /dev/null || echo v0.1.0)
+VERSION ?= $(shell git describe --tags 2> /dev/null || echo v0)
 PERMALINK ?= $(shell git describe --tags --exact-match &> /dev/null && echo latest || echo canary)
 
 LDFLAGS = -w -X $(PKG)/pkg.Version=$(VERSION) -X $(PKG)/pkg.Commit=$(COMMIT)
