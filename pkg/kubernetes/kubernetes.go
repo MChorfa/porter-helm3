@@ -33,3 +33,8 @@ func (f *clientFactory) GetClient(configPath string) (k8s.Interface, error) {
 	}
 	return clientset, nil
 }
+
+// New returns an implementation of the ClientFactory interface
+func New() ClientFactory {
+	return &clientFactory{}
+}
