@@ -12,9 +12,9 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestMain(m *testing.M) {
-	test.TestMainWithMockedCommandHandlers(m)
-}
+// func TestMain(m *testing.M) {
+// 	test.TestMainWithMockedCommandHandlers(m)
+// }
 
 // TODO: Add test cases for supported actions, we recommend install, update, uninstall and one custom action
 func TestMixin_Execute(t *testing.T) {
