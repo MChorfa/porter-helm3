@@ -19,7 +19,6 @@ destroy-cluster:
 	k3d delete --name mccluster
 
 install-porter:
-	# /Users/mohamedchorfa/.config/k3d/mccluster/kubeconfig.yaml
 	kubectl config use-context mccluster
 	porter build --debug
 	porter creds generate

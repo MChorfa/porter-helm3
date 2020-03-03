@@ -18,38 +18,42 @@ mixins:
   - kubernetes
 
 install:
-  - exec:
-      description: "Add stable repositories"
-      command: bash
-      flags:
-        c: "helm3 repo add stable https://kubernetes-charts.storage.googleapis.com/"
-  - exec:
-      description: "Add codecentric repositories"
-      command: bash
-      flags:
-        c: "helm3 repo add codecentric https://codecentric.github.io/helm-charts"
-  - exec:
-      description: "update Helm repositories"
-      command: bash
-      flags:
-        c: "helm3 repo update"
+  # - exec:
+  #     description: "Add stable repositories"
+  #     command: bash
+  #     flags:
+  #       c: "helm3 repo add stable https://kubernetes-charts.storage.googleapis.com/"
+  # - exec:
+  #     description: "Add codecentric repositories"
+  #     command: bash
+  #     flags:
+  #       c: "helm3 repo add codecentric https://codecentric.github.io/helm-charts"
+  # - exec:
+  #     description: "update Helm repositories"
+  #     command: bash
+  #     flags:
+  #       c: "helm3 repo update"
   - helm3:
+      repos:
+        stable:
+          url: stable https://kubernetes-charts.storage.googleapis.com
+
       description: "Install PostgresQL"
       name: "postgresql"
       chart: "stable/postgresql"
       version: "8.4.0"
       namespace: "{{ bundle.parameters.nanmespace }}"
-      replace: true
-      set:
-        postgresqlUsername: "{{ bundle.parameters.POSTGRESQL_WORKER_USERNAME }}"
-        postgresqlPassword: "{{ bundle.parameters.POSTGRESQL_WORKER_PASSWORD }}"
-        postgresqlDatabase: "{{ bundle.parameters.POSTGRESQL_DATABASE }}"
-        extraEnv[0].name: POSTGRESQL_POSTGRES_PASSWORD,
-        extraEnv[0].value: "{{ bundle.parameters.POSTGRESQL_ADMIN_PASSWORD }}"
-        persistence.enabled: false
-        persistence.storageClass: "azuredisk-standard"
-        persistence.size: "8Gi"
-        image.tag: "12.1.0"
+      # replace: true
+      # set:
+      #   postgresqlUsername: "{{ bundle.parameters.POSTGRESQL_WORKER_USERNAME }}"
+      #   postgresqlPassword: "{{ bundle.parameters.POSTGRESQL_WORKER_PASSWORD }}"
+      #   postgresqlDatabase: "{{ bundle.parameters.POSTGRESQL_DATABASE }}"
+      #   extraEnv[0].name: POSTGRESQL_POSTGRES_PASSWORD,
+      #   extraEnv[0].value: "{{ bundle.parameters.POSTGRESQL_ADMIN_PASSWORD }}"
+      #   persistence.enabled: false
+      #   persistence.storageClass: "azuredisk-standard"
+      #   persistence.size: "8Gi"
+      #   image.tag: "12.1.0"
 
 upgrade:
   - exec:

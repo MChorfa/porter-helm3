@@ -92,11 +92,11 @@ bin/porter$(FILE_EXT):
 	chmod +x bin/porter$(FILE_EXT)
 
 install:
-	porter mixin uninstall $(MIXIN)
+	# @porter mixin uninstall $(MIXIN)
 	mkdir -p $(PORTER_HOME)/mixins/$(MIXIN)
 	install $(BINDIR)/$(MIXIN)$(FILE_EXT) $(PORTER_HOME)/mixins/$(MIXIN)/$(MIXIN)$(FILE_EXT)
 	install $(BINDIR)/$(MIXIN)-runtime$(FILE_EXT) $(PORTER_HOME)/mixins/$(MIXIN)/$(MIXIN)-runtime$(FILE_EXT)
-	porter mixin list
+	# @porter mixin list
 clean: clean-packr
 	-rm -fr bin/
 

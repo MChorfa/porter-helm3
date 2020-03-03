@@ -28,5 +28,6 @@ func (m *Mixin) Build() error {
 	fmt.Fprintln(m.Out, `RUN curl https://get.helm.sh/helm-v3.1.1-linux-amd64.tar.gz --output helm3.tar.gz`)
 	fmt.Fprintln(m.Out, `RUN tar -xvf helm3.tar.gz`)
 	fmt.Fprintln(m.Out, `RUN mv linux-amd64/helm /usr/local/bin/helm3`)
+	fmt.Fprintln(m.Out, `RUN helm3 repo add stable https://kubernetes-charts.storage.googleapis.com && helm3 repo update`)
 	return nil
 }

@@ -41,6 +41,13 @@
                             "type": "object",
                             "additionalProperties": true
                         },
+                        "repos": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "additionalProperties": true
+                            }
+                        },
                         "values": {
                             "type": "array",
                             "items": {

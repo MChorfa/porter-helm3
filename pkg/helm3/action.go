@@ -125,7 +125,7 @@ type ExecuteStep struct {
 	Arguments   []string      `yaml:"arguments,omitempty"`
 	Flags       builder.Flags `yaml:"flags,omitempty"`
 	Outputs     []Output      `yaml:"outputs,omitempty"`
-	Namespace   string        `yaml:"namespace"`
+	Namespace   string        `yaml:"namespace,omitempty"`
 }
 
 func (s ExecuteStep) GetCommand() string {
