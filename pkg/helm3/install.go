@@ -21,25 +21,15 @@ type InstallStep struct {
 type InstallArguments struct {
 	Step `yaml:",inline"`
 
-	Namespace    string                         `yaml:"namespace"`
-	Name         string                         `yaml:"name"`
-	Chart        string                         `yaml:"chart"`
-	Version      string                         `yaml:"version"`
-	Replace      bool                           `yaml:"replace"`
-	Set          map[string]string              `yaml:"set"`
-	Values       []string                       `yaml:"values"`
-	Devel        bool                           `yaml:"devel`
-	Wait         bool                           `yaml:"wait"`
-	Repositories map[string]RepositoryArguments `yaml:"repos"`
-}
-
-type RepositoryArguments struct {
-	URL      string `yaml:"url"`
-	Cafile   string `yaml:"cafile"`
-	Certfile string `yaml:"certfile"`
-	Keyfile  string `yaml:"keyfile"`
-	Username string `yaml:"username"`
-	Password string `yaml:"password"`
+	Namespace string            `yaml:"namespace"`
+	Name      string            `yaml:"name"`
+	Chart     string            `yaml:"chart"`
+	Version   string            `yaml:"version"`
+	Replace   bool              `yaml:"replace"`
+	Set       map[string]string `yaml:"set"`
+	Values    []string          `yaml:"values"`
+	Devel     bool              `yaml:"devel`
+	Wait      bool              `yaml:"wait"`
 }
 
 func (m *Mixin) Install() error {
@@ -92,15 +82,6 @@ func (m *Mixin) Install() error {
 
 	cmd.Args = HandleSettingChartValues(step, cmd)
 
-	cmdRepos := m.NewCommand("helm3")
-
-	// repos:
-	//   brigade:
-	//     url: https://azure.github.io/brigade-charts
-	for name, repo := range step.Repositories {
-		AddRepository(cmdRepos, name, repo.URL, repo.Cafile, repo.Certfile, repo.Keyfile, repo.Username, repo.Password)
-	}
-
 	cmd.Stdout = m.Out
 	cmd.Stderr = m.Err
 
@@ -133,31 +114,6 @@ func (m *Mixin) Install() error {
 	}
 
 	return nil
-}
-
-// Construct and add the request repository
-func AddRepository(cmdAddRepo *exec.Cmd, name, url, cafile, certfile, keyfile, username, password string) error {
-
-	if name == "" && url != "" {
-		return fmt.Errorf("empty field name")
-	}
-	cmdAddRepo.Args = append(cmdAddRepo.Args, "repo", "add", name, url)
-	if certfile != "" && keyfile != "" {
-		cmdAddRepo.Args = append(cmdAddRepo.Args, "--cert-file", certfile, "--key-file", keyfile)
-	}
-	if cafile != "" {
-		cmdAddRepo.Args = append(cmdAddRepo.Args, "--ca-file", cafile)
-	}
-	if username != "" && password != "" {
-		cmdAddRepo.Args = append(cmdAddRepo.Args, "--username", username, "--password", password)
-	}
-	fmt.Sprintf("Adding repo %v %v", name, url)
-
-	err := cmdAddRepo.Run()
-	if err != nil {
-		return errors.Wrapf(err, "unable to add the requested repository '%s'", name)
-	}
-	return err
 }
 
 // Prepare set arguments

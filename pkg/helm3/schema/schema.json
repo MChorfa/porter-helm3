@@ -22,12 +22,6 @@
                         "version": {
                             "type": "string"
                         },
-                        "username": {
-                            "type": "string"
-                        },
-                        "password": {
-                            "type": "string"
-                        },
                         "replace": {
                             "type": "boolean"
                         },
@@ -40,13 +34,6 @@
                         "set": {
                             "type": "object",
                             "additionalProperties": true
-                        },
-                        "repos": {
-                            "type": "array",
-                            "items": {
-                                "type": "object",
-                                "additionalProperties": true
-                            }
                         },
                         "values": {
                             "type": "array",
