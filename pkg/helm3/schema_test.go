@@ -1,82 +1,55 @@
 package helm3
 
-import (
-	"fmt"
-	"io/ioutil"
-	"testing"
+// import (
+// 	"io/ioutil"
+// 	"testing"
 
-	"github.com/ghodss/yaml" // We are not using go-yaml because of serialization problems with jsonschema, don't use this library elsewhere
-	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
-	"github.com/xeipuuv/gojsonschema"
-)
+// 	"github.com/stretchr/testify/assert"
+// 	"github.com/stretchr/testify/require"
+// )
 
-func TestMixin_GetSchema(t *testing.T) {
-	m := NewTestMixin(t)
+// func TestMixin_PrintSchema(t *testing.T) {
+// 	m := NewTestMixin(t)
 
-	gotSchema, err := m.GetSchema()
-	require.NoError(t, err)
+// 	err := m.PrintSchema()
+// 	require.NoError(t, err)
 
-	wantSchema, err := ioutil.ReadFile("schema/schema.json")
-	require.NoError(t, err)
+// 	gotSchema := m.TestContext.GetOutput()
 
-	assert.Equal(t, string(wantSchema), gotSchema)
-}
+// 	wantSchema, err := ioutil.ReadFile("testdata/schema.json")
+// 	require.NoError(t, err)
 
-func TestMixin_PrintSchema(t *testing.T) {
-	m := NewTestMixin(t)
+// 	assert.Equal(t, string(wantSchema), gotSchema)
+// }
 
-	err := m.PrintSchema()
-	require.NoError(t, err)
+// func TestMixin_ValidatePayload(t *testing.T) {
+// 	testcases := []struct {
+// 		name  string
+// 		step  string
+// 		pass  bool
+// 		error string
+// 	}{
+// 		{"install", "testdata/install-input.yaml", true, ""},
+// 		{"execute", "testdata/execute-input.yaml", true, ""},
+// 		{"upgrade", "testdata/upgrade-input.yaml", true, ""},
+// 		{"uninstall", "testdata/uninstall-input.yaml", true, ""},
+// 		{"install.missing-desc", "testdata/bad-install-input.missing-desc.yaml", false, "install.0.helm.description: String length must be greater than or equal to 1"},
+// 		{"uninstall.missing-releases", "testdata/bad-uninstall-input.missing-releases.yaml", false, "uninstall.0.helm3: releases is required"},
+// 	}
 
-	gotSchema := m.TestContext.GetOutput()
+// 	for _, tc := range testcases {
+// 		t.Run(tc.name, func(t *testing.T) {
+// 			m := NewTestMixin(t)
+// 			b, err := ioutil.ReadFile(tc.step)
+// 			require.NoError(t, err)
 
-	wantSchema, err := ioutil.ReadFile("schema/schema.json")
-	require.NoError(t, err)
-
-	assert.Equal(t, string(wantSchema), gotSchema)
-}
-
-func TestMixin_ValidateSchema(t *testing.T) {
-	m := NewTestMixin(t)
-
-	// Load the mixin schema
-	schemaB, err := m.GetSchema()
-	require.NoError(t, err)
-	schemaLoader := gojsonschema.NewStringLoader(schemaB)
-
-	// TODO: Add testcases for any other action inputs you have in testdata
-	// This validates that your schema.json is filled in properly
-	testcases := []struct {
-		name      string
-		file      string
-		wantError string
-	}{
-		{"install", "testdata/step-input.yaml", ""},
-		{"invalid property", "testdata/invalid-input.yaml", "Additional property args is not allowed"},
-	}
-
-	for _, tc := range testcases {
-		t.Run(tc.name, func(t *testing.T) {
-			// Read the mixin input as a go dump
-			mixinInputB, err := ioutil.ReadFile(tc.file)
-			require.NoError(t, err)
-			mixinInputMap := make(map[string]interface{})
-			err = yaml.Unmarshal(mixinInputB, &mixinInputMap)
-			require.NoError(t, err)
-			mixinInputLoader := gojsonschema.NewGoLoader(mixinInputMap)
-
-			// Validate the manifest against the schema
-			result, err := gojsonschema.Validate(schemaLoader, mixinInputLoader)
-			require.NoError(t, err)
-
-			if tc.wantError == "" {
-				assert.True(t, result.Valid())
-				assert.Empty(t, result.Errors())
-			} else {
-				assert.False(t, result.Valid())
-				assert.Contains(t, fmt.Sprintf("%v", result.Errors()), tc.wantError)
-			}
-		})
-	}
-}
+// 			err = m.ValidatePayload(b)
+// 			if tc.pass {
+// 				require.NoError(t, err)
+// 			} else {
+// 				require.EqualError(t, err, tc.error)
+// 			}
+// 		})
+// 	}
+// }
+// //

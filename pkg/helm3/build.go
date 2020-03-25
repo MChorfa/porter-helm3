@@ -27,7 +27,7 @@ type BuildInput struct {
 
 // MixinConfig represents configuration that can be set on the helm mixin in porter.yaml
 // mixins:
-// - helm:
+// - helm3:
 //	  repositories:
 //	    stable:
 //		  url: "https://kubernetes-charts.storage.googleapis.com"
@@ -37,6 +37,7 @@ type BuildInput struct {
 //		  username: "username"
 //		  password: "password"
 type MixinConfig struct {
+	Version      string
 	Repositories map[string]Repository
 }
 
@@ -63,16 +64,16 @@ func (m *Mixin) Build() error {
 		return err
 	}
 	// Make sure kubectl is available
-	// fmt.Fprintln(m.Out, `RUN apt-get update && apt-get install -y apt-transport-https curl`)
-	// fmt.Fprintln(m.Out, `RUN curl https://storage.googleapis.com/kubernetes-release/release/v1.17.0/bin/linux/amd64/kubectl --output kubectl`)
-	// fmt.Fprintln(m.Out, `RUN mv kubectl /usr/local/bin`)
-	// fmt.Fprintln(m.Out, `RUN chmod a+x /usr/local/bin/kubectl`)
+	// fmt.Fprintf(m.Out, "\nRUN apt-get update && apt-get install -y apt-transport-https curl")
+	// fmt.Fprintf(m.Out, "\nRUN curl https://storage.googleapis.com/kubernetes-release/release/v1.17.0/bin/linux/amd64/kubectl --output kubectl")
+	// fmt.Fprintf(m.Out, "\nRUN mv kubectl /usr/local/bin")
+	// fmt.Fprintf(m.Out, "\nRUN chmod a+x /usr/local/bin/kubectl")
 
 	// Install helm3
-	fmt.Fprintln(m.Out, `RUN apt-get update && apt-get install -y curl`)
-	fmt.Fprintln(m.Out, `RUN curl https://get.helm.sh/helm-v3.1.2-linux-amd64.tar.gz --output helm3.tar.gz`)
-	fmt.Fprintln(m.Out, `RUN tar -xvf helm3.tar.gz`)
-	fmt.Fprintln(m.Out, `RUN mv linux-amd64/helm /usr/local/bin/helm3`)
+	fmt.Fprintf(m.Out, "RUN apt-get update && apt-get install -y curl")
+	fmt.Fprintf(m.Out, "\nRUN curl https://get.helm.sh/helm-v3.1.2-linux-amd64.tar.gz --output helm3.tar.gz")
+	fmt.Fprintf(m.Out, "\nRUN tar -xvf helm3.tar.gz")
+	fmt.Fprintf(m.Out, "\nRUN mv linux-amd64/helm /usr/local/bin/helm3")
 
 	// Go through repositories
 	for name, repo := range input.Config.Repositories {
@@ -95,7 +96,7 @@ func GetAddRepositoryCommand(name, url, cafile, certfile, keyfile, username, pas
 		return commandBuilder, fmt.Errorf("repository url must be supplied")
 	}
 
-	commandBuilder = append(commandBuilder, "\nRUN", "helm", "repo", "add", name, url)
+	commandBuilder = append(commandBuilder, "\nRUN", "helm3", "repo", "add", name, url)
 
 	if certfile != "" && keyfile != "" {
 		commandBuilder = append(commandBuilder, "--cert-file", certfile, "--key-file", keyfile)

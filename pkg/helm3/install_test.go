@@ -47,7 +47,6 @@ func TestMixin_UnmarshalInstallStep(t *testing.T) {
 
 func TestMixin_Install(t *testing.T) {
 	namespace := "MYNAMESPACE"
-	name := "MYRELEASE"
 	chart := "MYCHART"
 	version := "1.0.0"
 	setArgs := map[string]string{
@@ -59,7 +58,7 @@ func TestMixin_Install(t *testing.T) {
 		"/tmp/val2.yaml",
 	}
 
-	baseInstall := fmt.Sprintf(`helm install --name %s %s --namespace %s --version %s`, name, chart, namespace, version)
+	baseInstall := fmt.Sprintf(`helm3 install %s --namespace %s --version %s`, chart, namespace, version)
 	baseValues := `--values /tmp/val1.yaml --values /tmp/val2.yaml`
 	baseSetArgs := `--set baz=qux --set foo=bar`
 
@@ -70,7 +69,6 @@ func TestMixin_Install(t *testing.T) {
 				InstallArguments: InstallArguments{
 					Step:      Step{Description: "Install Foo"},
 					Namespace: namespace,
-					Name:      name,
 					Chart:     chart,
 					Version:   version,
 					Set:       setArgs,
@@ -84,7 +82,6 @@ func TestMixin_Install(t *testing.T) {
 				InstallArguments: InstallArguments{
 					Step:      Step{Description: "Install Foo"},
 					Namespace: namespace,
-					Name:      name,
 					Chart:     chart,
 					Version:   version,
 					Set:       setArgs,
@@ -99,7 +96,6 @@ func TestMixin_Install(t *testing.T) {
 				InstallArguments: InstallArguments{
 					Step:      Step{Description: "Install Foo"},
 					Namespace: namespace,
-					Name:      name,
 					Chart:     chart,
 					Version:   version,
 					Set:       setArgs,
@@ -114,7 +110,6 @@ func TestMixin_Install(t *testing.T) {
 				InstallArguments: InstallArguments{
 					Step:      Step{Description: "Install Foo"},
 					Namespace: namespace,
-					Name:      name,
 					Chart:     chart,
 					Version:   version,
 					Set:       setArgs,

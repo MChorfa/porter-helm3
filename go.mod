@@ -4,6 +4,7 @@ go 1.13
 
 require (
 	cloud.google.com/go v0.53.0 // indirect
+	get.porter.sh/mixin/helm v0.10.2-beta.1
 	get.porter.sh/porter v0.23.0-beta.1
 	github.com/Azure/go-autorest/autorest v0.10.0 // indirect
 	github.com/PaesslerAG/gval v1.0.1 // indirect

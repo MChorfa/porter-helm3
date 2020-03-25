@@ -4,11 +4,20 @@ import (
 	"testing"
 
 	"get.porter.sh/porter/pkg/context"
+	"k8s.io/client-go/kubernetes"
+	testclient "k8s.io/client-go/kubernetes/fake"
 )
 
 type TestMixin struct {
 	*Mixin
 	TestContext *context.TestContext
+}
+
+type testKubernetesFactory struct {
+}
+
+func (t *testKubernetesFactory) GetClient(configPath string) (kubernetes.Interface, error) {
+	return testclient.NewSimpleClientset(), nil
 }
 
 // NewTestMixin initializes a mixin test client, with the output buffered, and an in-memory file system.
