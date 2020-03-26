@@ -1,5 +1,5 @@
 MIXIN = helm3
-PKG = get.porter.sh/mixin/$(MIXIN)
+PKG = github.com/MChorfa/porter-helm3/pkg/$(MIXIN)
 SHELL = bash
 
 GO = GO111MODULE=on go
@@ -74,16 +74,16 @@ publish: bin/porter$(FILE_EXT)
 	# The porter mixins feed generate command is used to build an ATOM feed for sharing mixins once published
 
 	# AZURE_STORAGE_CONNECTION_STRING will be used for auth in the following commands
-	if [[ "$(PERMALINK)" == "latest" ]]; then \
-		az storage blob upload-batch -d porter/mixins/$(MIXIN)/$(VERSION) -s $(BINDIR)/$(VERSION); \
-		az storage blob upload-batch -d porter/mixins/$(MIXIN)/$(PERMALINK) -s $(BINDIR)/$(VERSION); \
-	else \
-		mv $(BINDIR)/$(VERSION) $(BINDIR)/$(PERMALINK); \
-		az storage blob upload-batch -d porter/mixins/$(MIXIN)/$(PERMALINK) -s $(BINDIR)/$(PERMALINK); \
-	fi
+	# if [[ "$(PERMALINK)" == "latest" ]]; then \
+	# 	az storage blob upload-batch -d porter/mixins/$(MIXIN)/$(VERSION) -s $(BINDIR)/$(VERSION); \
+	# 	az storage blob upload-batch -d porter/mixins/$(MIXIN)/$(PERMALINK) -s $(BINDIR)/$(VERSION); \
+	# else \
+	# 	mv $(BINDIR)/$(VERSION) $(BINDIR)/$(PERMALINK); \
+	# 	az storage blob upload-batch -d porter/mixins/$(MIXIN)/$(PERMALINK) -s $(BINDIR)/$(PERMALINK); \
+	# fi
 
 	# Generate the mixin feed
-	az storage blob download -c porter -n atom.xml -f bin/atom.xml
+	# az storage blob download -c porter -n atom.xml -f bin/atom.xml
 	bin/porter mixins feed generate -d bin/mixins -f bin/atom.xml -t build/atom-template.xml
 	#az storage blob upload -c porter -n atom.xml -f bin/atom.xml
 

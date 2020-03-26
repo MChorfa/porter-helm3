@@ -128,10 +128,13 @@
                                 "type": "string"
                             },
                             "minItems": 1
+                        },
+                        "namespace": {
+                            "type": "string"
                         }
                     },
                     "additionalProperties": false,
-                    "required": ["description", "releases"]
+                    "required": ["description", "releases", "namespace"]
                 }
             },
             "required": ["helm3"]

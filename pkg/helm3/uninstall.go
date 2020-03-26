@@ -22,9 +22,9 @@ type UninstallStep struct {
 
 // UninstallArguments are the arguments available for the Uninstall action
 type UninstallArguments struct {
-	Step `yaml:",inline"`
-
-	Releases []string `yaml:"releases"`
+	Step      `yaml:",inline"`
+	Namespace string   `yaml:"namespace"`
+	Releases  []string `yaml:"releases"`
 }
 
 // Uninstall deletes a provided set of Helm releases, supplying optional flags/params
@@ -48,7 +48,7 @@ func (m *Mixin) Uninstall() error {
 	// This gives us more fine-grained error recovery and handling
 	var result error
 	for _, release := range step.Releases {
-		err = m.delete(release)
+		err = m.delete(release, step.Namespace)
 		if err != nil {
 			result = multierror.Append(result, err)
 		}
@@ -56,10 +56,11 @@ func (m *Mixin) Uninstall() error {
 	return result
 }
 
-func (m *Mixin) delete(release string) error {
+func (m *Mixin) delete(release string, namespace string) error {
 	cmd := m.NewCommand("helm3", "uninstall")
 
 	cmd.Args = append(cmd.Args, release)
+	cmd.Args = append(cmd.Args, "--namespace", namespace)
 
 	output := &bytes.Buffer{}
 	cmd.Stdout = io.MultiWriter(m.Out, output)
