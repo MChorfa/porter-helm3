@@ -40,7 +40,7 @@ func TestMixin_Uninstall(t *testing.T) {
 
 	uninstallTests := []UninstallTest{
 		{
-			expectedCommand: "helm delete foo\nhelm delete bar",
+			expectedCommand: "helm3 delete foo\nhelm3 delete bar",
 			uninstallStep: UninstallStep{
 				UninstallArguments: UninstallArguments{
 					Step:     Step{Description: "Uninstall Foo"},
@@ -49,7 +49,7 @@ func TestMixin_Uninstall(t *testing.T) {
 			},
 		},
 		{
-			expectedCommand: "helm delete foo\nhelm delete bar",
+			expectedCommand: "helm3 delete foo\nhelm3 delete bar",
 			uninstallStep: UninstallStep{
 				UninstallArguments: UninstallArguments{
 					Step:     Step{Description: "Uninstall Foo"},

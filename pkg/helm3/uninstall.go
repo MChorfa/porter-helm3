@@ -57,7 +57,7 @@ func (m *Mixin) Uninstall() error {
 }
 
 func (m *Mixin) delete(release string) error {
-	cmd := m.NewCommand("helm3", "delete")
+	cmd := m.NewCommand("helm3", "uninstall")
 
 	cmd.Args = append(cmd.Args, release)
 

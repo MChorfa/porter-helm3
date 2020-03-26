@@ -44,7 +44,7 @@ func TestMixin_UnmarshalExecuteStep(t *testing.T) {
 
 func TestMixin_Execute(t *testing.T) {
 	defer os.Unsetenv(test.ExpectedCommandEnv)
-	os.Setenv(test.ExpectedCommandEnv, "helm3 status mysql -o yaml")
+	os.Setenv(test.ExpectedCommandEnv, "helm3 status mysql")
 
 	executeAction := Action{
 		Steps: []ExecuteSteps{
@@ -54,14 +54,14 @@ func TestMixin_Execute(t *testing.T) {
 						"status",
 						"mysql",
 					},
-					// Flags: builder.Flags{
-					// 	{
-					// 		Name: "o",
-					// 		Values: []string{
-					// 			"yaml",
-					// 		},
-					// 	},
-					// },
+					Flags: builder.Flags{
+						{
+							Name: "o",
+							Values: []string{
+								"yaml",
+							},
+						},
+					},
 				},
 			},
 		},
