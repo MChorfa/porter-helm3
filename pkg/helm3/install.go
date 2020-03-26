@@ -2,6 +2,7 @@ package helm3
 
 import (
 	"fmt"
+	"os/exec"
 	"sort"
 	"strings"
 
@@ -24,8 +25,6 @@ type InstallArguments struct {
 	Name      string            `yaml:"name"`
 	Chart     string            `yaml:"chart"`
 	Version   string            `yaml:"version"`
-	Username  string            `yaml:"username"`
-	Password  string            `yaml:"password"`
 	Replace   bool              `yaml:"replace"`
 	Set       map[string]string `yaml:"set"`
 	Values    []string          `yaml:"values"`
@@ -34,6 +33,7 @@ type InstallArguments struct {
 }
 
 func (m *Mixin) Install() error {
+
 	payload, err := m.getPayloadData()
 	if err != nil {
 		return err
@@ -64,14 +64,6 @@ func (m *Mixin) Install() error {
 		cmd.Args = append(cmd.Args, "--version", step.Version)
 	}
 
-	if step.Username != "" {
-		cmd.Args = append(cmd.Args, "--username", step.Username)
-	}
-
-	if step.Password != "" {
-		cmd.Args = append(cmd.Args, "--password", step.Password)
-	}
-
 	if step.Replace {
 		cmd.Args = append(cmd.Args, "--replace")
 	}
@@ -88,32 +80,27 @@ func (m *Mixin) Install() error {
 		cmd.Args = append(cmd.Args, "--values", v)
 	}
 
-	// sort the set consistently
-	setKeys := make([]string, 0, len(step.Set))
-	for k := range step.Set {
-		setKeys = append(setKeys, k)
-	}
-	sort.Strings(setKeys)
-
-	for _, k := range setKeys {
-		cmd.Args = append(cmd.Args, "--set", fmt.Sprintf("%s=%s", k, step.Set[k]))
-	}
+	cmd.Args = HandleSettingChartValues(step, cmd)
 
 	cmd.Stdout = m.Out
 	cmd.Stderr = m.Err
 
+	// format the command with all arguments
 	prettyCmd := fmt.Sprintf("%s %s", cmd.Path, strings.Join(cmd.Args, " "))
 	fmt.Fprintln(m.Out, prettyCmd)
 
+	// Here where really the command get executed
 	err = cmd.Start()
+	// Exit on error
 	if err != nil {
 		return fmt.Errorf("could not execute command, %s: %s", prettyCmd, err)
 	}
 	err = cmd.Wait()
+	// Exit on error
 	if err != nil {
 		return err
 	}
-
+	// Handle outputs that where generate throw out the steps
 	for _, output := range step.Outputs {
 		val, err := getSecret(kubeClient, step.Namespace, output.Secret, output.Key)
 		if err != nil {
@@ -125,5 +112,21 @@ func (m *Mixin) Install() error {
 			return errors.Wrapf(err, "unable to write output '%s'", output.Name)
 		}
 	}
+
 	return nil
+}
+
+// Prepare set arguments
+func HandleSettingChartValues(step InstallStep, cmd *exec.Cmd) []string {
+	// sort the set consistently
+	setKeys := make([]string, 0, len(step.Set))
+	for k := range step.Set {
+		setKeys = append(setKeys, k)
+	}
+	sort.Strings(setKeys)
+
+	for _, k := range setKeys {
+		cmd.Args = append(cmd.Args, "--set", fmt.Sprintf("%s=%s", k, step.Set[k]))
+	}
+	return cmd.Args
 }

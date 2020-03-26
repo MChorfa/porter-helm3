@@ -1,0 +1,5 @@
+uninstall:
+- helm3:
+    description: "Uninstall MySQL"
+    releases:
+    - porter-ci-mysql

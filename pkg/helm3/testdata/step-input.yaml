@@ -5,7 +5,6 @@ install:
       flags:
         species: "human"
       description: "Install PostgresQL"
-      name: postgresql
       chart: stable/postgresql
       version: 8.4.0
       namespace: "test-postgresql"

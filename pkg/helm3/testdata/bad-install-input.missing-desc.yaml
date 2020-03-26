@@ -1,0 +1,4 @@
+install:
+- helm3:
+    chart: stable/wordpress
+    description: ""

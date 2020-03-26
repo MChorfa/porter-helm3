@@ -1,0 +1,20 @@
+upgrade:
+- helm3:
+    description: "Upgrade MySQL"
+    chart: stable/mysql
+    version: 0.10.2
+    wait: true
+    resetValues: true
+    reuseValues: false
+    set:
+      mysqlDatabase: mydb
+      mysqlUser: myuser
+      livenessProbe.initialDelaySeconds: 30
+      persistence.enabled: true
+    outputs:
+      - name: mysql-root-password
+        secret: porter-ci-mysql
+        key: mysql-root-password
+      - name: mysql-password
+        secret: porter-ci-mysql
+        key: mysql-password

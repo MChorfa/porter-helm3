@@ -1,106 +1,92 @@
-# This is the configuration for Porter
-# You must define steps for each action, but the rest is optional
-# See https://porter.sh/author-bundles for documentation on how to configure your bundle
-# Uncomment out the sections below to take full advantage of what Porter can do!
-
-name: Postgresql
-version: 0.1.0
-description: "An postgresql Porter configuration"
-# TODO: update the registry to your own, e.g. myregistry/porter-postgresql:v0.1.0
-tag: getporter/porter-postgresql:v0.1.0
-
-# Uncomment the line below to use a template Dockerfile for your invocation image
-#dockerfile: Dockerfile.tmpl
-
 mixins:
-  - exec
-  - helm3
-  - kubernetes
+- helm3:
+    repositories:
+      stable:
+        url: "https://kubernetes-charts.storage.googleapis.com"
+
+name: helm3-mysql
+version: 0.1.0
+tag: getporter/helm3-mysql:v0.1.0
+
+credentials:
+- name: kubeconfig
+  path: /root/.kube/config
+
+parameters:
+- name: database-name
+  type: string
+  default: mydb
+- name: mysql-user
+  type: string
+  default: mysql-admin
+- name: namespace
+  type: string
+  default: ''
+- name: mysql-name
+  type: string
+  default: my-mysql
+
+customActions:
+  status:
+    description: "Get the status of a helm3 release"
+    modifies: false
+    stateless: true
 
 install:
-  - exec:
-      description: "Add stable repositories"
-      command: bash
-      flags:
-        c: "helm3 repo add stable https://kubernetes-charts.storage.googleapis.com/"
-  - exec:
-      description: "Add codecentric repositories"
-      command: bash
-      flags:
-        c: "helm3 repo add codecentric https://codecentric.github.io/helm-charts"
-  - exec:
-      description: "update Helm repositories"
-      command: bash
-      flags:
-        c: "helm3 repo update"
   - helm3:
-      description: "Install PostgresQL"
-      name: "postgresql"
-      chart: "stable/postgresql"
-      version: "8.4.0"
-      namespace: "{{ bundle.parameters.nanmespace }}"
+      description: "Install MySQL"
+      name: "{{ bundle.parameters.mysql-name }}"
+      chart: stable/mysql
+      version: 1.6.2
+      namespace: "{{ bundle.parameters.namespace }}"
       replace: true
       set:
-        postgresqlUsername: "{{ bundle.parameters.POSTGRESQL_WORKER_USERNAME }}"
-        postgresqlPassword: "{{ bundle.parameters.POSTGRESQL_WORKER_PASSWORD }}"
-        postgresqlDatabase: "{{ bundle.parameters.POSTGRESQL_DATABASE }}"
-        extraEnv[0].name: POSTGRESQL_POSTGRES_PASSWORD,
-        extraEnv[0].value: "{{ bundle.parameters.POSTGRESQL_ADMIN_PASSWORD }}"
-        persistence.enabled: false
-        persistence.storageClass: "azuredisk-standard"
-        persistence.size: "8Gi"
-        image.tag: "12.1.0"
+        mysqlDatabase: "{{ bundle.parameters.database-name}}"
+        mysqlUser: "{{ bundle.parameters.mysql-user }}"
+      outputs:
+      - name: mysql-root-password
+        secret: "{{ bundle.parameters.mysql-name }}"
+        key: mysql-root-password
+      - name: mysql-password
+        secret: "{{ bundle.parameters.mysql-name }}"
+        key: mysql-password
+
+status:
+  - helm3:
+      description: "MySQL Status"
+      arguments:
+        - status
+        - "{{ bundle.parameters.mysql-name }}"
+      flags:
+        o: yaml
 
 upgrade:
-  - exec:
-      description: "World 2.0"
-      command: bash
-      flags:
-        c: echo World 2.0
+  - helm3:
+      description: "Upgrade MySQL"
+      name: "{{ bundle.parameters.mysql-name }}"
+      namespace: "{{ bundle.parameters.namespace }}"
+      chart: stable/mysql
+      version: 1.6.2
+      outputs:
+      - name: mysql-root-password
+        secret: "{{ bundle.parameters.mysql-name }}"
+        key: mysql-root-password
+      - name: mysql-password
+        secret: "{{ bundle.parameters.mysql-name }}"
+        key: mysql-password
 
 uninstall:
-  - exec:
-      description: "Uninstall Hello World"
-      command: bash
-      flags:
-        c: echo Goodbye World
-# See https://porter.sh/author-bundles/#dependencies
-#dependencies:
-#  mysql:
-#    tag: getporter/mysql:v0.1.1
-#    parameters:
-#      database-name: wordpress
+  - helm3:
+      description: "Uninstall MySQL"
+      purge: true
+      releases:
+        - "{{ bundle.parameters.mysql-name }}"
 
-# See https://porter.sh/wiring/#credentials
-credentials:
-  - name: kubeconfig
-    path: /root/.kube/config
-parameters:
-  - name: POSTGRESQL_DATABASE
+outputs:
+  - name: mysql-password
+    description: "The mysql database password"
     type: string
-    default: postgres
-
-  - name: POSTGRESQL_WORKER_USERNAME
-    type: string
-    default: postgres
-
-  - name: POSTGRESQL_WORKER_PASSWORD
-    type: string
+    applyTo:
+      - install
+      - upgrade
     sensitive: true
-
-  - name: POSTGRESQL_ADMIN_PASSWORD
-    type: string
-    sensitive: true
-
-  - name: KEYCLOAK_USERNAME
-    type: string
-    default: postgres
-
-  - name: KEYCLOAK_PASSWORD
-    type: string
-    sensitive: true
-
-  - name: nanmespace
-    type: string
-    default: "nycta"
-    env: PROJECT_NAMESPACE

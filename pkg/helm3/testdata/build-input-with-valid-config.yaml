@@ -1,0 +1,11 @@
+config:
+  repositories:
+    stable:
+      url: "kubernetes-charts"
+      username: "username"
+      password: "password"
+install:
+  - helm3:
+      description: "Install MySQL"
+      chart: stable/mysql
+      version: 0.10.2

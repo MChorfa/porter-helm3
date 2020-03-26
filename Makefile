@@ -7,7 +7,7 @@ GO = GO111MODULE=on go
 PORTER_HOME ?= $(HOME)/.porter
 
 COMMIT ?= $(shell git rev-parse --short HEAD)
-VERSION ?= $(shell git describe --tags 2> /dev/null || echo v0.1.0)
+VERSION ?= $(shell git describe --tags 2> /dev/null || echo v0)
 PERMALINK ?= $(shell git describe --tags --exact-match &> /dev/null && echo latest || echo canary)
 
 LDFLAGS = -w -X $(PKG)/pkg.Version=$(VERSION) -X $(PKG)/pkg.Commit=$(COMMIT)
@@ -92,11 +92,11 @@ bin/porter$(FILE_EXT):
 	chmod +x bin/porter$(FILE_EXT)
 
 install:
-	porter mixin uninstall $(MIXIN)
+	# @porter mixin uninstall $(MIXIN)
 	mkdir -p $(PORTER_HOME)/mixins/$(MIXIN)
 	install $(BINDIR)/$(MIXIN)$(FILE_EXT) $(PORTER_HOME)/mixins/$(MIXIN)/$(MIXIN)$(FILE_EXT)
 	install $(BINDIR)/$(MIXIN)-runtime$(FILE_EXT) $(PORTER_HOME)/mixins/$(MIXIN)/$(MIXIN)-runtime$(FILE_EXT)
-	porter mixin list
+	# @porter mixin list
 clean: clean-packr
 	-rm -fr bin/
 
