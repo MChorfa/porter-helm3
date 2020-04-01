@@ -8,7 +8,7 @@ import (
 	"get.porter.sh/porter/pkg/printer"
 	"github.com/stretchr/testify/require"
 
-	"get.porter.sh/mixin/helm/pkg"
+	"github.com/MChorfa/porter-helm3/pkg"
 )
 
 func TestPrintVersion(t *testing.T) {
