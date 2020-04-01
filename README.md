@@ -1,4 +1,4 @@
-# Helm Mixin for Porter
+# Helm3 Mixin for Porter
 
 <img src="https://porter.sh/images/mixins/helm.svg" align="right" width="150px"/>
 
@@ -9,7 +9,7 @@ appropriate helm command based on which action it is included within: `install`,
 ### Install or Upgrade
 
 ```shell
-porter mixins install helm3 --url https://github.com/MChorfa/porter-helm3/releases/download --version v0.1.3
+porter mixins install helm3 --url https://github.com/MChorfa/porter-helm3/releases/download --version VERSION
 ```
 
 ### Mixin Configuration
