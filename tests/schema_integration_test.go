@@ -14,8 +14,8 @@ import (
 // Add a test that checked that the schema was packed into the binary
 // properly. Requires a make clean xbuild-all first.
 func TestSchema(t *testing.T) {
-	schemaBackup := "../pkg/helm/schema/schema.json.bak"
-	schemaPath := "../pkg/helm/schema/schema.json"
+	schemaBackup := "../pkg/helm3/schema/schema.json.bak"
+	schemaPath := "../pkg/helm3/schema/schema.json"
 
 	defer os.Rename(schemaBackup, schemaPath)
 	err := os.Rename(schemaPath, schemaBackup)
@@ -23,7 +23,7 @@ func TestSchema(t *testing.T) {
 
 	output := &bytes.Buffer{}
 	cmd := exec.Command("helm", "schema")
-	cmd.Path = "../bin/mixins/helm/helm"
+	cmd.Path = "../bin/mixins/helm3/helm3"
 	cmd.Stdout = output
 	cmd.Stderr = output
 

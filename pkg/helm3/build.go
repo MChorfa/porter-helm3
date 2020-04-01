@@ -8,17 +8,10 @@ import (
 	yaml "gopkg.in/yaml.v2"
 )
 
-// This is an example. Replace the following with whatever steps are needed to
-// install required components into
-// const dockerfileLines = `RUN apt-get update && \
-// apt-get install gnupg apt-transport-https lsb-release software-properties-common -y && \
-// echo "deb [arch=amd64] https://packages.microsoft.com/repos/azure-cli/ stretch main" | \
-//    tee /etc/apt/sources.list.d/azure-cli.list && \
-// apt-key --keyring /etc/apt/trusted.gpg.d/Microsoft.gpg adv \
-// 	--keyserver packages.microsoft.com \
-// 	--recv-keys BC528686B50D79E339D3721CEB3E94ADBE1229CF && \
-// apt-get update && apt-get install azure-cli
-// `
+// These values may be referenced elsewhere (init.go), hence consts
+var helmClientVersion string
+
+const helmDefaultClientVersion string = "v3.1.2"
 
 // BuildInput represents stdin passed to the mixin for the build command.
 type BuildInput struct {
@@ -37,7 +30,7 @@ type BuildInput struct {
 //		  username: "username"
 //		  password: "password"
 type MixinConfig struct {
-	Version      string
+	Version      string `yaml:"version,omitempty"`
 	Repositories map[string]Repository
 }
 
@@ -63,15 +56,10 @@ func (m *Mixin) Build() error {
 	if err != nil {
 		return err
 	}
-	// Make sure kubectl is available
-	// fmt.Fprintf(m.Out, "\nRUN apt-get update && apt-get install -y apt-transport-https curl")
-	// fmt.Fprintf(m.Out, "\nRUN curl https://storage.googleapis.com/kubernetes-release/release/v1.17.0/bin/linux/amd64/kubectl --output kubectl")
-	// fmt.Fprintf(m.Out, "\nRUN mv kubectl /usr/local/bin")
-	// fmt.Fprintf(m.Out, "\nRUN chmod a+x /usr/local/bin/kubectl")
 
 	// Install helm3
 	fmt.Fprintf(m.Out, "RUN apt-get update && apt-get install -y curl")
-	fmt.Fprintf(m.Out, "\nRUN curl https://get.helm.sh/helm-v3.1.2-linux-amd64.tar.gz --output helm3.tar.gz")
+	fmt.Fprintf(m.Out, "\nRUN curl https://get.helm.sh/helm-%s-linux-amd64.tar.gz --output helm3.tar.gz", getHelmVersion(input.Config.Version))
 	fmt.Fprintf(m.Out, "\nRUN tar -xvf helm3.tar.gz")
 	fmt.Fprintf(m.Out, "\nRUN mv linux-amd64/helm /usr/local/bin/helm3")
 
@@ -109,4 +97,13 @@ func GetAddRepositoryCommand(name, url, cafile, certfile, keyfile, username, pas
 	}
 
 	return commandBuilder, nil
+}
+
+func getHelmVersion(version string) string {
+	if version != "" {
+		helmClientVersion = version
+	} else {
+		helmClientVersion = helmDefaultClientVersion
+	}
+	return helmClientVersion
 }

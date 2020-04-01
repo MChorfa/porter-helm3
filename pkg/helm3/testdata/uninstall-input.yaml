@@ -1,5 +1,6 @@
 uninstall:
 - helm3:
+    namespace: "namespace"
     description: "Uninstall MySQL"
     releases:
     - porter-ci-mysql

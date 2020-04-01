@@ -44,7 +44,7 @@ func TestMixin_UnmarshalExecuteStep(t *testing.T) {
 
 func TestMixin_Execute(t *testing.T) {
 	defer os.Unsetenv(test.ExpectedCommandEnv)
-	os.Setenv(test.ExpectedCommandEnv, "helm3 status mysql")
+	os.Setenv(test.ExpectedCommandEnv, "helm3 status mysql -o yaml")
 
 	executeAction := Action{
 		Steps: []ExecuteSteps{

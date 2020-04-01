@@ -1,4 +1,6 @@
 install:
 - helm3:
     chart: stable/wordpress
+    name: "myrelease"
     description: ""
+

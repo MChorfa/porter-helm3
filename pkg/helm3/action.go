@@ -45,9 +45,9 @@ type ExecuteSteps struct {
 
 type ExecuteStep struct {
 	Step      `yaml:",inline"`
+	Namespace string        `yaml:"namespace,omitempty"`
 	Arguments []string      `yaml:"arguments,omitempty"`
 	Flags     builder.Flags `yaml:"flags,omitempty"`
-	Namespace string        `yaml:"namespace,omitempty"`
 }
 
 func (s ExecuteStep) GetCommand() string {

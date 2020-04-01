@@ -23,7 +23,7 @@ type UninstallStep struct {
 // UninstallArguments are the arguments available for the Uninstall action
 type UninstallArguments struct {
 	Step      `yaml:",inline"`
-	Namespace string   `yaml:"namespace"`
+	Namespace string   `yaml:"namespace,omitempty"`
 	Releases  []string `yaml:"releases"`
 }
 
@@ -60,7 +60,10 @@ func (m *Mixin) delete(release string, namespace string) error {
 	cmd := m.NewCommand("helm3", "uninstall")
 
 	cmd.Args = append(cmd.Args, release)
-	cmd.Args = append(cmd.Args, "--namespace", namespace)
+
+	if namespace != "" {
+		cmd.Args = append(cmd.Args, "--namespace", namespace)
+	}
 
 	output := &bytes.Buffer{}
 	cmd.Stdout = io.MultiWriter(m.Out, output)

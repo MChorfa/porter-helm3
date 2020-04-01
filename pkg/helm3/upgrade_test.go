@@ -32,7 +32,6 @@ func TestMixin_UnmarshalUpgradeStep(t *testing.T) {
 	assert.NotEmpty(t, step.Outputs)
 	assert.Equal(t, HelmOutput{"mysql-root-password", "porter-ci-mysql", "mysql-root-password"}, step.Outputs[0])
 
-	assert.Equal(t, "porter-ci-mysql", step.Name)
 	assert.Equal(t, "stable/mysql", step.Chart)
 	assert.Equal(t, "0.10.2", step.Version)
 	assert.True(t, step.Wait)
@@ -56,7 +55,7 @@ func TestMixin_Upgrade(t *testing.T) {
 		"/tmp/val2.yaml",
 	}
 
-	baseUpgrade := fmt.Sprintf(`helm upgrade --install %s %s --namespace %s --version %s`, name, chart, namespace, version)
+	baseUpgrade := fmt.Sprintf(`helm3 upgrade --install %s %s --namespace %s --version %s`, name, chart, namespace, version)
 	baseValues := `--values /tmp/val1.yaml --values /tmp/val2.yaml`
 	baseSetArgs := `--set baz=qux --set foo=bar`
 
