@@ -18,7 +18,7 @@
         <category term="{{Mixin}}"/>
         <content>{{Version}}</content>
         {{#Files}}
-        <link rel="download" href="https://github.com/MChorfa/porter-helm3/releases/download/{{Mixin}}/{{Version}}/{{File}}" />
+        <link rel="download" href="https://github.com/MChorfa/porter-helm3/releases/download/{{Version}}/{{File}}" />
         {{/Files}}
     </entry>
     {{/Entries}}
