@@ -9,7 +9,7 @@ appropriate helm command based on which action it is included within: `install`,
 ### Install or Upgrade
 
 ```shell
-porter mixins install helm3 --url https://github.com/MChorfa/porter-helm3/releases/download --version VERSION
+porter mixin install helm3 --feed-url https://mchorfa.github.com/porter-helm3/atom.xml
 ```
 
 ### Mixin Configuration
