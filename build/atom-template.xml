@@ -2,7 +2,7 @@
     <id>https://github.com/MChorfa/porter-helm3</id>
     <title>Porter Helm3 Mixin</title>
     <updated>{{Updated}}</updated>
-    <link rel="self" href="https://MChorfa.github.com/porter-helm3/atom.xml"/>
+    <link rel="self" href="https://mchorfa.github.com/porter-helm3/atom.xml"/>
     <author>
         <name>Mohamed chorfa</name>
         <uri>https://github.com/MChorfa/porter-helm3</uri>
