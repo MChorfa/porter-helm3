@@ -85,6 +85,7 @@ publish: bin/porter$(FILE_EXT)
 	# Generate the mixin feed
 	# az storage blob download -c porter -n atom.xml -f bin/atom.xml
 	bin/porter mixins feed generate -d bin/mixins -f bin/atom.xml -t build/atom-template.xml
+	cp bin/atom.xml docs/
 	#az storage blob upload -c porter -n atom.xml -f bin/atom.xml
 
 bin/porter$(FILE_EXT):

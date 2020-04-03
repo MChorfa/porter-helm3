@@ -11,8 +11,6 @@ import (
 // These values may be referenced elsewhere (init.go), hence consts
 var helmClientVersion string
 
-const helmDefaultClientVersion string = "v3.1.2"
-
 // BuildInput represents stdin passed to the mixin for the build command.
 type BuildInput struct {
 	Config MixinConfig
@@ -30,8 +28,8 @@ type BuildInput struct {
 //		  username: "username"
 //		  password: "password"
 type MixinConfig struct {
-	Version      string `yaml:"version,omitempty"`
-	Repositories map[string]Repository
+	ClientVersion string `yaml:"clientVersion,omitempty"`
+	Repositories  map[string]Repository
 }
 
 type Repository struct {
@@ -57,9 +55,13 @@ func (m *Mixin) Build() error {
 		return err
 	}
 
+	if input.Config.ClientVersion != "" {
+		m.HelmClientVersion = input.Config.ClientVersion
+	}
+
 	// Install helm3
 	fmt.Fprintf(m.Out, "RUN apt-get update && apt-get install -y curl")
-	fmt.Fprintf(m.Out, "\nRUN curl https://get.helm.sh/helm-%s-linux-amd64.tar.gz --output helm3.tar.gz", getHelmVersion(input.Config.Version))
+	fmt.Fprintf(m.Out, "\nRUN curl https://get.helm.sh/helm-%s-linux-amd64.tar.gz --output helm3.tar.gz", m.HelmClientVersion)
 	fmt.Fprintf(m.Out, "\nRUN tar -xvf helm3.tar.gz")
 	fmt.Fprintf(m.Out, "\nRUN mv linux-amd64/helm /usr/local/bin/helm3")
 
@@ -97,13 +99,4 @@ func GetAddRepositoryCommand(name, url, cafile, certfile, keyfile, username, pas
 	}
 
 	return commandBuilder, nil
-}
-
-func getHelmVersion(version string) string {
-	if version != "" {
-		helmClientVersion = version
-	} else {
-		helmClientVersion = helmDefaultClientVersion
-	}
-	return helmClientVersion
 }
