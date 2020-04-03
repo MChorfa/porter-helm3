@@ -1,3 +1,4 @@
 uninstall:
 - helm3:
+    namespace: "namespace"
     description: "Status MySQL"

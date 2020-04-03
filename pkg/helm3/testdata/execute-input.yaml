@@ -4,8 +4,8 @@ status:
       arguments:
         - status
         - mysql
-      # flags:
-      #   o: yaml
+      flags:
+        o: yaml
       outputs:
         - name: mysql-root-password
           secret: porter-ci-mysql

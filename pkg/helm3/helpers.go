@@ -8,6 +8,8 @@ import (
 	testclient "k8s.io/client-go/kubernetes/fake"
 )
 
+const MockHelmClientVersion string = "v3.1.2"
+
 type TestMixin struct {
 	*Mixin
 	TestContext *context.TestContext
@@ -23,12 +25,13 @@ func (t *testKubernetesFactory) GetClient(configPath string) (kubernetes.Interfa
 // NewTestMixin initializes a mixin test client, with the output buffered, and an in-memory file system.
 func NewTestMixin(t *testing.T) *TestMixin {
 	c := context.NewTestContext(t)
-	m := &TestMixin{
-		Mixin: &Mixin{
-			Context: c.Context,
-		},
+	m := New()
+	m.Context = c.Context
+	m.ClientFactory = &testKubernetesFactory{}
+	m.HelmClientVersion = MockHelmClientVersion
+
+	return &TestMixin{
+		Mixin:       m,
 		TestContext: c,
 	}
-
-	return m
 }

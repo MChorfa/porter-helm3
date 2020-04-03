@@ -37,10 +37,11 @@ func TestMixin_Uninstall(t *testing.T) {
 		"foo",
 		"bar",
 	}
+	namespace := "mynamespace"
 
 	uninstallTests := []UninstallTest{
 		{
-			expectedCommand: "helm3 delete foo\nhelm3 delete bar",
+			expectedCommand: "helm3 uninstall foo\nhelm3 uninstall bar",
 			uninstallStep: UninstallStep{
 				UninstallArguments: UninstallArguments{
 					Step:     Step{Description: "Uninstall Foo"},
@@ -49,11 +50,12 @@ func TestMixin_Uninstall(t *testing.T) {
 			},
 		},
 		{
-			expectedCommand: "helm3 delete foo\nhelm3 delete bar",
+			expectedCommand: "helm3 uninstall foo --namespace mynamespace\nhelm3 uninstall bar --namespace mynamespace",
 			uninstallStep: UninstallStep{
 				UninstallArguments: UninstallArguments{
-					Step:     Step{Description: "Uninstall Foo"},
-					Releases: releases,
+					Step:      Step{Description: "Uninstall Foo"},
+					Releases:  releases,
+					Namespace: namespace,
 				},
 			},
 		},

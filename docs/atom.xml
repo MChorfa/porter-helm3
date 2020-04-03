@@ -1,0 +1,21 @@
+<feed xmlns="http://www.w3.org/2005/Atom">
+    <id>https://github.com/MChorfa/porter-helm3</id>
+    <title>Porter Helm3 Mixin</title>
+    <updated>2020-04-02T02:11:33Z</updated>
+    <link rel="self" href="https://mchorfa.github.com/porter-helm3/atom.xml"/>
+    <author>
+        <name>Mohamed chorfa</name>
+        <uri>https://github.com/MChorfa/porter-helm3</uri>
+    </author>
+    <category term="helm3"/>
+    <entry>
+        <id>https://github.com/MChorfa/porter-helm3/releases/download/v0.1.3/helm3</id>
+        <title>helm3 @ v0.1.3</title>
+        <updated>2020-04-02T02:11:33Z</updated>
+        <category term="helm3"/>
+        <content>v0.1.3</content>
+        <link rel="download" href="https://github.com/MChorfa/porter-helm3/releases/download/v0.1.3/helm3-darwin-amd64" />
+        <link rel="download" href="https://github.com/MChorfa/porter-helm3/releases/download/v0.1.3/helm3-linux-amd64" />
+        <link rel="download" href="https://github.com/MChorfa/porter-helm3/releases/download/v0.1.3/helm3-windows-amd64.exe" />
+    </entry>
+</feed>

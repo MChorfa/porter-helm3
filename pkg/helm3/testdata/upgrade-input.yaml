@@ -1,6 +1,7 @@
 upgrade:
 - helm3:
     description: "Upgrade MySQL"
+    name: "myrelease"
     chart: stable/mysql
     version: 0.10.2
     wait: true

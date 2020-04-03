@@ -33,7 +33,7 @@ func TestMixin_ValidatePayload(t *testing.T) {
 		{"execute", "testdata/execute-input.yaml", true, ""},
 		{"upgrade", "testdata/upgrade-input.yaml", true, ""},
 		{"uninstall", "testdata/uninstall-input.yaml", true, ""},
-		{"install.missing-desc", "testdata/bad-install-input.missing-desc.yaml", false, "install.0.helm.description: String length must be greater than or equal to 1"},
+		{"install.missing-desc", "testdata/bad-install-input.missing-desc.yaml", false, "install.0.helm3.description: String length must be greater than or equal to 1"},
 		{"uninstall.missing-releases", "testdata/bad-uninstall-input.missing-releases.yaml", false, "uninstall.0.helm3: releases is required"},
 	}
 

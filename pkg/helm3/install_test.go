@@ -21,6 +21,7 @@ type InstallTest struct {
 // // sad hack: not sure how to make a common test main for all my subpackages
 func TestMain(m *testing.M) {
 	test.TestMainWithMockedCommandHandlers(m)
+
 }
 
 func TestMixin_UnmarshalInstallStep(t *testing.T) {
@@ -36,8 +37,6 @@ func TestMixin_UnmarshalInstallStep(t *testing.T) {
 	assert.Equal(t, "Install MySQL", step.Description)
 	assert.NotEmpty(t, step.Outputs)
 	assert.Equal(t, HelmOutput{"mysql-root-password", "porter-ci-mysql", "mysql-root-password"}, step.Outputs[0])
-
-	assert.Equal(t, "porter-ci-mysql", step.Name)
 	assert.Equal(t, "stable/mysql", step.Chart)
 	assert.Equal(t, "0.10.2", step.Version)
 	assert.Equal(t, true, step.Replace)
@@ -47,6 +46,7 @@ func TestMixin_UnmarshalInstallStep(t *testing.T) {
 
 func TestMixin_Install(t *testing.T) {
 	namespace := "MYNAMESPACE"
+	name := "MYRELEASE"
 	chart := "MYCHART"
 	version := "1.0.0"
 	setArgs := map[string]string{
@@ -58,7 +58,7 @@ func TestMixin_Install(t *testing.T) {
 		"/tmp/val2.yaml",
 	}
 
-	baseInstall := fmt.Sprintf(`helm3 install %s --namespace %s --version %s`, chart, namespace, version)
+	baseInstall := fmt.Sprintf(`helm3 install %s %s --namespace %s --version %s`, name, chart, namespace, version)
 	baseValues := `--values /tmp/val1.yaml --values /tmp/val2.yaml`
 	baseSetArgs := `--set baz=qux --set foo=bar`
 
@@ -69,6 +69,7 @@ func TestMixin_Install(t *testing.T) {
 				InstallArguments: InstallArguments{
 					Step:      Step{Description: "Install Foo"},
 					Namespace: namespace,
+					Name:      name,
 					Chart:     chart,
 					Version:   version,
 					Set:       setArgs,
@@ -82,6 +83,7 @@ func TestMixin_Install(t *testing.T) {
 				InstallArguments: InstallArguments{
 					Step:      Step{Description: "Install Foo"},
 					Namespace: namespace,
+					Name:      name,
 					Chart:     chart,
 					Version:   version,
 					Set:       setArgs,
@@ -96,6 +98,7 @@ func TestMixin_Install(t *testing.T) {
 				InstallArguments: InstallArguments{
 					Step:      Step{Description: "Install Foo"},
 					Namespace: namespace,
+					Name:      name,
 					Chart:     chart,
 					Version:   version,
 					Set:       setArgs,
@@ -110,6 +113,7 @@ func TestMixin_Install(t *testing.T) {
 				InstallArguments: InstallArguments{
 					Step:      Step{Description: "Install Foo"},
 					Namespace: namespace,
+					Name:      name,
 					Chart:     chart,
 					Version:   version,
 					Set:       setArgs,

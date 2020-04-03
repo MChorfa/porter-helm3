@@ -1,5 +1,5 @@
 MIXIN = helm3
-PKG = github.com/MChorfa/porter-helm3/pkg/$(MIXIN)
+PKG = get.porter.sh/mixin/$(MIXIN)
 SHELL = bash
 
 GO = GO111MODULE=on go
@@ -85,6 +85,7 @@ publish: bin/porter$(FILE_EXT)
 	# Generate the mixin feed
 	# az storage blob download -c porter -n atom.xml -f bin/atom.xml
 	bin/porter mixins feed generate -d bin/mixins -f bin/atom.xml -t build/atom-template.xml
+
 	#az storage blob upload -c porter -n atom.xml -f bin/atom.xml
 
 bin/porter$(FILE_EXT):
