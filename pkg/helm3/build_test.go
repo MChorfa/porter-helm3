@@ -32,7 +32,7 @@ RUN mv linux-amd64/helm /usr/local/bin/helm3`
 		err = m.Build()
 		require.NoError(t, err, "build failed")
 
-		wantOutput := fmt.Sprintf(buildOutput, helmDefaultClientVersion) + "\nRUN helm3 repo add stable kubernetes-charts --username username --password password"
+		wantOutput := fmt.Sprintf(buildOutput, m.HelmClientVersion) + "\nRUN helm3 repo add stable kubernetes-charts --username username --password password"
 
 		gotOutput := m.TestContext.GetOutput()
 		assert.Equal(t, wantOutput, gotOutput)
@@ -48,13 +48,13 @@ RUN mv linux-amd64/helm /usr/local/bin/helm3`
 
 		err = m.Build()
 		require.NoError(t, err, "build failed")
-		wantOutput := fmt.Sprintf(buildOutput, helmDefaultClientVersion)
+		wantOutput := fmt.Sprintf(buildOutput, m.HelmClientVersion)
 		gotOutput := m.TestContext.GetOutput()
 		assert.Equal(t, wantOutput, gotOutput)
 	})
 
 	t.Run("build with a defined helm client version", func(t *testing.T) {
-		var version = "v3.1.2"
+
 		b, err := ioutil.ReadFile("testdata/build-input-with-version.yaml")
 		require.NoError(t, err)
 
@@ -63,9 +63,8 @@ RUN mv linux-amd64/helm /usr/local/bin/helm3`
 		m.In = bytes.NewReader(b)
 		err = m.Build()
 		require.NoError(t, err, "build failed")
-		wantOutput := fmt.Sprintf(buildOutput, version)
+		wantOutput := fmt.Sprintf(buildOutput, m.HelmClientVersion)
 		gotOutput := m.TestContext.GetOutput()
 		assert.Equal(t, wantOutput, gotOutput)
-		helmClientVersion = helmDefaultClientVersion
 	})
 }

@@ -18,7 +18,7 @@ Helm client
 
 ```yaml
 - helm:
-    version: v3.1.2
+    clientVersion: v3.1.2
 ```
 
 Repositories
