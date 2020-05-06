@@ -17,14 +17,14 @@ porter mixin install helm3 --feed-url https://mchorfa.github.com/porter-helm3/at
 Helm client
 
 ```yaml
-- helm:
+- helm3:
     clientVersion: v3.1.2
 ```
 
 Repositories
 
 ```yaml
-- helm:
+- helm3:
     repositories:
       stable:
         url: "https://kubernetes-charts.storage.googleapis.com"
@@ -41,7 +41,7 @@ Install
 
 ```yaml
 install:
-- helm:
+- helm3:
     description: "Description of the command"
     name: RELEASE_NAME
     chart: STABLE_CHART_NAME
@@ -59,7 +59,7 @@ Upgrade
 
 ```yaml
 install:
-- helm:
+- helm3:
     description: "Description of the command"
     name: RELEASE_NAME
     chart: STABLE_CHART_NAME
@@ -77,7 +77,7 @@ Uninstall
 
 ```yaml
 uninstall:
-- helm:
+- helm3:
     description: "Description of command"
     namespace: NAMESPACE
     releases:
@@ -102,7 +102,7 @@ Install
 
 ```yaml
 install:
-- helm:
+- helm3:
     description: "Install MySQL"
     name: mydb
     chart: stable/mysql
@@ -125,7 +125,7 @@ Upgrade
 
 ```yaml
 upgrade:
-- helm:
+- helm3:
     description: "Upgrade MySQL"
     name: porter-ci-mysql
     chart: stable/mysql
@@ -144,7 +144,7 @@ Uninstall
 
 ```yaml
 uninstall:
-- helm:
+- helm3:
     description: "Uninstall MySQL"
     namespace: mydb
     releases:
