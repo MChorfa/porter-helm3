@@ -18,7 +18,7 @@ Helm client
 
 ```yaml
 - helm3:
-    clientVersion: v3.1.2
+    clientVersion: v3.2.1
 ```
 
 Repositories
@@ -41,48 +41,48 @@ Install
 
 ```yaml
 install:
-- helm3:
-    description: "Description of the command"
-    name: RELEASE_NAME
-    chart: STABLE_CHART_NAME
-    version: CHART_VERSION
-    namespace: NAMESPACE
-    replace: BOOL
-    devel: BOOL
-    wait: BOOL # default true
-    set:
-      VAR1: VALUE1
-      VAR2: VALUE2
+  - helm3:
+      description: "Description of the command"
+      name: RELEASE_NAME
+      chart: STABLE_CHART_NAME
+      version: CHART_VERSION
+      namespace: NAMESPACE
+      replace: BOOL
+      devel: BOOL
+      wait: BOOL # default true
+      set:
+        VAR1: VALUE1
+        VAR2: VALUE2
 ```
 
 Upgrade
 
 ```yaml
 install:
-- helm3:
-    description: "Description of the command"
-    name: RELEASE_NAME
-    chart: STABLE_CHART_NAME
-    version: CHART_VERSION
-    namespace: NAMESPACE
-    resetValues: BOOL
-    reuseValues: BOOL
-    wait: BOOL # default true
-    set:
-      VAR1: VALUE1
-      VAR2: VALUE2
+  - helm3:
+      description: "Description of the command"
+      name: RELEASE_NAME
+      chart: STABLE_CHART_NAME
+      version: CHART_VERSION
+      namespace: NAMESPACE
+      resetValues: BOOL
+      reuseValues: BOOL
+      wait: BOOL # default true
+      set:
+        VAR1: VALUE1
+        VAR2: VALUE2
 ```
 
 Uninstall
 
 ```yaml
 uninstall:
-- helm3:
-    description: "Description of command"
-    namespace: NAMESPACE
-    releases:
-      - RELEASE_NAME1
-      - RELASE_NAME2
+  - helm3:
+      description: "Description of command"
+      namespace: NAMESPACE
+      releases:
+        - RELEASE_NAME1
+        - RELASE_NAME2
 ```
 
 #### Outputs
@@ -91,9 +91,9 @@ The mixin supports saving secrets from Kuberentes as outputs.
 
 ```yaml
 outputs:
-    - name: NAME
-      secret: SECRET_NAME
-      key: SECRET_KEY
+  - name: NAME
+    secret: SECRET_NAME
+    key: SECRET_KEY
 ```
 
 ### Examples
@@ -102,51 +102,51 @@ Install
 
 ```yaml
 install:
-- helm3:
-    description: "Install MySQL"
-    name: mydb
-    chart: stable/mysql
-    version: 0.10.2
-    namespace: mydb
-    replace: true
-    set:
-      mysqlDatabase: wordpress
-      mysqlUser: wordpress
-    outputs:
-      - name: mysql-root-password
-        secret: mydb-mysql
-        key: mysql-root-password
-      - name: mysql-password
-        secret: mydb-mysql
-        key: mysql-password
+  - helm3:
+      description: "Install MySQL"
+      name: mydb
+      chart: stable/mysql
+      version: 0.10.2
+      namespace: mydb
+      replace: true
+      set:
+        mysqlDatabase: wordpress
+        mysqlUser: wordpress
+      outputs:
+        - name: mysql-root-password
+          secret: mydb-mysql
+          key: mysql-root-password
+        - name: mysql-password
+          secret: mydb-mysql
+          key: mysql-password
 ```
 
 Upgrade
 
 ```yaml
 upgrade:
-- helm3:
-    description: "Upgrade MySQL"
-    name: porter-ci-mysql
-    chart: stable/mysql
-    version: 0.10.2
-    wait: true
-    resetValues: true
-    reuseValues: false
-    set:
-      mysqlDatabase: mydb
-      mysqlUser: myuser
-      livenessProbe.initialDelaySeconds: 30
-      persistence.enabled: true
+  - helm3:
+      description: "Upgrade MySQL"
+      name: porter-ci-mysql
+      chart: stable/mysql
+      version: 0.10.2
+      wait: true
+      resetValues: true
+      reuseValues: false
+      set:
+        mysqlDatabase: mydb
+        mysqlUser: myuser
+        livenessProbe.initialDelaySeconds: 30
+        persistence.enabled: true
 ```
 
 Uninstall
 
 ```yaml
 uninstall:
-- helm3:
-    description: "Uninstall MySQL"
-    namespace: mydb
-    releases:
-      - mydb
+  - helm3:
+      description: "Uninstall MySQL"
+      namespace: mydb
+      releases:
+        - mydb
 ```
