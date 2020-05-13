@@ -1,13 +1,41 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://github.com/MChorfa/porter-helm3</id>
     <title>Porter Helm3 Mixin</title>
-    <updated>2020-04-03T19:55:06Z</updated>
+    <updated>2020-05-13T18:16:32Z</updated>
     <link rel="self" href="https://mchorfa.github.com/porter-helm3/atom.xml"/>
     <author>
         <name>Mohamed chorfa</name>
         <uri>https://github.com/MChorfa/porter-helm3</uri>
     </author>
     <category term="helm3"/>
+    <entry>
+        <id>https://github.com/MChorfa/porter-helm3/releases/download/v0.1.5/helm3</id>
+        <title>helm3 @ v0.1.5</title>
+        <updated>2020-05-13T18:16:32Z</updated>
+        <category term="helm3"/>
+        <content>v0.1.5</content>
+        <link rel="download" href="https://github.com/MChorfa/porter-helm3/releases/download/v0.1.5/helm3-darwin-amd64" />
+        <link rel="download" href="https://github.com/MChorfa/porter-helm3/releases/download/v0.1.5/helm3-linux-amd64" />
+        <link rel="download" href="https://github.com/MChorfa/porter-helm3/releases/download/v0.1.5/helm3-windows-amd64.exe" />
+    </entry>
+    <entry>
+        <id>https://github.com/MChorfa/porter-helm3/releases/download/v0.1.4-13-g46f5564/helm3</id>
+        <title>helm3 @ v0.1.4-13-g46f5564</title>
+        <updated>2020-05-13T18:03:17Z</updated>
+        <category term="helm3"/>
+        <content>v0.1.4-13-g46f5564</content>
+        <link rel="download" href="https://github.com/MChorfa/porter-helm3/releases/download/v0.1.4-13-g46f5564/helm3-darwin-amd64" />
+        <link rel="download" href="https://github.com/MChorfa/porter-helm3/releases/download/v0.1.4-13-g46f5564/helm3-linux-amd64" />
+        <link rel="download" href="https://github.com/MChorfa/porter-helm3/releases/download/v0.1.4-13-g46f5564/helm3-windows-amd64.exe" />
+    </entry>
+    <entry>
+        <id>https://github.com/MChorfa/porter-helm3/releases/download/v0.1.4-11-g0ae2fa3/helm3</id>
+        <title>helm3 @ v0.1.4-11-g0ae2fa3</title>
+        <updated>2020-05-13T17:57:01Z</updated>
+        <category term="helm3"/>
+        <content>v0.1.4-11-g0ae2fa3</content>
+        <link rel="download" href="https://github.com/MChorfa/porter-helm3/releases/download/v0.1.4-11-g0ae2fa3/helm3-darwin-amd64" />
+    </entry>
     <entry>
         <id>https://github.com/MChorfa/porter-helm3/releases/download/v0.1.4/helm3</id>
         <title>helm3 @ v0.1.4</title>
