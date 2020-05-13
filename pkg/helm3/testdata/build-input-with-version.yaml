@@ -1,7 +1,7 @@
 config:
   version: v3.1.2
 install:
-  - helm:
+  - helm3:
       description: "Install MySQL"
       name: porter-ci-mysql
       chart: stable/mysql
