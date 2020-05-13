@@ -5,11 +5,14 @@ import (
 	"strings"
 
 	"get.porter.sh/porter/pkg/exec/builder"
+	"github.com/Masterminds/semver"
+	"github.com/pkg/errors"
 	yaml "gopkg.in/yaml.v2"
 )
 
-// These values may be referenced elsewhere (init.go), hence consts
-var helmClientVersion string
+// clientVersionConstraint represents the semver constraint for the Helm client version
+// Currently, this mixin only supports Helm clients versioned v2.x.x
+const clientVersionConstraint string = "^v3.x"
 
 // BuildInput represents stdin passed to the mixin for the build command.
 type BuildInput struct {
@@ -55,8 +58,17 @@ func (m *Mixin) Build() error {
 		return err
 	}
 
-	if input.Config.ClientVersion != "" {
-		m.HelmClientVersion = input.Config.ClientVersion
+	suppliedClientVersion := input.Config.ClientVersion
+	if suppliedClientVersion != "" {
+		ok, err := validate(suppliedClientVersion, clientVersionConstraint)
+		if err != nil {
+			return err
+		}
+		if !ok {
+			return errors.Errorf("supplied clientVersion %q does not meet semver constraint %q",
+				suppliedClientVersion, clientVersionConstraint)
+		}
+		m.HelmClientVersion = suppliedClientVersion
 	}
 
 	// Install helm3
@@ -99,4 +111,19 @@ func GetAddRepositoryCommand(name, url, cafile, certfile, keyfile, username, pas
 	}
 
 	return commandBuilder, nil
+}
+
+// validate validates that the supplied clientVersion meets the supplied semver constraint
+func validate(clientVersion, constraint string) (bool, error) {
+	c, err := semver.NewConstraint(constraint)
+	if err != nil {
+		return false, errors.Wrapf(err, "unable to parse version constraint %q", constraint)
+	}
+
+	v, err := semver.NewVersion(clientVersion)
+	if err != nil {
+		return false, errors.Wrapf(err, "supplied client version %q cannot be parsed as semver", clientVersion)
+	}
+
+	return c.Check(v), nil
 }

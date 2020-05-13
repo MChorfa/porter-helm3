@@ -6,6 +6,7 @@ require (
 	cloud.google.com/go v0.55.0 // indirect
 	get.porter.sh/porter v0.23.0-beta.1
 	github.com/Azure/go-autorest/autorest v0.10.0 // indirect
+	github.com/Masterminds/semver v1.5.0
 	github.com/PaesslerAG/gval v1.0.1 // indirect
 	github.com/PuerkitoBio/goquery v1.5.1 // indirect
 	github.com/ghodss/yaml v1.0.0

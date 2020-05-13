@@ -1,6 +1,6 @@
 mixins:
 - helm3:
-    clientVersion: v3.1.2
+    clientVersion: v3.2.1
     repositories:
       stable:
         url: "https://kubernetes-charts.storage.googleapis.com"
@@ -79,7 +79,7 @@ upgrade:
 uninstall:
   - helm3:
       description: "Uninstall MySQL"
-      purge: true
+      namespace: "{{ bundle.parameters.namespace }}"
       releases:
         - "{{ bundle.parameters.mysql-name }}"
 
