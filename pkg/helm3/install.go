@@ -100,20 +100,8 @@ func (m *Mixin) Install() error {
 	if err != nil {
 		return err
 	}
-	// Handle outputs that where generate throw out the steps
-	for _, output := range step.Outputs {
-		val, err := getSecret(kubeClient, step.Namespace, output.Secret, output.Key)
-		if err != nil {
-			return err
-		}
-
-		err = m.Context.WriteMixinOutputToFile(output.Name, val)
-		if err != nil {
-			return errors.Wrapf(err, "unable to write output '%s'", output.Name)
-		}
-	}
-
-	return nil
+	err = m.handleOutputs(kubeClient, step.Namespace, step.Outputs)
+	return err
 }
 
 // Prepare set arguments

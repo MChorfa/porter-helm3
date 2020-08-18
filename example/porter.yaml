@@ -1,6 +1,6 @@
 mixins:
 - helm3:
-    clientVersion: v3.2.1
+    clientVersion: v3.3.0
     repositories:
       stable:
         url: "https://kubernetes-charts.storage.googleapis.com"
