@@ -1,3 +1,4 @@
 bin
 .cnab
 *-packr.go
+.vscode/*

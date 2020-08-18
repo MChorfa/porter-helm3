@@ -157,18 +157,21 @@
           "key": {
             "type": "string"
           },
-          "JSONPath": {
+          "namespace": {
             "type": "string"
           },
-          "regex": {
+          "resourceType": {
             "type": "string"
           },
-          "path": {
+          "resourceName": {
+            "type": "string"
+          },
+          "jsonPath": {
             "type": "string"
           }
         },
         "additionalProperties": false,
-        "required": ["name", "secret", "key"]
+        "required": ["name"]
       }
     },
     "helm3": {

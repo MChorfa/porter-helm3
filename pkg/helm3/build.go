@@ -11,7 +11,7 @@ import (
 )
 
 // clientVersionConstraint represents the semver constraint for the Helm client version
-// Currently, this mixin only supports Helm clients versioned v2.x.x
+// Currently, this mixin only supports Helm clients versioned v3.x.x
 const clientVersionConstraint string = "^v3.x"
 
 // BuildInput represents stdin passed to the mixin for the build command.
@@ -19,9 +19,10 @@ type BuildInput struct {
 	Config MixinConfig
 }
 
-// MixinConfig represents configuration that can be set on the helm mixin in porter.yaml
+// MixinConfig represents configuration that can be set on the helm3 mixin in porter.yaml
 // mixins:
 // - helm3:
+// 	  clientVersion: v3.3.0
 //	  repositories:
 //	    stable:
 //		  url: "https://kubernetes-charts.storage.googleapis.com"
