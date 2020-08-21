@@ -32,7 +32,7 @@ RUN mv linux-amd64/helm /usr/local/bin/helm3`
 		err = m.Build()
 		require.NoError(t, err, "build failed")
 
-		wantOutput := fmt.Sprintf(buildOutput, m.HelmClientVersion) + "\nRUN helm3 repo add stable kubernetes-charts --username username --password password"
+		wantOutput := fmt.Sprintf(buildOutput, m.HelmClientVersion) + "\nRUN helm3 repo add stable kubernetes-charts"
 
 		gotOutput := m.TestContext.GetOutput()
 		assert.Equal(t, wantOutput, gotOutput)

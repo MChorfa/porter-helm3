@@ -26,23 +26,14 @@ type BuildInput struct {
 //	  repositories:
 //	    stable:
 //		  url: "https://kubernetes-charts.storage.googleapis.com"
-//		  cafile: "path/to/cafile"
-//		  certfile: "path/to/certfile"
-//		  keyfile: "path/to/keyfile"
-//		  username: "username"
-//		  password: "password"
+
 type MixinConfig struct {
 	ClientVersion string `yaml:"clientVersion,omitempty"`
 	Repositories  map[string]Repository
 }
 
 type Repository struct {
-	URL      string `yaml:"url,omitempty"`
-	Cafile   string `yaml:"cafile,omitempty"`
-	Certfile string `yaml:"certfile,omitempty"`
-	Keyfile  string `yaml:"keyfile,omitempty"`
-	Username string `yaml:"username,omitempty"`
-	Password string `yaml:"password,omitempty"`
+	URL string `yaml:"url,omitempty"`
 }
 
 // Build will generate the necessary Dockerfile lines
@@ -81,7 +72,7 @@ func (m *Mixin) Build() error {
 	// Go through repositories
 	for name, repo := range input.Config.Repositories {
 
-		commandValue, err := GetAddRepositoryCommand(name, repo.URL, repo.Cafile, repo.Certfile, repo.Keyfile, repo.Username, repo.Password)
+		commandValue, err := GetAddRepositoryCommand(name, repo.URL)
 		if err != nil && m.Debug {
 			fmt.Fprintf(m.Err, "DEBUG: addition of repository failed: %s\n", err.Error())
 		} else {
@@ -91,7 +82,7 @@ func (m *Mixin) Build() error {
 	return nil
 }
 
-func GetAddRepositoryCommand(name, url, cafile, certfile, keyfile, username, password string) (commandValue []string, err error) {
+func GetAddRepositoryCommand(name, url string) (commandValue []string, err error) {
 
 	var commandBuilder []string
 
@@ -100,16 +91,6 @@ func GetAddRepositoryCommand(name, url, cafile, certfile, keyfile, username, pas
 	}
 
 	commandBuilder = append(commandBuilder, "\nRUN", "helm3", "repo", "add", name, url)
-
-	if certfile != "" && keyfile != "" {
-		commandBuilder = append(commandBuilder, "--cert-file", certfile, "--key-file", keyfile)
-	}
-	if cafile != "" {
-		commandBuilder = append(commandBuilder, "--ca-file", cafile)
-	}
-	if username != "" && password != "" {
-		commandBuilder = append(commandBuilder, "--username", username, "--password", password)
-	}
 
 	return commandBuilder, nil
 }
