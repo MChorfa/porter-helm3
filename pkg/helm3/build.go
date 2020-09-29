@@ -22,7 +22,7 @@ type BuildInput struct {
 // MixinConfig represents configuration that can be set on the helm3 mixin in porter.yaml
 // mixins:
 // - helm3:
-// 	  clientVersion: v3.3.0
+// 	  clientVersion: v3.3.4
 //	  repositories:
 //	    stable:
 //		  url: "https://kubernetes-charts.storage.googleapis.com"
