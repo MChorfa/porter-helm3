@@ -14,11 +14,11 @@ porter mixin install helm3 --feed-url https://mchorfa.github.com/porter-helm3/at
 
 ### Mixin Configuration
 
-Helm client
+Helm client version configuration. You can define others minors and patch versions up and down
 
 ```yaml
 - helm3:
-    clientVersion: v3.3.0
+    clientVersion: v3.3.4
 ```
 
 Repositories
@@ -95,11 +95,11 @@ The mixin also supports extracting resource metadata from Kubernetes as outputs.
 
 ```yaml
 outputs:
-    - name: NAME
-      resourceType: RESOURCE_TYPE
-      resourceName: RESOURCE_TYPE_NAME
-      namespace: NAMESPACE
-      jsonPath: JSON_PATH_DEFINITION
+  - name: NAME
+    resourceType: RESOURCE_TYPE
+    resourceName: RESOURCE_TYPE_NAME
+    namespace: NAMESPACE
+    jsonPath: JSON_PATH_DEFINITION
 ```
 
 ### Examples
