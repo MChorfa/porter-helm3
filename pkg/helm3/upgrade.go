@@ -89,7 +89,11 @@ func (m *Mixin) Upgrade() error {
 	sort.Strings(setKeys)
 
 	for _, k := range setKeys {
-		cmd.Args = append(cmd.Args, "--set", fmt.Sprintf("%s=%s", k, step.Set[k]))
+		//Hack unitl helm introduce `--set-literal` for complex keys
+		// see https://github.com/helm/helm/issues/4030
+		// TODO : Fix this later upon `--set-literal` introduction
+		forcePointEscaping := strings.Replace(k, ".", "\\.", -1)
+		cmd.Args = append(cmd.Args, "--set", fmt.Sprintf("%s=%s", forcePointEscaping, step.Set[k]))
 	}
 
 	cmd.Stdout = m.Out

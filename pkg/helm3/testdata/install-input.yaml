@@ -10,6 +10,8 @@ install:
       mysqlUser: myuser
       livenessProbe.initialDelaySeconds: 30
       persistence.enabled: true
+      controller.nodeSelector."beta\.kubernetes\.io/os": linux
+
     outputs:
       - name: mysql-root-password
         secret: porter-ci-mysql

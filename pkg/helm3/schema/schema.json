@@ -28,6 +28,9 @@
             "wait": {
               "type": "boolean"
             },
+            "upsert": {
+              "type": "boolean"
+            },
             "devel": {
               "type": "boolean"
             },

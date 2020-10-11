@@ -2,6 +2,7 @@ package helm3
 
 import (
 	"fmt"
+	"sort"
 	"strings"
 
 	"get.porter.sh/porter/pkg/exec/builder"
@@ -69,16 +70,27 @@ func (m *Mixin) Build() error {
 	fmt.Fprintf(m.Out, "\nRUN tar -xvf helm3.tar.gz")
 	fmt.Fprintf(m.Out, "\nRUN mv linux-amd64/helm /usr/local/bin/helm3")
 
-	// Go through repositories
-	for name, repo := range input.Config.Repositories {
-
-		commandValue, err := GetAddRepositoryCommand(name, repo.URL)
-		if err != nil && m.Debug {
-			fmt.Fprintf(m.Err, "DEBUG: addition of repository failed: %s\n", err.Error())
-		} else {
-			fmt.Fprintf(m.Out, strings.Join(commandValue, " "))
+	if len(input.Config.Repositories) > 0 {
+		// Go through repositories
+		names := make([]string, 0, len(input.Config.Repositories))
+		for name := range input.Config.Repositories {
+			names = append(names, name)
 		}
+		sort.Strings(names) //sort by key
+		for _, name := range names {
+			url := input.Config.Repositories[name].URL
+			commandValue, err := GetAddRepositoryCommand(name, url)
+			if err != nil && m.Debug {
+				fmt.Fprintf(m.Err, "DEBUG: addition of repository failed: %s\n", err.Error())
+			} else {
+				fmt.Fprintf(m.Out, strings.Join(commandValue, " "))
+			}
+		}
+		// Make sure we update  the helm repositories
+		// So we don\'t have to do it later
+		fmt.Fprintf(m.Out, "\nRUN helm3 repo update")
 	}
+
 	return nil
 }
 

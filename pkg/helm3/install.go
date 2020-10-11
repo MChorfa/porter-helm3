@@ -29,6 +29,7 @@ type InstallArguments struct {
 	Set       map[string]string `yaml:"set"`
 	Values    []string          `yaml:"values"`
 	Devel     bool              `yaml:"devel`
+	UpSert    bool              `yaml:"devel`
 	Wait      bool              `yaml:"wait"`
 }
 
@@ -54,7 +55,14 @@ func (m *Mixin) Install() error {
 	}
 	step := action.Steps[0]
 
-	cmd := m.NewCommand("helm3", "install", step.Name, step.Chart)
+	cmd := m.NewCommand("helm3")
+
+	if step.UpSert {
+		cmd.Args = append(cmd.Args, "upgrade", "--install", step.Name, step.Chart)
+
+	} else {
+		cmd.Args = append(cmd.Args, "install", step.Name, step.Chart)
+	}
 
 	if step.Namespace != "" {
 		cmd.Args = append(cmd.Args, "--namespace", step.Namespace)
@@ -109,12 +117,17 @@ func HandleSettingChartValues(step InstallStep, cmd *exec.Cmd) []string {
 	// sort the set consistently
 	setKeys := make([]string, 0, len(step.Set))
 	for k := range step.Set {
+
 		setKeys = append(setKeys, k)
 	}
 	sort.Strings(setKeys)
 
 	for _, k := range setKeys {
-		cmd.Args = append(cmd.Args, "--set", fmt.Sprintf("%s=%s", k, step.Set[k]))
+		// Hack unitl helm introduce `--set-literal` for complex keys
+		// see https://github.com/helm/helm/issues/4030
+		// TODO : Fix this later upon `--set-literal` introduction
+		forcePointEscaping := strings.Replace(k, ".", "\\.", -1)
+		cmd.Args = append(cmd.Args, "--set", fmt.Sprintf("%s=%s", forcePointEscaping, step.Set[k]))
 	}
 	return cmd.Args
 }
