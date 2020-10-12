@@ -42,9 +42,10 @@ install:
       chart: STABLE_CHART_NAME
       version: CHART_VERSION
       namespace: NAMESPACE
-      replace: BOOL
+      replace: BOOL # Remove it if upsert is set to true. This is unsafe in production
       devel: BOOL
       wait: BOOL # default true
+      upsert: BOOL # default false. If set to true `upgrade --install` will be executed
       set:
         VAR1: VALUE1
         VAR2: VALUE2
