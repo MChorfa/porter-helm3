@@ -70,6 +70,11 @@ test: test-unit
 test-unit: build
 	$(GO) test ./...
 
+test-integration: xbuild
+	# Test against the cross-built client binary that we will publish
+	cp $(BINDIR)/$(VERSION)/$(MIXIN)-$(CLIENT_PLATFORM)-$(CLIENT_ARCH)$(FILE_EXT) $(BINDIR)/$(MIXIN)$(FILE_EXT)
+	$(GO) test -tags=integration ./tests/...
+
 publish: bin/porter$(FILE_EXT)
 	# The following demonstrates how to publish a mixin. As an example, we show how to publish to azure.
 	# The porter mixins feed generate command is used to build an ATOM feed for sharing mixins once published

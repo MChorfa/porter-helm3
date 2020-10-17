@@ -79,11 +79,11 @@ func (m *Mixin) Build() error {
 		sort.Strings(names) //sort by key
 		for _, name := range names {
 			url := input.Config.Repositories[name].URL
-			commandValue, err := GetAddRepositoryCommand(name, url)
+			repositoryCommand, err := getRepositoryCommand(name, url)
 			if err != nil && m.Debug {
 				fmt.Fprintf(m.Err, "DEBUG: addition of repository failed: %s\n", err.Error())
 			} else {
-				fmt.Fprintf(m.Out, strings.Join(commandValue, " "))
+				fmt.Fprintf(m.Out, strings.Join(repositoryCommand, " "))
 			}
 		}
 		// Make sure we update  the helm repositories
@@ -94,7 +94,7 @@ func (m *Mixin) Build() error {
 	return nil
 }
 
-func GetAddRepositoryCommand(name, url string) (commandValue []string, err error) {
+func getRepositoryCommand(name, url string) (repositoryCommand []string, err error) {
 
 	var commandBuilder []string
 
