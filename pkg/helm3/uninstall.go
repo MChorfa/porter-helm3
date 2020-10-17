@@ -78,8 +78,12 @@ func (m *Mixin) delete(release string, namespace string) error {
 	}
 	err = cmd.Wait()
 	if err != nil {
-		// Gracefully handle the error being a release not found
-		if strings.Contains(output.String(), fmt.Sprintf(`release: %q not found`, release)) {
+		// Gracefully handle the error being a release not loaded or found
+		outputBuffer := strings.ToLower(output.String())
+		if strings.Contains(outputBuffer, fmt.Sprintf(`uninstall: release not loaded: %q`, strings.ToLower(release))) ||
+			strings.Contains(outputBuffer, fmt.Sprintf(`the release named %q is already deleted`, strings.ToLower(release))) ||
+			strings.Contains(outputBuffer, fmt.Sprintf(`release: %q not found`, strings.ToLower(release))) ||
+			strings.Contains(outputBuffer, "uninstall: failed to purge the release") {
 			return nil
 		}
 		return err

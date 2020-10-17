@@ -42,9 +42,9 @@ func TestMixin_UnmarshalUpgradeStep(t *testing.T) {
 }
 
 func TestMixin_Upgrade(t *testing.T) {
-	namespace := "MYNAMESPACE"
-	name := "MYRELEASE"
-	chart := "MYCHART"
+	namespace := "MY-NAMESPACE"
+	name := "MY-RELEASE"
+	chart := "MY-CHART"
 	version := "1.0.0"
 	setArgs := map[string]string{
 		"foo": "bar",

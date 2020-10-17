@@ -46,7 +46,7 @@ func TestMixin_UnmarshalInstallStep(t *testing.T) {
 }
 
 func TestMixin_Install(t *testing.T) {
-	namespace := "MYNAMESPACE"
+	namespace := "MY-NAMESPACE"
 	name := "MYRELEASE"
 	chart := "MYCHART"
 	version := "1.0.0"

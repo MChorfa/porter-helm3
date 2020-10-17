@@ -27,9 +27,9 @@ func TestSchema(t *testing.T) {
 	cmd.Stderr = output
 
 	err = cmd.Start()
-	require.NoError(t, err, "failed to start the helm schema command")
+	require.NoError(t, err, "failed to start the helm3 schema command")
 
 	err = cmd.Wait()
 	t.Log(output)
-	require.NoError(t, err, "helm schema failed")
+	require.NoError(t, err, "helm3 schema failed")
 }

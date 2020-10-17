@@ -40,7 +40,7 @@ RUN mv linux-amd64/helm /usr/local/bin/helm3`
 		assert.Equal(t, wantOutput, gotOutput)
 	})
 
-	t.Run("build with a valid config", func(t *testing.T) {
+	t.Run("build with a valid config and multiple repositories", func(t *testing.T) {
 		b, err := ioutil.ReadFile("testdata/build-input-with-valid-config-multi-repos.yaml")
 		require.NoError(t, err)
 

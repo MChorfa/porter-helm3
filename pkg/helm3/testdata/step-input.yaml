@@ -1,5 +1,6 @@
 install:
   - helm3:
+      name: "my-release"
       arguments:
         - "man-e-faces"
       flags:

@@ -29,7 +29,8 @@
               "type": "boolean"
             },
             "upsert": {
-              "type": "boolean"
+              "type": "boolean",
+              "default": false
             },
             "devel": {
               "type": "boolean"
@@ -52,8 +53,7 @@
           "required": ["name", "description", "chart"]
         }
       },
-      "required": ["helm3"],
-      "additionalProperties": false
+      "required": ["helm3"]
     },
     "upgradeStep": {
       "type": "object",
@@ -229,5 +229,6 @@
     "items": {
       "$ref": "#/definitions/invokeStep"
     }
-  }
+  },
+  "additionalProperties": false
 }
