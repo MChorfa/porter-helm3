@@ -49,6 +49,7 @@ func TestMixin_Upgrade(t *testing.T) {
 	setArgs := map[string]string{
 		"foo": "bar",
 		"baz": "qux",
+		"prop1.prop2.\"key1.key2.key3\".prop1.prop2.\"key1.key2.key3\"": "value1",
 	}
 	values := []string{
 		"/tmp/val1.yaml",
@@ -57,7 +58,7 @@ func TestMixin_Upgrade(t *testing.T) {
 
 	baseUpgrade := fmt.Sprintf(`helm3 upgrade --install %s %s --namespace %s --version %s`, name, chart, namespace, version)
 	baseValues := `--values /tmp/val1.yaml --values /tmp/val2.yaml`
-	baseSetArgs := `--set baz=qux --set foo=bar`
+	baseSetArgs := `--set baz=qux --set foo=bar --set prop1.prop2."key1\.key2\.key3".prop1.prop2."key1\.key2\.key3"=value1`
 
 	upgradeTests := []UpgradeTest{
 		{

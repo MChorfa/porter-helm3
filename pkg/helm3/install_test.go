@@ -51,8 +51,10 @@ func TestMixin_Install(t *testing.T) {
 	chart := "MYCHART"
 	version := "1.0.0"
 	setArgs := map[string]string{
-		"foo": "bar",
-		"baz": "qux",
+		"foo":                            "bar",
+		"baz":                            "qux",
+		"prop2.prop3.\"key1.key2.key3\"": "value2",
+		"prop1.prop2.\"key1.key2.key3\".prop1.prop2.\"key1.key2.key3\"": "value1",
 	}
 	values := []string{
 		"/tmp/val1.yaml",
@@ -62,7 +64,7 @@ func TestMixin_Install(t *testing.T) {
 	baseInstall := fmt.Sprintf(`helm3 install %s %s --namespace %s --version %s`, name, chart, namespace, version)
 	baseInstallUpSert := fmt.Sprintf(`helm3 upgrade --install %s %s --namespace %s --version %s`, name, chart, namespace, version)
 	baseValues := `--values /tmp/val1.yaml --values /tmp/val2.yaml`
-	baseSetArgs := `--set baz=qux --set foo=bar`
+	baseSetArgs := `--set baz=qux --set foo=bar --set prop1.prop2."key1\.key2\.key3".prop1.prop2."key1\.key2\.key3"=value1 --set prop2.prop3."key1\.key2\.key3"=value2`
 
 	installTests := []InstallTest{
 		{

@@ -88,7 +88,7 @@ func (m *Mixin) Install() error {
 		cmd.Args = append(cmd.Args, "--values", v)
 	}
 
-	cmd.Args = HandleSettingChartValues(step, cmd)
+	cmd.Args = HandleSettingChartValuesForInstall(step, cmd)
 
 	cmd.Stdout = m.Out
 	cmd.Stderr = m.Err
@@ -113,7 +113,7 @@ func (m *Mixin) Install() error {
 }
 
 // Prepare set arguments
-func HandleSettingChartValues(step InstallStep, cmd *exec.Cmd) []string {
+func HandleSettingChartValuesForInstall(step InstallStep, cmd *exec.Cmd) []string {
 	// sort the set consistently
 	setKeys := make([]string, 0, len(step.Set))
 	for k := range step.Set {
@@ -123,11 +123,34 @@ func HandleSettingChartValues(step InstallStep, cmd *exec.Cmd) []string {
 	sort.Strings(setKeys)
 
 	for _, k := range setKeys {
-		// Hack unitl helm introduce `--set-literal` for complex keys
+		//Hack unitl helm introduce `--set-literal` for complex keys
 		// see https://github.com/helm/helm/issues/4030
 		// TODO : Fix this later upon `--set-literal` introduction
-		forcePointEscaping := strings.Replace(k, ".", "\\.", -1)
-		cmd.Args = append(cmd.Args, "--set", fmt.Sprintf("%s=%s", forcePointEscaping, step.Set[k]))
+		var complexKey bool
+		keySequences := strings.Split(k, ".")
+		keyAccumulator := make([]string, 0, len(keySequences))
+		for _, ks := range keySequences {
+
+			if strings.HasPrefix(ks, "\"") {
+				// Start Complex key
+				keyAccumulator = append(keyAccumulator, ks+"\\")
+				complexKey = true
+
+			} else if !strings.HasPrefix(ks, "\"") && !strings.HasSuffix(ks, "\"") && complexKey {
+				// Still in the middle of complex key
+				keyAccumulator = append(keyAccumulator, strings.Replace(ks, "\"", "\"", -1)+"\\")
+
+			} else if strings.HasSuffix(ks, "\"") && complexKey {
+				// We Reached the end of complex key so nothing to do. Reset complex sequence
+				keyAccumulator = append(keyAccumulator, strings.Replace(ks, "\"", "\"", -1))
+				complexKey = false
+			} else {
+				// Do nothing
+				keyAccumulator = append(keyAccumulator, ks)
+			}
+		}
+
+		cmd.Args = append(cmd.Args, "--set", fmt.Sprintf("%s=%s", strings.Join(keyAccumulator, "."), step.Set[k]))
 	}
 	return cmd.Args
 }

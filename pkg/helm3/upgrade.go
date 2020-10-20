@@ -2,6 +2,7 @@ package helm3
 
 import (
 	"fmt"
+	"os/exec"
 	"sort"
 	"strings"
 
@@ -81,20 +82,7 @@ func (m *Mixin) Upgrade() error {
 		cmd.Args = append(cmd.Args, "--values", v)
 	}
 
-	// sort the set consistently
-	setKeys := make([]string, 0, len(step.Set))
-	for k := range step.Set {
-		setKeys = append(setKeys, k)
-	}
-	sort.Strings(setKeys)
-
-	for _, k := range setKeys {
-		//Hack unitl helm introduce `--set-literal` for complex keys
-		// see https://github.com/helm/helm/issues/4030
-		// TODO : Fix this later upon `--set-literal` introduction
-		forcePointEscaping := strings.Replace(k, ".", "\\.", -1)
-		cmd.Args = append(cmd.Args, "--set", fmt.Sprintf("%s=%s", forcePointEscaping, step.Set[k]))
-	}
+	cmd.Args = HandleSettingChartValuesForUpgrade(step, cmd)
 
 	cmd.Stdout = m.Out
 	cmd.Stderr = m.Err
@@ -113,4 +101,44 @@ func (m *Mixin) Upgrade() error {
 
 	err = m.handleOutputs(kubeClient, step.Namespace, step.Outputs)
 	return err
+}
+
+// Prepare set arguments
+func HandleSettingChartValuesForUpgrade(step UpgradeStep, cmd *exec.Cmd) []string {
+	// sort the set consistently
+	setKeys := make([]string, 0, len(step.Set))
+	for k := range step.Set {
+
+		setKeys = append(setKeys, k)
+	}
+	sort.Strings(setKeys)
+
+	for _, k := range setKeys {
+		//Hack unitl helm introduce `--set-literal` for complex keys
+		// see https://github.com/helm/helm/issues/4030
+		// TODO : Fix this later upon `--set-literal` introduction
+		var complexKey bool
+		keySequences := strings.Split(k, ".")
+		escapedKeys := make([]string, 0, len(keySequences))
+		for _, ks := range keySequences {
+			// Start Complex key
+			if strings.HasPrefix(ks, "\"") {
+				escapedKeys = append(escapedKeys, ks+"\\")
+				complexKey = true
+				// Still in the middle of complex key
+			} else if !strings.HasPrefix(ks, "\"") && !strings.HasSuffix(ks, "\"") && complexKey {
+				escapedKeys = append(escapedKeys, ks+"\\")
+				// Reach the end of complex key
+			} else if strings.HasSuffix(ks, "\"") && complexKey {
+				escapedKeys = append(escapedKeys, ks)
+				complexKey = false
+				// Do nothing
+			} else {
+				escapedKeys = append(escapedKeys, ks)
+			}
+		}
+
+		cmd.Args = append(cmd.Args, "--set", fmt.Sprintf("%s=%s", strings.Join(escapedKeys, "."), step.Set[k]))
+	}
+	return cmd.Args
 }
