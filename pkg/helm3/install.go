@@ -123,34 +123,7 @@ func HandleSettingChartValuesForInstall(step InstallStep, cmd *exec.Cmd) []strin
 	sort.Strings(setKeys)
 
 	for _, k := range setKeys {
-		//Hack unitl helm introduce `--set-literal` for complex keys
-		// see https://github.com/helm/helm/issues/4030
-		// TODO : Fix this later upon `--set-literal` introduction
-		var complexKey bool
-		keySequences := strings.Split(k, ".")
-		keyAccumulator := make([]string, 0, len(keySequences))
-		for _, ks := range keySequences {
-
-			if strings.HasPrefix(ks, "\"") {
-				// Start Complex key
-				keyAccumulator = append(keyAccumulator, ks+"\\")
-				complexKey = true
-
-			} else if !strings.HasPrefix(ks, "\"") && !strings.HasSuffix(ks, "\"") && complexKey {
-				// Still in the middle of complex key
-				keyAccumulator = append(keyAccumulator, strings.Replace(ks, "\"", "\"", -1)+"\\")
-
-			} else if strings.HasSuffix(ks, "\"") && complexKey {
-				// We Reached the end of complex key so nothing to do. Reset complex sequence
-				keyAccumulator = append(keyAccumulator, strings.Replace(ks, "\"", "\"", -1))
-				complexKey = false
-			} else {
-				// Do nothing
-				keyAccumulator = append(keyAccumulator, ks)
-			}
-		}
-
-		cmd.Args = append(cmd.Args, "--set", fmt.Sprintf("%s=%s", strings.Join(keyAccumulator, "."), step.Set[k]))
+		cmd.Args = append(cmd.Args, "--set", fmt.Sprintf("%s=%s", k, step.Set[k]))
 	}
 	return cmd.Args
 }

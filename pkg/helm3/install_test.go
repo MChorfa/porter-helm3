@@ -42,7 +42,7 @@ func TestMixin_UnmarshalInstallStep(t *testing.T) {
 	assert.Equal(t, "0.10.2", step.Version)
 	assert.Equal(t, true, step.Replace)
 	assert.Equal(t, map[string]string{"mysqlDatabase": "mydb", "mysqlUser": "myuser",
-		"livenessProbe.initialDelaySeconds": "30", "persistence.enabled": "true", "controller.nodeSelector.\"beta\\.kubernetes\\.io/os\"": "linux"}, step.Set)
+		"livenessProbe.initialDelaySeconds": "30", "persistence.enabled": "true"}, step.Set)
 }
 
 func TestMixin_Install(t *testing.T) {
@@ -53,8 +53,6 @@ func TestMixin_Install(t *testing.T) {
 	setArgs := map[string]string{
 		"foo":                            "bar",
 		"baz":                            "qux",
-		"prop2.prop3.\"key1.key2.key3\"": "value2",
-		"prop1.prop2.\"key1.key2.key3\".prop1.prop2.\"key1.key2.key3\"": "value1",
 	}
 	values := []string{
 		"/tmp/val1.yaml",
@@ -64,7 +62,7 @@ func TestMixin_Install(t *testing.T) {
 	baseInstall := fmt.Sprintf(`helm3 install %s %s --namespace %s --version %s`, name, chart, namespace, version)
 	baseInstallUpSert := fmt.Sprintf(`helm3 upgrade --install %s %s --namespace %s --version %s`, name, chart, namespace, version)
 	baseValues := `--values /tmp/val1.yaml --values /tmp/val2.yaml`
-	baseSetArgs := `--set baz=qux --set foo=bar --set prop1.prop2."key1\.key2\.key3".prop1.prop2."key1\.key2\.key3"=value1 --set prop2.prop3."key1\.key2\.key3"=value2`
+	baseSetArgs := `--set baz=qux --set foo=bar`
 
 	installTests := []InstallTest{
 		{

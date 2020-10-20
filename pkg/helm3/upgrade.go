@@ -114,31 +114,7 @@ func HandleSettingChartValuesForUpgrade(step UpgradeStep, cmd *exec.Cmd) []strin
 	sort.Strings(setKeys)
 
 	for _, k := range setKeys {
-		//Hack unitl helm introduce `--set-literal` for complex keys
-		// see https://github.com/helm/helm/issues/4030
-		// TODO : Fix this later upon `--set-literal` introduction
-		var complexKey bool
-		keySequences := strings.Split(k, ".")
-		escapedKeys := make([]string, 0, len(keySequences))
-		for _, ks := range keySequences {
-			// Start Complex key
-			if strings.HasPrefix(ks, "\"") {
-				escapedKeys = append(escapedKeys, ks+"\\")
-				complexKey = true
-				// Still in the middle of complex key
-			} else if !strings.HasPrefix(ks, "\"") && !strings.HasSuffix(ks, "\"") && complexKey {
-				escapedKeys = append(escapedKeys, ks+"\\")
-				// Reach the end of complex key
-			} else if strings.HasSuffix(ks, "\"") && complexKey {
-				escapedKeys = append(escapedKeys, ks)
-				complexKey = false
-				// Do nothing
-			} else {
-				escapedKeys = append(escapedKeys, ks)
-			}
-		}
-
-		cmd.Args = append(cmd.Args, "--set", fmt.Sprintf("%s=%s", strings.Join(escapedKeys, "."), step.Set[k]))
+		cmd.Args = append(cmd.Args, "--set", fmt.Sprintf("%s=%s", k, step.Set[k]))
 	}
 	return cmd.Args
 }
