@@ -1,13 +1,33 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://github.com/MChorfa/porter-helm3</id>
     <title>Porter Helm3 Mixin</title>
-    <updated>2020-10-17T22:40:15Z</updated>
+    <updated>2020-10-20T04:29:12Z</updated>
     <link rel="self" href="https://mchorfa.github.com/porter-helm3/atom.xml"/>
     <author>
         <name>Mohamed chorfa</name>
         <uri>https://github.com/MChorfa/porter-helm3</uri>
     </author>
     <category term="helm3"/>
+    <entry>
+        <id>https://github.com/MChorfa/porter-helm3/releases/download/v0.1.11/helm3</id>
+        <title>helm3 @ v0.1.11</title>
+        <updated>2020-10-20T04:29:12Z</updated>
+        <category term="helm3"/>
+        <content>v0.1.11</content>
+        <link rel="download" href="https://github.com/MChorfa/porter-helm3/releases/download/v0.1.11/helm3-darwin-amd64" />
+        <link rel="download" href="https://github.com/MChorfa/porter-helm3/releases/download/v0.1.11/helm3-linux-amd64" />
+        <link rel="download" href="https://github.com/MChorfa/porter-helm3/releases/download/v0.1.11/helm3-windows-amd64.exe" />
+    </entry>
+    <entry>
+        <id>https://github.com/MChorfa/porter-helm3/releases/download/v0.1.10-3-g64a6880/helm3</id>
+        <title>helm3 @ v0.1.10-3-g64a6880</title>
+        <updated>2020-10-20T04:22:30Z</updated>
+        <category term="helm3"/>
+        <content>v0.1.10-3-g64a6880</content>
+        <link rel="download" href="https://github.com/MChorfa/porter-helm3/releases/download/v0.1.10-3-g64a6880/helm3-darwin-amd64" />
+        <link rel="download" href="https://github.com/MChorfa/porter-helm3/releases/download/v0.1.10-3-g64a6880/helm3-linux-amd64" />
+        <link rel="download" href="https://github.com/MChorfa/porter-helm3/releases/download/v0.1.10-3-g64a6880/helm3-windows-amd64.exe" />
+    </entry>
     <entry>
         <id>https://github.com/MChorfa/porter-helm3/releases/download/v0.1.10/helm3</id>
         <title>helm3 @ v0.1.10</title>

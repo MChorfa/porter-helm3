@@ -23,6 +23,16 @@
     </entry>
     {{/Entries}}
     <entry>
+        <id>https://github.com/MChorfa/porter-helm3/releases/download/v0.1.10/helm3</id>
+        <title>helm3 @ v0.1.10</title>
+        <updated>2020-10-17T22:40:15Z</updated>
+        <category term="helm3"/>
+        <content>v0.1.10</content>
+        <link rel="download" href="https://github.com/MChorfa/porter-helm3/releases/download/v0.1.10/helm3-darwin-amd64" />
+        <link rel="download" href="https://github.com/MChorfa/porter-helm3/releases/download/v0.1.10/helm3-linux-amd64" />
+        <link rel="download" href="https://github.com/MChorfa/porter-helm3/releases/download/v0.1.10/helm3-windows-amd64.exe" />
+    </entry>
+    <entry>
         <id>https://github.com/MChorfa/porter-helm3/releases/download/v0.1.9/helm3</id>
         <title>helm3 @ v0.1.9</title>
         <updated>2020-10-12T00:19:47Z</updated>
