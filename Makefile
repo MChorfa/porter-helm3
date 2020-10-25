@@ -57,6 +57,9 @@ xbuild-all:
 		$(foreach ARCH, $(SUPPORTED_ARCHES), \
 				$(MAKE) $(MAKE_OPTS) CLIENT_PLATFORM=$(OS) CLIENT_ARCH=$(ARCH) MIXIN=$(MIXIN) xbuild; \
 		))
+	# Buid for linux arm64
+	$(MAKE) $(MAKE_OPTS) CLIENT_PLATFORM=linux CLIENT_ARCH=arm64 MIXIN=$(MIXIN) xbuild;
+	# Clean
 	$(MAKE) clean-packr
 
 xbuild: $(BINDIR)/$(VERSION)/$(MIXIN)-$(CLIENT_PLATFORM)-$(CLIENT_ARCH)$(FILE_EXT)
