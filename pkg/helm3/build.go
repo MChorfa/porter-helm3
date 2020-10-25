@@ -24,13 +24,17 @@ type BuildInput struct {
 // mixins:
 // - helm3:
 // 	  clientVersion: v3.3.4
+// 	  clientPlatfrom: linux
+// 	  clientArchitecture: amd64 | arm64 | arm | i386
 //	  repositories:
 //	    stable:
 //		  url: "https://kubernetes-charts.storage.googleapis.com"
 
 type MixinConfig struct {
-	ClientVersion string `yaml:"clientVersion,omitempty"`
-	Repositories  map[string]Repository
+	ClientVersion      string `yaml:"clientVersion,omitempty"`
+	ClientPlatfrom     string `yaml:"clientPlatfrom,omitempty"`
+	ClientArchitecture string `yaml:"clientArchitecture,omitempty"`
+	Repositories       map[string]Repository
 }
 
 type Repository struct {
@@ -64,9 +68,17 @@ func (m *Mixin) Build() error {
 		m.HelmClientVersion = suppliedClientVersion
 	}
 
+	if input.Config.ClientPlatfrom != "" {
+		m.HelmClientPlatfrom = input.Config.ClientPlatfrom
+	}
+
+	if input.Config.ClientArchitecture != "" {
+		m.HelmClientArchitecture = input.Config.ClientArchitecture
+	}
 	// Install helm3
 	fmt.Fprintf(m.Out, "RUN apt-get update && apt-get install -y curl")
-	fmt.Fprintf(m.Out, "\nRUN curl https://get.helm.sh/helm-%s-linux-amd64.tar.gz --output helm3.tar.gz", m.HelmClientVersion)
+	fmt.Fprintf(m.Out, "\nRUN curl https://get.helm.sh/helm-%s-%s-%s.tar.gz --output helm3.tar.gz",
+		m.HelmClientVersion, m.HelmClientPlatfrom, m.HelmClientArchitecture)
 	fmt.Fprintf(m.Out, "\nRUN tar -xvf helm3.tar.gz")
 	fmt.Fprintf(m.Out, "\nRUN mv linux-amd64/helm /usr/local/bin/helm3")
 

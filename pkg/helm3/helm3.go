@@ -16,23 +16,29 @@ import (
 	k8s "k8s.io/client-go/kubernetes"
 )
 
-const defaultHelmClientVersion string = "v3.3.4"
+const defaultClientVersion string = "v3.3.4"
+const defaultClientPlatfrom string = "linux"
+const defaultClientArchitecture string = "amd64"
 
 // Helm is the logic behind the helm mixin
 type Mixin struct {
 	*context.Context
-	schema            *packr.Box
-	ClientFactory     kubernetes.ClientFactory
-	HelmClientVersion string
+	schema                 *packr.Box
+	ClientFactory          kubernetes.ClientFactory
+	HelmClientVersion      string
+	HelmClientPlatfrom     string
+	HelmClientArchitecture string
 }
 
 // New helm mixin client, initialized with useful defaults.
 func New() *Mixin {
 	return &Mixin{
-		schema:            packr.New("schema", "./schema"),
-		Context:           context.New(),
-		ClientFactory:     kubernetes.New(),
-		HelmClientVersion: defaultHelmClientVersion,
+		schema:                 packr.New("schema", "./schema"),
+		Context:                context.New(),
+		ClientFactory:          kubernetes.New(),
+		HelmClientVersion:      defaultClientVersion,
+		HelmClientPlatfrom:     defaultClientPlatfrom,
+		HelmClientArchitecture: defaultClientArchitecture,
 	}
 }
 

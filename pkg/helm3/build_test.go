@@ -17,7 +17,7 @@ func TestMixin_Build(t *testing.T) {
 	require.NoError(t, err)
 
 	buildOutput := `RUN apt-get update && apt-get install -y curl
-RUN curl https://get.helm.sh/helm-%s-linux-amd64.tar.gz --output helm3.tar.gz
+RUN curl https://get.helm.sh/helm-%s-%s-%s.tar.gz --output helm3.tar.gz
 RUN tar -xvf helm3.tar.gz
 RUN mv linux-amd64/helm /usr/local/bin/helm3`
 
@@ -32,7 +32,7 @@ RUN mv linux-amd64/helm /usr/local/bin/helm3`
 		err = m.Build()
 		require.NoError(t, err, "build failed")
 
-		wantOutput := fmt.Sprintf(buildOutput, m.HelmClientVersion) +
+		wantOutput := fmt.Sprintf(buildOutput, m.HelmClientVersion, m.HelmClientPlatfrom, m.HelmClientArchitecture) +
 			"\nRUN helm3 repo add stable kubernetes-charts" +
 			"\nRUN helm3 repo update"
 
@@ -51,7 +51,7 @@ RUN mv linux-amd64/helm /usr/local/bin/helm3`
 		err = m.Build()
 		require.NoError(t, err, "build failed")
 
-		wantOutput := fmt.Sprintf(buildOutput, m.HelmClientVersion) +
+		wantOutput := fmt.Sprintf(buildOutput, m.HelmClientVersion, m.HelmClientPlatfrom, m.HelmClientArchitecture) +
 			"\nRUN helm3 repo add harbor https://helm.getharbor.io" +
 			"\nRUN helm3 repo add jetstack https://charts.jetstack.io" +
 			"\nRUN helm3 repo add stable kubernetes-charts" +
@@ -70,7 +70,8 @@ RUN mv linux-amd64/helm /usr/local/bin/helm3`
 
 		err = m.Build()
 		require.NoError(t, err, "build failed")
-		wantOutput := fmt.Sprintf(buildOutput, m.HelmClientVersion) + "\nRUN helm3 repo update"
+		wantOutput := fmt.Sprintf(buildOutput, m.HelmClientVersion, m.HelmClientPlatfrom, m.HelmClientArchitecture) +
+			"\nRUN helm3 repo update"
 		gotOutput := m.TestContext.GetOutput()
 		assert.Equal(t, wantOutput, gotOutput)
 	})
@@ -85,7 +86,7 @@ RUN mv linux-amd64/helm /usr/local/bin/helm3`
 		m.In = bytes.NewReader(b)
 		err = m.Build()
 		require.NoError(t, err, "build failed")
-		wantOutput := fmt.Sprintf(buildOutput, m.HelmClientVersion)
+		wantOutput := fmt.Sprintf(buildOutput, m.HelmClientVersion, m.HelmClientPlatfrom, m.HelmClientArchitecture)
 		gotOutput := m.TestContext.GetOutput()
 		assert.Equal(t, wantOutput, gotOutput)
 	})
