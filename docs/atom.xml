@@ -16,6 +16,7 @@
         <content>v0.1.12</content>
         <link rel="download" href="https://github.com/MChorfa/porter-helm3/releases/download/v0.1.12/helm3-darwin-amd64" />
         <link rel="download" href="https://github.com/MChorfa/porter-helm3/releases/download/v0.1.12/helm3-linux-amd64" />
+        <link rel="download" href="https://github.com/MChorfa/porter-helm3/releases/download/v0.1.12/helm3-linux-arm64" />
         <link rel="download" href="https://github.com/MChorfa/porter-helm3/releases/download/v0.1.12/helm3-windows-amd64.exe" />
     </entry>
     <entry>
