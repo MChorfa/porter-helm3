@@ -15,14 +15,10 @@ porter mixin install helm3 --feed-url https://mchorfa.github.com/porter-helm3/at
 ### Mixin Configuration
 
 - Helm client version configuration. You can define others minors and patch versions up and down
-- Helm client platfrom configuration. You can define others platforms supported by Helm upstream project. The Default is `Linux`
-- Helm client architecture configuration. You can define others Architectures supported by Helm upstream project. The Default is `amd64`
 
 ```yaml
 - helm3:
     clientVersion: v3.3.4
-    clientPlatfrom: linux #Must Match the base porter platform
-    clientArchitecture: amd64 | arm64 | arm #Must Match the base porter architecture
 ```
 
 Repositories
