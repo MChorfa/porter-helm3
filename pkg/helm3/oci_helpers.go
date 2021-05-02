@@ -8,18 +8,25 @@ import (
 
 var ociChartRegex *regexp.Regexp = regexp.MustCompile(`oci:\/\/([^:/]+)\/([^:]+)(:([^:]+))?`)
 
-func IsOciInstall(step InstallStep) bool {
-	return ociChartRegex.MatchString(step.Chart)
+type OciStep interface {
+	GetChart() string
+	GetRegistryUsername() string
+	GetRegistryPassword() string
+	GetOptionalVersion() string
+}
+
+func IsOciInstall(step OciStep) bool {
+	return ociChartRegex.MatchString(step.GetChart())
 }
 
 // Only call this function if IsOciInstall == true
-func LoginToOciRegistryIfNecessary(step InstallStep, m *Mixin) error {
-	if (step.RegistryAuth.Username == "" && step.RegistryAuth.Password != "") ||
-		(step.RegistryAuth.Username != "" && step.RegistryAuth.Password == "") {
+func LoginToOciRegistryIfNecessary(step OciStep, m *Mixin) error {
+	if (step.GetRegistryUsername() == "" && step.GetRegistryPassword() != "") ||
+		(step.GetRegistryUsername() != "" && step.GetRegistryPassword() == "") {
 		return fmt.Errorf("either password or username is empty but not both")
 	}
 
-	subGroups := ociChartRegex.FindStringSubmatch(step.Chart)
+	subGroups := ociChartRegex.FindStringSubmatch(step.GetChart())
 
 	registryUrl := subGroups[1]
 
@@ -29,32 +36,32 @@ func LoginToOciRegistryIfNecessary(step InstallStep, m *Mixin) error {
 		"login",
 		registryUrl)
 
-	if step.RegistryAuth.Username != "" && step.RegistryAuth.Password != "" {
+	if step.GetRegistryUsername() != "" && step.GetRegistryPassword() != "" {
 		cmd.Args = append(cmd.Args,
 			"-u",
-			step.RegistryAuth.Username,
+			step.GetRegistryUsername(),
 			"-p",
-			step.RegistryAuth.Password)
+			step.GetRegistryPassword())
 	}
 
 	return m.RunCmd(cmd, false)
 }
 
 // Only call this function if IsOciInstall == true
-func GetFullOciResourceName(step InstallStep) string {
-	subGroups := ociChartRegex.FindStringSubmatch(step.Chart)
+func GetFullOciResourceName(step OciStep) string {
+	subGroups := ociChartRegex.FindStringSubmatch(step.GetChart())
 
 	fullOciResourceName := subGroups[1] + "/" + subGroups[2]
 	tag := ":" + subGroups[4]
 	if subGroups[4] == "" {
-		tag = ":" + step.Version
+		tag = ":" + step.GetOptionalVersion()
 	}
 	fullOciResourceName = fullOciResourceName + tag
 	return fullOciResourceName
 }
 
 // Only call this function if IsOciInstall == true
-func PullChartFromOciRegistry(step InstallStep, m *Mixin) error {
+func PullChartFromOciRegistry(step OciStep, m *Mixin) error {
 	cmd := m.NewCommand(
 		"helm3",
 		"chart",
@@ -65,7 +72,7 @@ func PullChartFromOciRegistry(step InstallStep, m *Mixin) error {
 }
 
 // Only call this function if IsOciInstall == true
-func ExportOciChartToTempPath(step InstallStep, m *Mixin) (string, error) {
+func ExportOciChartToTempPath(step OciStep, m *Mixin) (string, error) {
 	tempChartPath := "/tmp/"
 	cmd := m.NewCommand(
 		"helm3",
@@ -100,10 +107,10 @@ func ExportOciChartToTempPath(step InstallStep, m *Mixin) (string, error) {
 }
 
 // Only call this function if IsOciInstall == true
-func RemoveLocalOciExport(step InstallStep, m *Mixin) error {
+func RemoveLocalOciExport(step OciStep, m *Mixin) error {
 	cmd := m.NewCommand(
 		"rm",
 		"-rf",
-		step.Chart)
+		step.GetChart())
 	return m.RunCmd(cmd, true)
 }

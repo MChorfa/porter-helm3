@@ -38,6 +38,19 @@ type RegistryAuthArguments struct {
 	Password string `yaml:"password"`
 }
 
+func (step *InstallStep) GetChart() string {
+	return step.Chart
+}
+func (step *InstallStep) GetRegistryUsername() string {
+	return step.RegistryAuth.Username
+}
+func (step *InstallStep) GetRegistryPassword() string {
+	return step.RegistryAuth.Password
+}
+func (step *InstallStep) GetOptionalVersion() string {
+	return step.Version
+}
+
 func (m *Mixin) Install() error {
 
 	payload, err := m.getPayloadData()
@@ -60,14 +73,14 @@ func (m *Mixin) Install() error {
 	}
 	step := action.Steps[0]
 
-	isOciInstall := IsOciInstall(step)
+	isOciInstall := IsOciInstall(&step)
 
 	if isOciInstall {
 		fmt.Fprintln(m.Out, "OCI install detected.")
 
-		LoginToOciRegistryIfNecessary(step, m)
-		PullChartFromOciRegistry(step, m)
-		newChartName, err := ExportOciChartToTempPath(step, m)
+		LoginToOciRegistryIfNecessary(&step, m)
+		PullChartFromOciRegistry(&step, m)
+		newChartName, err := ExportOciChartToTempPath(&step, m)
 
 		if err != nil {
 			return err
@@ -124,7 +137,7 @@ func (m *Mixin) Install() error {
 	}
 
 	if isOciInstall {
-		err = RemoveLocalOciExport(step, m)
+		err = RemoveLocalOciExport(&step, m)
 	}
 	return err
 }
