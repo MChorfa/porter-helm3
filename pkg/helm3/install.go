@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"os/exec"
 	"sort"
-	"strings"
 
 	"github.com/pkg/errors"
 	yaml "gopkg.in/yaml.v2"
@@ -21,16 +20,22 @@ type InstallStep struct {
 type InstallArguments struct {
 	Step `yaml:",inline"`
 
-	Namespace string            `yaml:"namespace"`
-	Name      string            `yaml:"name"`
-	Chart     string            `yaml:"chart"`
-	Version   string            `yaml:"version"`
-	Replace   bool              `yaml:"replace"`
-	Set       map[string]string `yaml:"set"`
-	Values    []string          `yaml:"values"`
-	Devel     bool              `yaml:"devel`
-	UpSert    bool              `yaml:"devel`
-	Wait      bool              `yaml:"wait"`
+	Namespace    string                `yaml:"namespace"`
+	Name         string                `yaml:"name"`
+	Chart        string                `yaml:"chart"`
+	Version      string                `yaml:"version"`
+	Replace      bool                  `yaml:"replace"`
+	Set          map[string]string     `yaml:"set"`
+	Values       []string              `yaml:"values"`
+	Devel        bool                  `yaml:"devel`
+	UpSert       bool                  `yaml:"devel`
+	Wait         bool                  `yaml:"wait"`
+	RegistryAuth RegistryAuthArguments `yaml:"registryAuth"`
+}
+
+type RegistryAuthArguments struct {
+	Username string `yaml:"username"`
+	Password string `yaml:"password"`
 }
 
 func (m *Mixin) Install() error {
@@ -54,6 +59,23 @@ func (m *Mixin) Install() error {
 		return errors.Errorf("expected a single step, but got %d", len(action.Steps))
 	}
 	step := action.Steps[0]
+
+	isOciInstall := IsOciInstall(step)
+
+	if isOciInstall {
+		fmt.Fprintln(m.Out, "OCI install detected.")
+
+		LoginToOciRegistryIfNecessary(step, m)
+		PullChartFromOciRegistry(step, m)
+		newChartName, err := ExportOciChartToTempPath(step, m)
+
+		if err != nil {
+			return err
+		}
+		step.Chart = newChartName
+	} else {
+		fmt.Fprintln(m.Out, "No OCI install detected.")
+	}
 
 	cmd := m.NewCommand("helm3")
 
@@ -90,25 +112,20 @@ func (m *Mixin) Install() error {
 
 	cmd.Args = HandleSettingChartValuesForInstall(step, cmd)
 
-	cmd.Stdout = m.Out
-	cmd.Stderr = m.Err
+	err = m.RunCmd(cmd, true)
 
-	// format the command with all arguments
-	prettyCmd := fmt.Sprintf("%s %s", cmd.Path, strings.Join(cmd.Args, " "))
-	fmt.Fprintln(m.Out, prettyCmd)
-
-	// Here where really the command get executed
-	err = cmd.Start()
-	// Exit on error
-	if err != nil {
-		return fmt.Errorf("could not execute command, %s: %s", prettyCmd, err)
-	}
-	err = cmd.Wait()
 	// Exit on error
 	if err != nil {
 		return err
 	}
 	err = m.handleOutputs(kubeClient, step.Namespace, step.Outputs)
+	if err != nil {
+		return err
+	}
+
+	if isOciInstall {
+		err = RemoveLocalOciExport(step, m)
+	}
 	return err
 }
 

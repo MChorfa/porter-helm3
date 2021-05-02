@@ -3,7 +3,9 @@ package helm3
 
 import (
 	"bufio"
+	"fmt"
 	"io/ioutil"
+	"os/exec"
 	"strings"
 
 	"get.porter.sh/porter/pkg/context"
@@ -40,6 +42,26 @@ func New() *Mixin {
 		HelmClientPlatfrom:     defaultClientPlatfrom,
 		HelmClientArchitecture: defaultClientArchitecture,
 	}
+}
+
+func (m *Mixin) RunCmd(cmd *exec.Cmd, printCmd bool) error {
+	cmd.Stdout = m.Out
+	cmd.Stderr = m.Err
+
+	prettyCmd := "obfuscated cmd call"
+	if printCmd {
+		// format the command with all arguments
+		prettyCmd = fmt.Sprintf("%s %s", cmd.Path, strings.Join(cmd.Args, " "))
+		fmt.Fprintln(m.Out, prettyCmd)
+	}
+
+	// Here where really the command get executed
+	err := cmd.Start()
+	// Exit on error
+	if err != nil {
+		return fmt.Errorf("could not execute command, %s: %s", prettyCmd, err)
+	}
+	return cmd.Wait()
 }
 
 func (m *Mixin) getPayloadData() ([]byte, error) {
