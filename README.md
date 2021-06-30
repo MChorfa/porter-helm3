@@ -14,7 +14,7 @@ porter mixin install helm3 --feed-url https://mchorfa.github.io/porter-helm3/ato
 
 ### Mixin Configuration
 
-- Helm client version configuration. You can define others minors and patch versions up and down
+Helm client version configuration. You can define others minors and patch versions up and down
 
 ```yaml
 - helm3:
@@ -54,7 +54,7 @@ install:
 Upgrade
 
 ```yaml
-install:
+upgrade:
   - helm3:
       description: "Description of the command"
       name: RELEASE_NAME
@@ -83,7 +83,7 @@ uninstall:
 
 #### Outputs
 
-The mixin supports saving secrets from Kuberentes as outputs.
+The mixin supports saving secrets from Kubernetes as outputs.
 
 ```yaml
 outputs:
