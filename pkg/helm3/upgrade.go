@@ -23,15 +23,29 @@ type UpgradeStep struct {
 type UpgradeArguments struct {
 	Step `yaml:",inline"`
 
-	Namespace   string            `yaml:"namespace"`
-	Name        string            `yaml:"name"`
-	Chart       string            `yaml:"chart"`
-	Version     string            `yaml:"version"`
-	Set         map[string]string `yaml:"set"`
-	Values      []string          `yaml:"values"`
-	Wait        bool              `yaml:"wait"`
-	ResetValues bool              `yaml:"resetValues"`
-	ReuseValues bool              `yaml:"reuseValues"`
+	Namespace    string                `yaml:"namespace"`
+	Name         string                `yaml:"name"`
+	Chart        string                `yaml:"chart"`
+	Version      string                `yaml:"version"`
+	Set          map[string]string     `yaml:"set"`
+	Values       []string              `yaml:"values"`
+	Wait         bool                  `yaml:"wait"`
+	ResetValues  bool                  `yaml:"resetValues"`
+	ReuseValues  bool                  `yaml:"reuseValues"`
+	RegistryAuth RegistryAuthArguments `yaml:"registryAuth"`
+}
+
+func (step *UpgradeStep) GetChart() string {
+	return step.Chart
+}
+func (step *UpgradeStep) GetRegistryUsername() string {
+	return step.RegistryAuth.Username
+}
+func (step *UpgradeStep) GetRegistryPassword() string {
+	return step.RegistryAuth.Password
+}
+func (step *UpgradeStep) GetOptionalVersion() string {
+	return step.Version
 }
 
 // Upgrade issues a helm upgrade command for a release using the provided UpgradeArguments
@@ -55,6 +69,23 @@ func (m *Mixin) Upgrade() error {
 		return errors.Errorf("expected a single step, but got %d", len(action.Steps))
 	}
 	step := action.Steps[0]
+
+	isOciInstall := IsOciInstall(&step)
+
+	if isOciInstall {
+		fmt.Fprintln(m.Out, "OCI install detected.")
+
+		LoginToOciRegistryIfNecessary(&step, m)
+		PullChartFromOciRegistry(&step, m)
+		newChartName, err := ExportOciChartToTempPath(&step, m)
+
+		if err != nil {
+			return err
+		}
+		step.Chart = newChartName
+	} else {
+		fmt.Fprintln(m.Out, "No OCI install detected.")
+	}
 
 	cmd := m.NewCommand("helm3", "upgrade", "--install", step.Name, step.Chart)
 
@@ -100,6 +131,13 @@ func (m *Mixin) Upgrade() error {
 	}
 
 	err = m.handleOutputs(kubeClient, step.Namespace, step.Outputs)
+	if err != nil {
+		return err
+	}
+
+	if isOciInstall {
+		err = RemoveLocalOciExport(&step, m)
+	}
 	return err
 }
 
