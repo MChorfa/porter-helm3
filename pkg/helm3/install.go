@@ -29,7 +29,7 @@ type InstallArguments struct {
 	Set       map[string]string `yaml:"set"`
 	Values    []string          `yaml:"values"`
 	Devel     bool              `yaml:"devel`
-	UpSert    bool              `yaml:"devel`
+	UpSert    bool              `yaml:"upsert`
 	Wait      bool              `yaml:"wait"`
 }
 
