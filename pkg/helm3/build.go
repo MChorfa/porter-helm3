@@ -81,6 +81,8 @@ func (m *Mixin) Build() error {
 		m.HelmClientVersion, m.HelmClientPlatfrom, m.HelmClientArchitecture)
 	fmt.Fprintf(m.Out, "\nRUN tar -xvf helm3.tar.gz && rm helm3.tar.gz")
 	fmt.Fprintf(m.Out, "\nRUN mv linux-amd64/helm /usr/local/bin/helm3")
+	fmt.Fprintf(m.Out, "\nRUN curl -o kubectl https://storage.googleapis.com/kubernetes-release/release/v1.22.1/bin/linux/amd64/kubectl &&\\")
+	fmt.Fprintf(m.Out, "\n    mv kubectl /usr/local/bin && chmod a+x /usr/local/bin/kubectl")
 
 	if len(input.Config.Repositories) > 0 {
 		// Go through repositories
