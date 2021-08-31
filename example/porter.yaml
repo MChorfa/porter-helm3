@@ -3,7 +3,7 @@ mixins:
     clientVersion: v3.3.0
     repositories:
       stable:
-        url: "https://kubernetes-charts.storage.googleapis.com"
+        url: "https://charts.helm.sh/stable"
 
 name: helm3-mysql
 version: 0.1.0
