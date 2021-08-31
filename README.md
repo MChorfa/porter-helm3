@@ -18,7 +18,7 @@ Helm client version configuration. You can define others minors and patch versio
 
 ```yaml
 - helm3:
-    clientVersion: v3.3.4
+    clientVersion: v3.6.3
 ```
 
 Repositories
@@ -49,6 +49,10 @@ install:
       set:
         VAR1: VALUE1
         VAR2: VALUE2
+      values: # Array of paths to: Set/Override multiple values and multi-lines values
+        - PATH_TO_THE_VALUES_FILE_1
+        - PATH_TO_THE_VALUES_FILE_2
+        - PATH_TO_THE_VALUES_FILE_3
 ```
 
 Upgrade
@@ -67,6 +71,10 @@ upgrade:
       set:
         VAR1: VALUE1
         VAR2: VALUE2
+      values: # Array of paths to: Set/Override multiple values and multi-line values
+        - PATH_TO_THE_VALUES_FILE_1
+        - PATH_TO_THE_VALUES_FILE_2
+        - PATH_TO_THE_VALUES_FILE_3
 ```
 
 Uninstall
@@ -78,7 +86,7 @@ uninstall:
       namespace: NAMESPACE
       releases:
         - RELEASE_NAME1
-        - RELASE_NAME2
+        - RELEASE_NAME2
 ```
 
 #### Outputs
@@ -119,6 +127,10 @@ install:
       set:
         mysqlDatabase: wordpress
         mysqlUser: wordpress
+      values:
+        - "./manifests/values_1.yaml"
+        - "./manifests/values_2.yaml"
+        - "./manifests/values_3.yaml"
       outputs:
         - name: mysql-root-password
           secret: mydb-mysql
@@ -150,6 +162,10 @@ upgrade:
         mysqlUser: myuser
         livenessProbe.initialDelaySeconds: 30
         persistence.enabled: true
+      values:
+        - "./manifests/values_1.yaml"
+        - "./manifests/values_2.yaml"
+        - "./manifests/values_3.yaml"
 ```
 
 Uninstall

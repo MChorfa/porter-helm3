@@ -82,6 +82,9 @@ func (m *Mixin) Upgrade() error {
 		cmd.Args = append(cmd.Args, "--values", v)
 	}
 
+	// This will upgrade process rolls back changes made in case of failed upgrade.
+	cmd.Args = append(cmd.Args, "--atomic")
+
 	cmd.Args = HandleSettingChartValuesForUpgrade(step, cmd)
 
 	cmd.Stdout = m.Out

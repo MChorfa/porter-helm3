@@ -18,7 +18,7 @@ func TestMixin_Build(t *testing.T) {
 
 	buildOutput := `RUN apt-get update && apt-get install -y curl
 RUN curl https://get.helm.sh/helm-%s-%s-%s.tar.gz --output helm3.tar.gz
-RUN tar -xvf helm3.tar.gz
+RUN tar -xvf helm3.tar.gz && rm helm3.tar.gz
 RUN mv linux-amd64/helm /usr/local/bin/helm3`
 
 	t.Run("build with a valid config", func(t *testing.T) {

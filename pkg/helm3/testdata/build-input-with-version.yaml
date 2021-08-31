@@ -1,5 +1,5 @@
 config:
-  clientVersion: v3.3.4
+  clientVersion: v3.6.3
   clientPlatfrom: linux
   clientArchitecture: amd64
 
