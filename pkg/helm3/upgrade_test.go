@@ -58,10 +58,11 @@ func TestMixin_Upgrade(t *testing.T) {
 	baseUpgrade := fmt.Sprintf(`helm3 upgrade --install %s %s --namespace %s --version %s`, name, chart, namespace, version)
 	baseValues := `--values /tmp/val1.yaml --values /tmp/val2.yaml`
 	baseSetArgs := `--set baz=qux --set foo=bar`
+	baseAddFlags := `--atomic`
 
 	upgradeTests := []UpgradeTest{
 		{
-			expectedCommand: fmt.Sprintf(`%s %s %s`, baseUpgrade, baseValues, baseSetArgs),
+			expectedCommand: fmt.Sprintf(`%s %s %s %s`, baseUpgrade, baseValues, baseAddFlags, baseSetArgs),
 			upgradeStep: UpgradeStep{
 				UpgradeArguments: UpgradeArguments{
 					Step:      Step{Description: "Upgrade Foo"},
@@ -75,7 +76,7 @@ func TestMixin_Upgrade(t *testing.T) {
 			},
 		},
 		{
-			expectedCommand: fmt.Sprintf(`%s %s %s %s`, baseUpgrade, `--reset-values`, baseValues, baseSetArgs),
+			expectedCommand: fmt.Sprintf(`%s %s %s %s %s`, baseUpgrade, `--reset-values`, baseValues, baseAddFlags, baseSetArgs),
 			upgradeStep: UpgradeStep{
 				UpgradeArguments: UpgradeArguments{
 					Step:        Step{Description: "Upgrade Foo"},
@@ -90,7 +91,7 @@ func TestMixin_Upgrade(t *testing.T) {
 			},
 		},
 		{
-			expectedCommand: fmt.Sprintf(`%s %s %s %s`, baseUpgrade, `--reuse-values`, baseValues, baseSetArgs),
+			expectedCommand: fmt.Sprintf(`%s %s %s %s %s`, baseUpgrade, `--reuse-values`, baseValues, baseAddFlags, baseSetArgs),
 			upgradeStep: UpgradeStep{
 				UpgradeArguments: UpgradeArguments{
 					Step:        Step{Description: "Upgrade Foo"},
@@ -105,7 +106,7 @@ func TestMixin_Upgrade(t *testing.T) {
 			},
 		},
 		{
-			expectedCommand: fmt.Sprintf(`%s %s %s %s`, baseUpgrade, `--wait`, baseValues, baseSetArgs),
+			expectedCommand: fmt.Sprintf(`%s %s %s %s %s`, baseUpgrade, `--wait`, baseValues, baseAddFlags, baseSetArgs),
 			upgradeStep: UpgradeStep{
 				UpgradeArguments: UpgradeArguments{
 					Step:      Step{Description: "Upgrade Foo"},

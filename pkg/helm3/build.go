@@ -23,12 +23,12 @@ type BuildInput struct {
 // MixinConfig represents configuration that can be set on the helm3 mixin in porter.yaml
 // mixins:
 // - helm3:
-// 	  clientVersion: v3.3.4
+// 	  clientVersion: v3.6.3
 // 	  clientPlatfrom: linux
 // 	  clientArchitecture: amd64 | arm64 | arm | i386
 //	  repositories:
 //	    stable:
-//		  url: "https://kubernetes-charts.storage.googleapis.com"
+//		  url: "https://charts.helm.sh/stable"
 
 type MixinConfig struct {
 	ClientVersion      string `yaml:"clientVersion,omitempty"`
@@ -79,7 +79,7 @@ func (m *Mixin) Build() error {
 	fmt.Fprintf(m.Out, "RUN apt-get update && apt-get install -y curl")
 	fmt.Fprintf(m.Out, "\nRUN curl https://get.helm.sh/helm-%s-%s-%s.tar.gz --output helm3.tar.gz",
 		m.HelmClientVersion, m.HelmClientPlatfrom, m.HelmClientArchitecture)
-	fmt.Fprintf(m.Out, "\nRUN tar -xvf helm3.tar.gz")
+	fmt.Fprintf(m.Out, "\nRUN tar -xvf helm3.tar.gz && rm helm3.tar.gz")
 	fmt.Fprintf(m.Out, "\nRUN mv linux-amd64/helm /usr/local/bin/helm3")
 
 	if len(input.Config.Repositories) > 0 {

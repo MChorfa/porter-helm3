@@ -88,6 +88,9 @@ func (m *Mixin) Install() error {
 		cmd.Args = append(cmd.Args, "--values", v)
 	}
 
+	// This will ensure the installation process deletes the installation on failure.
+	cmd.Args = append(cmd.Args, "--atomic")
+
 	cmd.Args = HandleSettingChartValuesForInstall(step, cmd)
 
 	cmd.Stdout = m.Out
