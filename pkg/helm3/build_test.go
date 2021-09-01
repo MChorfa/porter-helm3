@@ -112,6 +112,6 @@ RUN mv linux-amd64/helm /usr/local/bin/helm3`
 		m.Debug = false
 		m.In = bytes.NewReader(b)
 		err = m.Build()
-		require.EqualError(t, err, `supplied client version "v3.3.0.0" cannot be parsed as semver: Invalid Semantic Version`)
+		require.EqualError(t, err, `supplied client version "v3.6.3.0" cannot be parsed as semver: Invalid Semantic Version`)
 	})
 }
