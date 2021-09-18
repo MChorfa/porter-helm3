@@ -1,6 +1,7 @@
 mixins:
+- exec
 - helm3:
-    clientVersion: v3.6.3
+    clientVersion: v3.7.0
     repositories:
       stable:
         url: "https://charts.helm.sh/stable"
@@ -13,6 +14,8 @@ registry: getporter
 credentials:
 - name: kubeconfig
   path: /root/.kube/config
+- name: helm-registry-password
+  env: HELM_REGISTRY_PASSWORD
 
 parameters:
 - name: database-name
@@ -23,16 +26,34 @@ parameters:
   default: mysql-admin
 - name: namespace
   type: string
-  default: ''
+  default: 'my-namespace'
 - name: mysql-name
   type: string
   default: my-mysql
+- name: mysql-password
+  type: string
+  default: my-password
+- name: helm-registry-username
+  type: string
+  default: myuser
 
 customActions:
   status:
     description: "Get the status of a helm3 release"
     modifies: false
     stateless: true
+
+login:
+  - helm3:
+      description: "Login to OCI registry"
+      arguments:
+        - registry
+        - login
+        - localhost:5000
+        - "--insecure"
+      flags:
+        u:  "{{ bundle.parameters.helm-registry-username }}"
+        p:  "{{ bundle.credentials.helm-registry-password }}"
 
 install:
   - helm3:
@@ -41,7 +62,7 @@ install:
       chart: stable/mysql
       version: 1.6.2
       namespace: "{{ bundle.parameters.namespace }}"
-      replace: true
+      createNamespace: true
       set:
         mysqlDatabase: "{{ bundle.parameters.database-name}}"
         mysqlUser: "{{ bundle.parameters.mysql-user }}"

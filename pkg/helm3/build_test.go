@@ -16,7 +16,8 @@ func TestMixin_Build(t *testing.T) {
 	err := m.Build()
 	require.NoError(t, err)
 
-	buildOutput := `RUN apt-get update && apt-get install -y curl
+	buildOutput := `ENV HELM_EXPERIMENTAL_OCI=1
+RUN apt-get update && apt-get install -y curl
 RUN curl https://get.helm.sh/helm-%s-%s-%s.tar.gz --output helm3.tar.gz
 RUN tar -xvf helm3.tar.gz && rm helm3.tar.gz
 RUN mv linux-amd64/helm /usr/local/bin/helm3
@@ -114,6 +115,6 @@ RUN curl -o kubectl https://storage.googleapis.com/kubernetes-release/release/v1
 		m.Debug = false
 		m.In = bytes.NewReader(b)
 		err = m.Build()
-		require.EqualError(t, err, `supplied client version "v3.6.3.0" cannot be parsed as semver: Invalid Semantic Version`)
+		require.EqualError(t, err, `supplied client version "v3.7.0.0" cannot be parsed as semver: Invalid Semantic Version`)
 	})
 }

@@ -23,15 +23,16 @@ type UpgradeStep struct {
 type UpgradeArguments struct {
 	Step `yaml:",inline"`
 
-	Namespace   string            `yaml:"namespace"`
-	Name        string            `yaml:"name"`
-	Chart       string            `yaml:"chart"`
-	Version     string            `yaml:"version"`
-	Set         map[string]string `yaml:"set"`
-	Values      []string          `yaml:"values"`
-	Wait        bool              `yaml:"wait"`
-	ResetValues bool              `yaml:"resetValues"`
-	ReuseValues bool              `yaml:"reuseValues"`
+	Namespace       string            `yaml:"namespace"`
+	CreateNamespace bool              `yaml:"createNamespace"`
+	Name            string            `yaml:"name"`
+	Chart           string            `yaml:"chart"`
+	Version         string            `yaml:"version"`
+	Set             map[string]string `yaml:"set"`
+	Values          []string          `yaml:"values"`
+	Wait            bool              `yaml:"wait"`
+	ResetValues     bool              `yaml:"resetValues"`
+	ReuseValues     bool              `yaml:"reuseValues"`
 }
 
 // Upgrade issues a helm upgrade command for a release using the provided UpgradeArguments
@@ -62,6 +63,10 @@ func (m *Mixin) Upgrade() error {
 		cmd.Args = append(cmd.Args, "--namespace", step.Namespace)
 	}
 
+	if step.CreateNamespace {
+		cmd.Args = append(cmd.Args, "--create-namespace")
+	}
+
 	if step.Version != "" {
 		cmd.Args = append(cmd.Args, "--version", step.Version)
 	}
@@ -84,7 +89,8 @@ func (m *Mixin) Upgrade() error {
 
 	// This will upgrade process rolls back changes made in case of failed upgrade.
 	cmd.Args = append(cmd.Args, "--atomic")
-
+	// This will ensure the creation of the release namespace if not present.
+	cmd.Args = append(cmd.Args, "--create-namespace")
 	cmd.Args = HandleSettingChartValuesForUpgrade(step, cmd)
 
 	cmd.Stdout = m.Out

@@ -18,7 +18,7 @@ Helm client version configuration. You can define others minors and patch versio
 
 ```yaml
 - helm3:
-    clientVersion: v3.6.3
+    clientVersion: v3.7.0
 ```
 
 Repositories
@@ -45,7 +45,6 @@ install:
       replace: BOOL # Remove it if upsert is set to true. This is unsafe in production
       devel: BOOL
       wait: BOOL # default true
-      upsert: BOOL # default false. If set to true `upgrade --install` will be executed
       set:
         VAR1: VALUE1
         VAR2: VALUE2

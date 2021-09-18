@@ -21,16 +21,17 @@ type InstallStep struct {
 type InstallArguments struct {
 	Step `yaml:",inline"`
 
-	Namespace string            `yaml:"namespace"`
-	Name      string            `yaml:"name"`
-	Chart     string            `yaml:"chart"`
-	Version   string            `yaml:"version"`
-	Replace   bool              `yaml:"replace"`
-	Set       map[string]string `yaml:"set"`
-	Values    []string          `yaml:"values"`
-	Devel     bool              `yaml:"devel`
-	UpSert    bool              `yaml:"upsert`
-	Wait      bool              `yaml:"wait"`
+	Namespace       string            `yaml:"namespace"`
+	CreateNamespace bool              `yaml:"createNamespace"`
+	Name            string            `yaml:"name"`
+	Chart           string            `yaml:"chart"`
+	Version         string            `yaml:"version"`
+	Replace         bool              `yaml:"replace"`
+	Set             map[string]string `yaml:"set"`
+	Values          []string          `yaml:"values"`
+	Devel           bool              `yaml:"devel`
+	UpSert          bool              `yaml:"upsert`
+	Wait            bool              `yaml:"wait"`
 }
 
 func (m *Mixin) Install() error {
@@ -57,15 +58,14 @@ func (m *Mixin) Install() error {
 
 	cmd := m.NewCommand("helm3")
 
-	if step.UpSert {
-		cmd.Args = append(cmd.Args, "upgrade", "--install", step.Name, step.Chart)
-
-	} else {
-		cmd.Args = append(cmd.Args, "install", step.Name, step.Chart)
-	}
+	cmd.Args = append(cmd.Args, "upgrade", "--install", step.Name, step.Chart)
 
 	if step.Namespace != "" {
 		cmd.Args = append(cmd.Args, "--namespace", step.Namespace)
+	}
+
+	if step.CreateNamespace {
+		cmd.Args = append(cmd.Args, "--create-namespace")
 	}
 
 	if step.Version != "" {
@@ -90,7 +90,8 @@ func (m *Mixin) Install() error {
 
 	// This will ensure the installation process deletes the installation on failure.
 	cmd.Args = append(cmd.Args, "--atomic")
-
+	// This will ensure the creation of the release namespace if not present.
+	cmd.Args = append(cmd.Args, "--create-namespace")
 	cmd.Args = HandleSettingChartValuesForInstall(step, cmd)
 
 	cmd.Stdout = m.Out

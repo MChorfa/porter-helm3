@@ -1,0 +1,21 @@
+# Test Authenticate to a remote registry.
+# Usage:
+#   helm registry login [host] [flags]
+
+# Flags:
+#   -h, --help              help for login
+#       --insecure          allow connections to TLS registry without certs
+#   -p, --password string   registry password or identity token
+#       --password-stdin    read password or identity token from stdin
+#   -u, --username string   registry username
+status:
+  - helm3:
+      description: "Login to OCI registry"
+      arguments:
+        - registry
+        - login
+        - localhost:5000
+        - "--insecure"
+      flags:
+        u: myuser
+        p: mypass

@@ -16,6 +16,10 @@
             "namespace": {
               "type": "string"
             },
+            "createNamespace": {
+              "type": "boolean",
+              "default": true
+            },
             "chart": {
               "type": "string"
             },
@@ -30,7 +34,7 @@
             },
             "upsert": {
               "type": "boolean",
-              "default": false
+              "default": true
             },
             "devel": {
               "type": "boolean"
@@ -69,6 +73,10 @@
             },
             "namespace": {
               "type": "string"
+            },
+            "createNamespace": {
+              "type": "boolean",
+              "default": true
             },
             "chart": {
               "type": "string"

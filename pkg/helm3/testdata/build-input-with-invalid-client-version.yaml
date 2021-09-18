@@ -1,5 +1,5 @@
 config:
-  clientVersion: v3.6.3.0
+  clientVersion: v3.7.0.0
 install:
   - helm3:
       description: "Install MySQL"
