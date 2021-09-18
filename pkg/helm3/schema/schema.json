@@ -16,25 +16,39 @@
             "namespace": {
               "type": "string"
             },
-            "createNamespace": {
-              "type": "boolean",
-              "default": true
-            },
             "chart": {
               "type": "string"
             },
             "version": {
               "type": "string"
             },
-            "replace": {
-              "type": "boolean"
+            "repo": {
+              "type": "string"
             },
-            "wait": {
-              "type": "boolean"
+            "username": {
+              "type": "string"
+            },
+            "password": {
+              "type": "string"
+            },
+            "dependencyUpdate": {
+              "type": "boolean",
+              "default": false
+            },
+            "noHooks": {
+              "type": "boolean",
+              "default": false
+            },
+            "replace": {
+              "type": "boolean",
+              "default": false
             },
             "upsert": {
               "type": "boolean",
               "default": true
+            },
+            "wait": {
+              "type": "boolean"
             },
             "devel": {
               "type": "boolean"
@@ -73,10 +87,6 @@
             },
             "namespace": {
               "type": "string"
-            },
-            "createNamespace": {
-              "type": "boolean",
-              "default": true
             },
             "chart": {
               "type": "string"
