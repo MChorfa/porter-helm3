@@ -1,252 +1,299 @@
 {
-  "$schema": "http://json-schema.org/draft-07/schema#",
-  "definitions": {
-    "installStep": {
-      "type": "object",
-      "properties": {
-        "helm3": {
-          "type": "object",
-          "properties": {
-            "description": {
-              "$ref": "#/definitions/stepDescription"
+  "$schema":"http://json-schema.org/draft-07/schema#",
+  "definitions":{
+    "installStep":{
+      "type":"object",
+      "properties":{
+        "helm3":{
+          "type":"object",
+          "properties":{
+            "description":{
+              "$ref":"#/definitions/stepDescription"
             },
-            "name": {
-              "type": "string"
+            "name":{
+              "type":"string"
             },
-            "namespace": {
-              "type": "string"
+            "namespace":{
+              "type":"string"
             },
-            "chart": {
-              "type": "string"
+            "chart":{
+              "type":"string"
             },
-            "version": {
-              "type": "string"
+            "version":{
+              "type":"string"
             },
-            "repo": {
-              "type": "string"
+            "repo":{
+              "type":"string"
             },
-            "username": {
-              "type": "string"
+            "username":{
+              "type":"string"
             },
-            "password": {
-              "type": "string"
+            "password":{
+              "type":"string"
             },
-            "dependencyUpdate": {
-              "type": "boolean",
-              "default": false
+            "skipCrds":{
+              "type":"boolean",
+              "default":false
             },
-            "noHooks": {
-              "type": "boolean",
-              "default": false
+            "noHooks":{
+              "type":"boolean",
+              "default":false
             },
-            "replace": {
-              "type": "boolean",
-              "default": false
+            "wait":{
+              "type":"boolean"
             },
-            "upsert": {
-              "type": "boolean",
-              "default": true
+            "devel":{
+              "type":"boolean"
             },
-            "wait": {
-              "type": "boolean"
+            "set":{
+              "type":"object",
+              "additionalProperties":true
             },
-            "devel": {
-              "type": "boolean"
-            },
-            "set": {
-              "type": "object",
-              "additionalProperties": true
-            },
-            "values": {
-              "type": "array",
-              "items": {
-                "type": "string"
+            "values":{
+              "type":"array",
+              "items":{
+                "type":"string"
               }
             },
-            "outputs": {
-              "$ref": "#/definitions/outputs"
+            "outputs":{
+              "$ref":"#/definitions/outputs"
             }
           },
-          "additionalProperties": false,
-          "required": ["name", "description", "chart"]
+          "additionalProperties":false,
+          "required":[
+            "name",
+            "description",
+            "chart"
+          ]
         }
       },
-      "required": ["helm3"]
+      "required":[
+        "helm3"
+      ]
     },
-    "upgradeStep": {
-      "type": "object",
-      "properties": {
-        "helm3": {
-          "type": "object",
-          "properties": {
-            "description": {
-              "$ref": "#/definitions/stepDescription"
+    "upgradeStep":{
+      "type":"object",
+      "properties":{
+        "helm3":{
+          "type":"object",
+          "properties":{
+            "description":{
+              "$ref":"#/definitions/stepDescription"
             },
-            "name": {
-              "type": "string"
+            "name":{
+              "type":"string"
             },
-            "namespace": {
-              "type": "string"
+            "namespace":{
+              "type":"string"
             },
-            "chart": {
-              "type": "string"
+            "chart":{
+              "type":"string"
             },
-            "version": {
-              "type": "string"
+            "version":{
+              "type":"string"
             },
-            "wait": {
-              "type": "boolean",
-              "default": false
+            "repo":{
+              "type":"string"
             },
-            "set": {
-              "type": "object",
-              "additionalProperties": true
+            "username":{
+              "type":"string"
             },
-            "values": {
-              "type": "array",
-              "items": {
-                "type": "string"
+            "password":{
+              "type":"string"
+            },
+            "skipCrds":{
+              "type":"boolean",
+              "default":false
+            },
+            "noHooks":{
+              "type":"boolean",
+              "default":false
+            },
+            "wait":{
+              "type":"boolean",
+              "default":false
+            },
+            "set":{
+              "type":"object",
+              "additionalProperties":true
+            },
+            "values":{
+              "type":"array",
+              "items":{
+                "type":"string"
               }
             },
-            "resetValues": {
-              "type": "boolean",
-              "default": false
+            "resetValues":{
+              "type":"boolean",
+              "default":false
             },
-            "reuseValues": {
-              "type": "boolean",
-              "default": false
+            "reuseValues":{
+              "type":"boolean",
+              "default":false
             },
-            "outputs": {
-              "$ref": "#/definitions/outputs"
+            "outputs":{
+              "$ref":"#/definitions/outputs"
             }
           },
-          "additionalProperties": false,
-          "required": ["name", "description", "chart"]
+          "additionalProperties":false,
+          "required":[
+            "name",
+            "description",
+            "chart"
+          ]
         }
       },
-      "required": ["helm3"]
+      "required":[
+        "helm3"
+      ]
     },
-    "invokeStep": {
-      "type": "object",
-      "properties": {
-        "helm3": { "$ref": "#/definitions/helm3" }
+    "invokeStep":{
+      "type":"object",
+      "properties":{
+        "helm3":{
+          "$ref":"#/definitions/helm3"
+        }
       },
-      "required": ["helm3"],
-      "additionalProperties": false
+      "required":[
+        "helm3"
+      ],
+      "additionalProperties":false
     },
-    "uninstallStep": {
-      "type": "object",
-      "properties": {
-        "helm3": {
-          "type": "object",
-          "properties": {
-            "description": {
-              "$ref": "#/definitions/stepDescription"
+    "uninstallStep":{
+      "type":"object",
+      "properties":{
+        "helm3":{
+          "type":"object",
+          "properties":{
+            "description":{
+              "$ref":"#/definitions/stepDescription"
             },
-            "releases": {
-              "type": "array",
-              "items": {
-                "type": "string"
+            "releases":{
+              "type":"array",
+              "items":{
+                "type":"string"
               },
-              "minItems": 1
+              "minItems":1
             },
-            "namespace": {
-              "type": "string"
+            "namespace":{
+              "type":"string"
+            },
+            "wait":{
+              "type":"boolean",
+              "default":false
+            },
+            "noHooks":{
+              "type":"boolean",
+              "default":false
             }
           },
-          "additionalProperties": false,
-          "required": ["description", "releases"]
+          "additionalProperties":false,
+          "required":[
+            "description",
+            "releases"
+          ]
         }
       },
-      "required": ["helm3"]
+      "required":[
+        "helm3"
+      ]
     },
-    "stepDescription": {
-      "type": "string",
-      "minLength": 1
+    "stepDescription":{
+      "type":"string",
+      "minLength":1
     },
-    "outputs": {
-      "type": "array",
-      "items": {
-        "type": "object",
-        "properties": {
-          "name": {
-            "type": "string"
+    "outputs":{
+      "type":"array",
+      "items":{
+        "type":"object",
+        "properties":{
+          "name":{
+            "type":"string"
           },
-          "secret": {
-            "type": "string"
+          "secret":{
+            "type":"string"
           },
-          "key": {
-            "type": "string"
+          "key":{
+            "type":"string"
           },
-          "namespace": {
-            "type": "string"
+          "namespace":{
+            "type":"string"
           },
-          "resourceType": {
-            "type": "string"
+          "resourceType":{
+            "type":"string"
           },
-          "resourceName": {
-            "type": "string"
+          "resourceName":{
+            "type":"string"
           },
-          "jsonPath": {
-            "type": "string"
+          "jsonPath":{
+            "type":"string"
           }
         },
-        "additionalProperties": false,
-        "required": ["name"]
+        "additionalProperties":false,
+        "required":[
+          "name"
+        ]
       }
     },
-    "helm3": {
-      "type": "object",
-      "properties": {
-        "description": {
-          "$ref": "#/definitions/stepDescription"
+    "helm3":{
+      "type":"object",
+      "properties":{
+        "description":{
+          "$ref":"#/definitions/stepDescription"
         },
-        "arguments": {
-          "type": "array",
-          "items": {
-            "type": "string"
+        "arguments":{
+          "type":"array",
+          "items":{
+            "type":"string"
           }
         },
-        "flags": {
-          "type": "object",
-          "additionalProperties": {
-            "type": ["null", "boolean", "number", "string"]
+        "flags":{
+          "type":"object",
+          "additionalProperties":{
+            "type":[
+              "null",
+              "boolean",
+              "number",
+              "string"
+            ]
           }
         },
-        "outputs": {
-          "$ref": "#/definitions/outputs"
+        "outputs":{
+          "$ref":"#/definitions/outputs"
         }
       },
-      "additionalProperties": false,
-      "required": ["description"]
+      "additionalProperties":false,
+      "required":[
+        "description"
+      ]
     }
   },
-  "type": "object",
-  "properties": {
-    "install": {
-      "type": "array",
-      "items": {
-        "$ref": "#/definitions/installStep"
+  "type":"object",
+  "properties":{
+    "install":{
+      "type":"array",
+      "items":{
+        "$ref":"#/definitions/installStep"
       }
     },
-    "upgrade": {
-      "type": "array",
-      "items": {
-        "$ref": "#/definitions/upgradeStep"
+    "upgrade":{
+      "type":"array",
+      "items":{
+        "$ref":"#/definitions/upgradeStep"
       }
     },
-    "uninstall": {
-      "type": "array",
-      "items": {
-        "$ref": "#/definitions/uninstallStep"
+    "uninstall":{
+      "type":"array",
+      "items":{
+        "$ref":"#/definitions/uninstallStep"
       }
     }
   },
-  "additionalProperties": {
-    "type": "array",
-    "items": {
-      "$ref": "#/definitions/invokeStep"
+  "additionalProperties":{
+    "type":"array",
+    "items":{
+      "$ref":"#/definitions/invokeStep"
     }
   },
-  "additionalProperties": false
+  "additionalProperties":false
 }
