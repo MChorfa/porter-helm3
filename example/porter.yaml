@@ -61,7 +61,6 @@ install:
       chart: stable/mysql
       version: 1.6.2
       namespace: "{{ bundle.parameters.namespace }}"
-      createNamespace: true
       set:
         mysqlDatabase: "{{ bundle.parameters.database-name}}"
         mysqlUser: "{{ bundle.parameters.mysql-user }}"
