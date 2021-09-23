@@ -5,6 +5,7 @@ import (
 )
 
 var _ builder.ExecutableAction = Action{}
+var _ builder.ExecutableStep = ExecuteStep{}
 
 type Action struct {
 	Steps []ExecuteSteps // using UnmarshalYAML so that we don't need a custom type per action
@@ -36,8 +37,6 @@ func (a Action) GetSteps() []builder.ExecutableStep {
 
 	return steps
 }
-
-var _ builder.ExecutableStep = ExecuteStep{}
 
 type ExecuteSteps struct {
 	ExecuteStep `yaml:"helm3"`

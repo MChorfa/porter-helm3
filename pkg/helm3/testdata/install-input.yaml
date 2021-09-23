@@ -4,7 +4,7 @@ install:
     chart: stable/mysql
     name: "my-release"
     version: 0.10.2
-    replace: true
+    noHooks: true
     set:
       mysqlDatabase: mydb
       mysqlUser: myuser

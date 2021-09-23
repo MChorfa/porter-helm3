@@ -9,7 +9,6 @@ install:
       chart: stable/postgresql
       version: 8.4.0
       namespace: "test-postgresql"
-      replace: true
       set:
         postgresqlUsername: "test-123"
         postgresqlPassword: "test-123"

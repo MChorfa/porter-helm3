@@ -42,6 +42,88 @@ func TestMixin_UnmarshalExecuteStep(t *testing.T) {
 	assert.Equal(t, wantOutputs, step.Outputs)
 }
 
+func TestMixin_UnmarshalExecuteLoginRegistryStep(t *testing.T) {
+	b, err := ioutil.ReadFile("testdata/execute-input-login-registry-private.yaml")
+	require.NoError(t, err)
+
+	var action Action
+	err = yaml.Unmarshal(b, &action)
+	require.NoError(t, err)
+	require.Len(t, action.Steps, 1)
+	step := action.Steps[0]
+
+	assert.Equal(t, "Login to OCI registry", step.Description)
+	assert.Equal(t, []string{"registry", "login", "https://charts.private.com"}, step.Arguments)
+	wantFlags := builder.Flags{
+		builder.Flag{Name: "p", Values: []string{"mypass"}},
+		builder.Flag{Name: "u", Values: []string{"myuser"}},
+	}
+
+	assert.Equal(t, wantFlags, step.Flags)
+}
+
+func TestMixin_UnmarshalExecuteLoginRegistryInsecureStep(t *testing.T) {
+	b, err := ioutil.ReadFile("testdata/execute-input-login-registry-insecure.yaml")
+	require.NoError(t, err)
+
+	var action Action
+	err = yaml.Unmarshal(b, &action)
+	require.NoError(t, err)
+	require.Len(t, action.Steps, 1)
+	step := action.Steps[0]
+
+	assert.Equal(t, "Login to OCI registry", step.Description)
+	assert.Equal(t, []string{"registry", "login", "localhost:5000", "--insecure"}, step.Arguments)
+	wantFlags := builder.Flags{
+		builder.Flag{Name: "p", Values: []string{"mypass"}},
+		builder.Flag{Name: "u", Values: []string{"myuser"}},
+	}
+
+	assert.Equal(t, wantFlags, step.Flags)
+}
+
+func TestMixin_Execute_Login_Registry(t *testing.T) {
+	defer os.Unsetenv(test.ExpectedCommandEnv)
+	os.Setenv(test.ExpectedCommandEnv, "helm3 registry login localhost:5000 --insecure -p mypass -u myuser")
+
+	executeAction := Action{
+		Steps: []ExecuteSteps{
+			{
+				ExecuteStep: ExecuteStep{
+					Arguments: []string{
+						"registry",
+						"login",
+						"localhost:5000",
+						"--insecure",
+					},
+					Flags: builder.Flags{
+						{
+							Name: "u",
+							Values: []string{
+								"myuser",
+							},
+						},
+						{
+							Name: "p",
+							Values: []string{
+								"mypass",
+							},
+						},
+					},
+				},
+			},
+		},
+	}
+
+	b, _ := yaml.Marshal(executeAction)
+
+	h := NewTestMixin(t)
+	h.In = bytes.NewReader(b)
+
+	err := h.Execute()
+	require.NoError(t, err)
+}
+
 func TestMixin_Execute(t *testing.T) {
 	defer os.Unsetenv(test.ExpectedCommandEnv)
 	os.Setenv(test.ExpectedCommandEnv, "helm3 status mysql -o yaml")

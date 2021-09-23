@@ -40,7 +40,6 @@ func TestMixin_UnmarshalInstallStep(t *testing.T) {
 	assert.Equal(t, HelmOutput{"mysql-cluster-ip", "", "", "service", "porter-ci-mysql-service", "default", "{.spec.clusterIP}"}, step.Outputs[2])
 	assert.Equal(t, "stable/mysql", step.Chart)
 	assert.Equal(t, "0.10.2", step.Version)
-	assert.Equal(t, true, step.Replace)
 	assert.Equal(t, map[string]string{"mysqlDatabase": "mydb", "mysqlUser": "myuser",
 		"livenessProbe.initialDelaySeconds": "30", "persistence.enabled": "true"}, step.Set)
 }
@@ -59,11 +58,10 @@ func TestMixin_Install(t *testing.T) {
 		"/tmp/val2.yaml",
 	}
 
-	baseInstall := fmt.Sprintf(`helm3 install %s %s --namespace %s --version %s`, name, chart, namespace, version)
-	baseInstallUpSert := fmt.Sprintf(`helm3 upgrade --install %s %s --namespace %s --version %s`, name, chart, namespace, version)
+	baseInstall := fmt.Sprintf(`helm3 upgrade --install %s %s --namespace %s --version %s`, name, chart, namespace, version)
 	baseValues := `--values /tmp/val1.yaml --values /tmp/val2.yaml`
 	baseSetArgs := `--set baz=qux --set foo=bar`
-	baseAddFlags := `--atomic`
+	baseAddFlags := `--atomic --create-namespace`
 
 	installTests := []InstallTest{
 		{
@@ -81,7 +79,7 @@ func TestMixin_Install(t *testing.T) {
 			},
 		},
 		{
-			expectedCommand: fmt.Sprintf(`%s %s %s %s %s`, baseInstall, `--replace`, baseValues, baseAddFlags, baseSetArgs),
+			expectedCommand: fmt.Sprintf(`%s %s %s %s %s`, baseInstall, baseValues, `--no-hooks`, baseAddFlags, baseSetArgs),
 			installStep: InstallStep{
 				InstallArguments: InstallArguments{
 					Step:      Step{Description: "Install Foo"},
@@ -91,7 +89,22 @@ func TestMixin_Install(t *testing.T) {
 					Version:   version,
 					Set:       setArgs,
 					Values:    values,
-					Replace:   true,
+					NoHooks:   true,
+				},
+			},
+		},
+		{
+			expectedCommand: fmt.Sprintf(`%s %s %s %s %s`, baseInstall, baseValues, `--skip-crds`, baseAddFlags, baseSetArgs),
+			installStep: InstallStep{
+				InstallArguments: InstallArguments{
+					Step:      Step{Description: "Install Foo"},
+					Namespace: namespace,
+					Name:      name,
+					Chart:     chart,
+					Version:   version,
+					Set:       setArgs,
+					Values:    values,
+					SkipCrds:  true,
 				},
 			},
 		},
@@ -111,7 +124,7 @@ func TestMixin_Install(t *testing.T) {
 			},
 		},
 		{
-			expectedCommand: fmt.Sprintf(`%s %s %s %s %s`, baseInstallUpSert, `--wait`, baseValues, baseAddFlags, baseSetArgs),
+			expectedCommand: fmt.Sprintf(`%s %s %s %s %s`, baseInstall, `--wait`, baseValues, baseAddFlags, baseSetArgs),
 			installStep: InstallStep{
 				InstallArguments: InstallArguments{
 					Step:      Step{Description: "Install Foo"},
@@ -122,7 +135,6 @@ func TestMixin_Install(t *testing.T) {
 					Set:       setArgs,
 					Values:    values,
 					Wait:      true,
-					UpSert:    true,
 				},
 			},
 		},

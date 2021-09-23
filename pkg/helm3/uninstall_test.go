@@ -2,7 +2,6 @@ package helm3
 
 import (
 	"bytes"
-	"fmt"
 	"io/ioutil"
 	"os"
 	"testing"
@@ -30,18 +29,21 @@ func TestMixin_UnmarshalUninstallStep(t *testing.T) {
 
 	assert.Equal(t, "Uninstall MySQL", step.Description)
 	assert.Equal(t, []string{"porter-ci-mysql"}, step.Releases)
+	assert.Equal(t, true, step.Wait)
+	assert.Equal(t, true, step.NoHooks)
 }
 
 func TestMixin_Uninstall(t *testing.T) {
 	releases := []string{
 		"foo",
-		"bar",
 	}
 	namespace := "my-namespace"
+	noHooks := true
+	wait := true
 
 	uninstallTests := []UninstallTest{
 		{
-			expectedCommand: "helm3 uninstall foo\nhelm3 uninstall bar",
+			expectedCommand: "helm3 uninstall foo",
 			uninstallStep: UninstallStep{
 				UninstallArguments: UninstallArguments{
 					Step:     Step{Description: "Uninstall Foo"},
@@ -50,12 +52,24 @@ func TestMixin_Uninstall(t *testing.T) {
 			},
 		},
 		{
-			expectedCommand: "helm3 uninstall foo --namespace my-namespace\nhelm3 uninstall bar --namespace my-namespace",
+			expectedCommand: "helm3 uninstall foo --namespace my-namespace",
 			uninstallStep: UninstallStep{
 				UninstallArguments: UninstallArguments{
 					Step:      Step{Description: "Uninstall Foo"},
 					Releases:  releases,
 					Namespace: namespace,
+				},
+			},
+		},
+		{
+			expectedCommand: "helm3 uninstall foo --namespace my-namespace --no-hooks --wait",
+			uninstallStep: UninstallStep{
+				UninstallArguments: UninstallArguments{
+					Step:      Step{Description: "Uninstall Foo"},
+					Releases:  releases,
+					Namespace: namespace,
+					NoHooks:   noHooks,
+					Wait:      wait,
 				},
 			},
 		},
@@ -69,8 +83,6 @@ func TestMixin_Uninstall(t *testing.T) {
 			action := UninstallAction{Steps: []UninstallStep{uninstallTest.uninstallStep}}
 			b, _ := yaml.Marshal(action)
 
-			x := string(b)
-			fmt.Println(x)
 			h := NewTestMixin(t)
 			h.In = bytes.NewReader(b)
 

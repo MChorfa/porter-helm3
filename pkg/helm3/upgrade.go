@@ -27,11 +27,16 @@ type UpgradeArguments struct {
 	Name        string            `yaml:"name"`
 	Chart       string            `yaml:"chart"`
 	Version     string            `yaml:"version"`
+	NoHooks     bool              `yaml:"nohooks"`
 	Set         map[string]string `yaml:"set"`
 	Values      []string          `yaml:"values"`
 	Wait        bool              `yaml:"wait"`
 	ResetValues bool              `yaml:"resetValues"`
 	ReuseValues bool              `yaml:"reuseValues"`
+	Repo        string            `yaml:"repo"`
+	SkipCrds    bool              `yaml:"skipcrds`
+	Password    string            `yaml:"password"`
+	Username    string            `yaml:"username"`
 }
 
 // Upgrade issues a helm upgrade command for a release using the provided UpgradeArguments
@@ -84,7 +89,8 @@ func (m *Mixin) Upgrade() error {
 
 	// This will upgrade process rolls back changes made in case of failed upgrade.
 	cmd.Args = append(cmd.Args, "--atomic")
-
+	// This will ensure the creation of the release namespace if not present.
+	cmd.Args = append(cmd.Args, "--create-namespace")
 	cmd.Args = HandleSettingChartValuesForUpgrade(step, cmd)
 
 	cmd.Stdout = m.Out

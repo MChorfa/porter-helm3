@@ -25,6 +25,8 @@ type UninstallArguments struct {
 	Step      `yaml:",inline"`
 	Namespace string   `yaml:"namespace,omitempty"`
 	Releases  []string `yaml:"releases"`
+	NoHooks   bool     `yaml:"noHooks"`
+	Wait      bool     `yaml:"wait"`
 }
 
 // Uninstall deletes a provided set of Helm releases, supplying optional flags/params
@@ -48,7 +50,7 @@ func (m *Mixin) Uninstall() error {
 	// This gives us more fine-grained error recovery and handling
 	var result error
 	for _, release := range step.Releases {
-		err = m.delete(release, step.Namespace)
+		err = m.delete(release, step.Namespace, step.NoHooks, step.Wait)
 		if err != nil {
 			result = multierror.Append(result, err)
 		}
@@ -56,13 +58,21 @@ func (m *Mixin) Uninstall() error {
 	return result
 }
 
-func (m *Mixin) delete(release string, namespace string) error {
+func (m *Mixin) delete(release string, namespace string, noHooks bool, wait bool) error {
 	cmd := m.NewCommand("helm3", "uninstall")
 
 	cmd.Args = append(cmd.Args, release)
 
 	if namespace != "" {
 		cmd.Args = append(cmd.Args, "--namespace", namespace)
+	}
+
+	if noHooks {
+		cmd.Args = append(cmd.Args, "--no-hooks")
+	}
+
+	if wait {
+		cmd.Args = append(cmd.Args, "--wait")
 	}
 
 	output := &bytes.Buffer{}
