@@ -34,6 +34,8 @@ type InstallArguments struct {
 	Values    []string          `yaml:"values"`
 	Version   string            `yaml:"version"`
 	Wait      bool              `yaml:"wait"`
+	Timeout   string            `yaml:"timeout"`
+	Debug     bool              `yaml:"debug"`
 }
 
 func (m *Mixin) Install() error {
@@ -92,6 +94,13 @@ func (m *Mixin) Install() error {
 
 	if step.Repo != "" && step.Username != "" && step.Password != "" {
 		cmd.Args = append(cmd.Args, "--repo", step.Repo, "--username", step.Username, "--password", step.Password)
+	}
+
+	if step.Timeout != "" {
+		cmd.Args = append(cmd.Args, "--timeout", step.Timeout)
+	}
+	if step.Debug {
+		cmd.Args = append(cmd.Args, "--debug")
 	}
 	// This will ensure the installation process deletes the installation on failure.
 	cmd.Args = append(cmd.Args, "--atomic")

@@ -37,6 +37,8 @@ type UpgradeArguments struct {
 	SkipCrds    bool              `yaml:"skipcrds`
 	Password    string            `yaml:"password"`
 	Username    string            `yaml:"username"`
+	Timeout     string            `yaml:"timeout"`
+	Debug       bool              `yaml:"debug"`
 }
 
 // Upgrade issues a helm upgrade command for a release using the provided UpgradeArguments
@@ -87,10 +89,19 @@ func (m *Mixin) Upgrade() error {
 		cmd.Args = append(cmd.Args, "--values", v)
 	}
 
+	if step.Timeout != "" {
+		cmd.Args = append(cmd.Args, "--timeout", step.Timeout)
+	}
+
+	if step.Debug {
+		cmd.Args = append(cmd.Args, "--debug")
+	}
+
 	// This will upgrade process rolls back changes made in case of failed upgrade.
 	cmd.Args = append(cmd.Args, "--atomic")
 	// This will ensure the creation of the release namespace if not present.
 	cmd.Args = append(cmd.Args, "--create-namespace")
+
 	cmd.Args = HandleSettingChartValuesForUpgrade(step, cmd)
 
 	cmd.Stdout = m.Out
