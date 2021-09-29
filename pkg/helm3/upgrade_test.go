@@ -120,6 +120,22 @@ func TestMixin_Upgrade(t *testing.T) {
 				},
 			},
 		},
+		{
+			expectedCommand: fmt.Sprintf(`%s %s %s %s %s`, baseUpgrade, baseValues, `--timeout 600 --debug`, baseAddFlags, baseSetArgs),
+			upgradeStep: UpgradeStep{
+				UpgradeArguments: UpgradeArguments{
+					Step:      Step{Description: "Upgrade Foo"},
+					Namespace: namespace,
+					Name:      name,
+					Chart:     chart,
+					Version:   version,
+					Set:       setArgs,
+					Values:    values,
+					Timeout:   "600",
+					Debug:     true,
+				},
+			},
+		},
 	}
 
 	defer os.Unsetenv(test.ExpectedCommandEnv)

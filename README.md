@@ -48,6 +48,8 @@ install:
       wait: BOOL # default true
       noHooks: BOOL # disable pre/post upgrade hooks (default false)
       skipCrds: BOOL # if set, no CRDs will be installed (default false)
+      timeout:  DURATION # time to wait for any individual Kubernetes operation
+      debug: BOOL # enable verbose output (default false)
       set:
         VAR1: VALUE1
         VAR2: VALUE2
@@ -72,6 +74,8 @@ upgrade:
       wait: BOOL # default true
       noHooks: BOOL # disable pre/post upgrade hooks (default false)
       skipCrds: BOOL # if set, no CRDs will be installed (default false)
+      timeout:  DURATION # time to wait for any individual Kubernetes operation
+      debug: BOOL # enable verbose output (default false)
       set:
         VAR1: VALUE1
         VAR2: VALUE2
@@ -91,8 +95,10 @@ uninstall:
       releases:
         - RELEASE_NAME1
         - RELEASE_NAME2
-      wait: BOOL # default false
+      wait: BOOL # default false, if set It will wait for as long as --timeout
       noHooks: BOOL # prevent hooks from running during uninstallation
+      timeout:  DURATION # time to wait for any individual Kubernetes operation
+      debug: BOOL # enable verbose output (default false)
 ```
 
 #### Outputs

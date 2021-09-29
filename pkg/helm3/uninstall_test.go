@@ -73,6 +73,19 @@ func TestMixin_Uninstall(t *testing.T) {
 				},
 			},
 		},
+		{
+			expectedCommand: "helm3 uninstall foo --namespace my-namespace --no-hooks --timeout 600 --debug",
+			uninstallStep: UninstallStep{
+				UninstallArguments: UninstallArguments{
+					Step:      Step{Description: "Uninstall Foo"},
+					Releases:  releases,
+					Namespace: namespace,
+					NoHooks:   noHooks,
+					Timeout:   "600",
+					Debug:     true,
+				},
+			},
+		},
 	}
 
 	defer os.Unsetenv(test.ExpectedCommandEnv)

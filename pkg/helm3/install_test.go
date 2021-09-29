@@ -138,6 +138,22 @@ func TestMixin_Install(t *testing.T) {
 				},
 			},
 		},
+		{
+			expectedCommand: fmt.Sprintf(`%s %s %s %s %s`, baseInstall, baseValues, `--timeout 600 --debug`, baseAddFlags, baseSetArgs),
+			installStep: InstallStep{
+				InstallArguments: InstallArguments{
+					Step:      Step{Description: "Install Foo"},
+					Namespace: namespace,
+					Name:      name,
+					Chart:     chart,
+					Version:   version,
+					Set:       setArgs,
+					Values:    values,
+					Timeout:   "600",
+					Debug:     true,
+				},
+			},
+		},
 	}
 
 	defer os.Unsetenv(test.ExpectedCommandEnv)

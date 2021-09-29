@@ -27,6 +27,8 @@ type UninstallArguments struct {
 	Releases  []string `yaml:"releases"`
 	NoHooks   bool     `yaml:"noHooks"`
 	Wait      bool     `yaml:"wait"`
+	Timeout   string   `yaml:"timeout"`
+	Debug     bool     `yaml:"debug"`
 }
 
 // Uninstall deletes a provided set of Helm releases, supplying optional flags/params
@@ -50,7 +52,7 @@ func (m *Mixin) Uninstall() error {
 	// This gives us more fine-grained error recovery and handling
 	var result error
 	for _, release := range step.Releases {
-		err = m.delete(release, step.Namespace, step.NoHooks, step.Wait)
+		err = m.delete(release, step.Namespace, step.NoHooks, step.Wait, step.Timeout, step.Debug)
 		if err != nil {
 			result = multierror.Append(result, err)
 		}
@@ -58,7 +60,7 @@ func (m *Mixin) Uninstall() error {
 	return result
 }
 
-func (m *Mixin) delete(release string, namespace string, noHooks bool, wait bool) error {
+func (m *Mixin) delete(release string, namespace string, noHooks bool, wait bool, timeout string, debug bool) error {
 	cmd := m.NewCommand("helm3", "uninstall")
 
 	cmd.Args = append(cmd.Args, release)
@@ -75,6 +77,13 @@ func (m *Mixin) delete(release string, namespace string, noHooks bool, wait bool
 		cmd.Args = append(cmd.Args, "--wait")
 	}
 
+	if timeout != "" {
+		cmd.Args = append(cmd.Args, "--timeout", timeout)
+	}
+
+	if debug {
+		cmd.Args = append(cmd.Args, "--debug")
+	}
 	output := &bytes.Buffer{}
 	cmd.Stdout = io.MultiWriter(m.Out, output)
 	cmd.Stderr = io.MultiWriter(m.Err, output)

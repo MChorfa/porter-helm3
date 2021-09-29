@@ -59,7 +59,7 @@ func TestMixin_UnmarshalExecuteLoginRegistryStep(t *testing.T) {
 		builder.Flag{Name: "u", Values: []string{"myuser"}},
 	}
 
-	assert.Equal(t, wantFlags, step.Flags)
+	assert.EqualValues(t, wantFlags, step.Flags)
 }
 
 func TestMixin_UnmarshalExecuteLoginRegistryInsecureStep(t *testing.T) {
@@ -79,7 +79,7 @@ func TestMixin_UnmarshalExecuteLoginRegistryInsecureStep(t *testing.T) {
 		builder.Flag{Name: "u", Values: []string{"myuser"}},
 	}
 
-	assert.Equal(t, wantFlags, step.Flags)
+	assert.EqualValues(t, wantFlags, step.Flags)
 }
 
 func TestMixin_Execute_Login_Registry(t *testing.T) {
