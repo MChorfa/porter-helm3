@@ -1,4 +1,3 @@
-// go:generate packr2
 package helm3
 
 import (
@@ -10,7 +9,6 @@ import (
 	"github.com/MChorfa/porter-helm3/pkg/kubernetes"
 
 	"github.com/ghodss/yaml" // We are not using go-yaml because of serialization problems with jsonschema, don't use this library elsewhere
-	"github.com/gobuffalo/packr/v2"
 	"github.com/pkg/errors"
 	"github.com/xeipuuv/gojsonschema"
 	k8s "k8s.io/client-go/kubernetes"
@@ -23,7 +21,6 @@ const defaultClientArchitecture string = "amd64"
 // Helm is the logic behind the helm mixin
 type Mixin struct {
 	*context.Context
-	schema                 *packr.Box
 	ClientFactory          kubernetes.ClientFactory
 	HelmClientVersion      string
 	HelmClientPlatfrom     string
@@ -33,7 +30,6 @@ type Mixin struct {
 // New helm mixin client, initialized with useful defaults.
 func New() *Mixin {
 	return &Mixin{
-		schema:                 packr.New("schema", "./schema"),
 		Context:                context.New(),
 		ClientFactory:          kubernetes.New(),
 		HelmClientVersion:      defaultClientVersion,
@@ -61,10 +57,7 @@ func (m *Mixin) ValidatePayload(b []byte) error {
 	manifestLoader := gojsonschema.NewGoLoader(s)
 
 	// Load the step schema
-	schema, err := m.GetSchema()
-	if err != nil {
-		return err
-	}
+	schema := m.GetSchema()
 	schemaLoader := gojsonschema.NewStringLoader(schema)
 
 	validator, err := gojsonschema.NewSchema(schemaLoader)

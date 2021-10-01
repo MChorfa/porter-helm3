@@ -11,18 +11,6 @@ import (
 	"github.com/xeipuuv/gojsonschema"
 )
 
-func TestMixin_GetSchema(t *testing.T) {
-	m := NewTestMixin(t)
-
-	gotSchema, err := m.GetSchema()
-	require.NoError(t, err)
-
-	wantSchema, err := ioutil.ReadFile("schema/schema.json")
-	require.NoError(t, err)
-
-	assert.Equal(t, string(wantSchema), gotSchema)
-}
-
 func TestMixin_PrintSchema(t *testing.T) {
 	m := NewTestMixin(t)
 
@@ -41,8 +29,7 @@ func TestMixin_ValidateSchema(t *testing.T) {
 	m := NewTestMixin(t)
 
 	// Load the mixin schema
-	schemaB, err := m.GetSchema()
-	require.NoError(t, err)
+	schemaB := m.GetSchema()
 	schemaLoader := gojsonschema.NewStringLoader(schemaB)
 
 	// This validates that your schema.json is filled in properly
