@@ -32,25 +32,15 @@ endif
 REGISTRY ?= $(USER)
 
 .PHONY: build
-build: build-client build-runtime clean-packr
+build: build-client build-runtime
 
-build-runtime: generate
+build-runtime:
 	mkdir -p $(BINDIR)
 	GOARCH=$(RUNTIME_ARCH) GOOS=$(RUNTIME_PLATFORM) $(GO) build -ldflags '$(LDFLAGS)' -o $(BINDIR)/$(MIXIN)-runtime$(FILE_EXT) ./cmd/$(MIXIN)
 
-build-client: generate
+build-client:
 	mkdir -p $(BINDIR)
 	$(GO) build -ldflags '$(LDFLAGS)' -o $(BINDIR)/$(MIXIN)$(FILE_EXT) ./cmd/$(MIXIN)
-
-generate: packr2
-	$(GO) mod tidy
-	$(GO) generate ./...
-
-HAS_PACKR2 := $(shell command -v packr2)
-packr2:
-ifndef HAS_PACKR2
-	$(GO) get -u github.com/gobuffalo/packr/v2/packr2
-endif
 
 xbuild-all:
 	$(foreach OS, $(SUPPORTED_PLATFORMS), \
@@ -59,8 +49,6 @@ xbuild-all:
 		))
 	# Buid for linux arm64
 	$(MAKE) $(MAKE_OPTS) CLIENT_PLATFORM=linux CLIENT_ARCH=arm64 MIXIN=$(MIXIN) xbuild;
-	# Clean
-	$(MAKE) clean-packr
 
 xbuild: $(BINDIR)/$(VERSION)/$(MIXIN)-$(CLIENT_PLATFORM)-$(CLIENT_ARCH)$(FILE_EXT)
 $(BINDIR)/$(VERSION)/$(MIXIN)-$(CLIENT_PLATFORM)-$(CLIENT_ARCH)$(FILE_EXT):
@@ -107,8 +95,5 @@ install:
 	install $(BINDIR)/$(MIXIN)$(FILE_EXT) $(PORTER_HOME)/mixins/$(MIXIN)/$(MIXIN)$(FILE_EXT)
 	install $(BINDIR)/$(MIXIN)-runtime$(FILE_EXT) $(PORTER_HOME)/mixins/$(MIXIN)/runtimes/$(MIXIN)-runtime$(FILE_EXT)
 	# @porter mixin list
-clean: clean-packr
+clean:
 	-rm -fr bin/
-
-clean-packr: packr2
-	cd pkg/helm3 && packr2 clean

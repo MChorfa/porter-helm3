@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"io/ioutil"
 	"os"
+	"sort"
 	"testing"
 
 	"get.porter.sh/porter/pkg/exec/builder"
@@ -59,6 +60,7 @@ func TestMixin_UnmarshalExecuteLoginRegistryStep(t *testing.T) {
 		builder.Flag{Name: "u", Values: []string{"myuser"}},
 	}
 
+	sort.Sort(step.Flags)
 	assert.EqualValues(t, wantFlags, step.Flags)
 }
 

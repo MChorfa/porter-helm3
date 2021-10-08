@@ -1,6 +1,6 @@
 module github.com/MChorfa/porter-helm3
 
-go 1.13
+go 1.16
 
 require (
 	cloud.google.com/go v0.55.0 // indirect
@@ -13,7 +13,6 @@ require (
 	github.com/gobuffalo/envy v1.9.0 // indirect
 	github.com/gobuffalo/logger v1.0.3 // indirect
 	github.com/gobuffalo/packd v1.0.0 // indirect
-	github.com/gobuffalo/packr/v2 v2.7.1
 	github.com/google/gofuzz v1.1.0 // indirect
 	github.com/googleapis/gnostic v0.5.3 // indirect
 	github.com/gophercloud/gophercloud v0.8.0 // indirect
