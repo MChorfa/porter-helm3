@@ -22,7 +22,8 @@ RUN curl https://get.helm.sh/helm-%s-%s-%s.tar.gz --output helm3.tar.gz
 RUN tar -xvf helm3.tar.gz && rm helm3.tar.gz
 RUN mv linux-amd64/helm /usr/local/bin/helm3
 RUN curl -o kubectl https://storage.googleapis.com/kubernetes-release/release/v1.22.1/bin/linux/amd64/kubectl &&\
-    mv kubectl /usr/local/bin && chmod a+x /usr/local/bin/kubectl`
+    mv kubectl /usr/local/bin && chmod a+x /usr/local/bin/kubectl
+`
 
 	t.Run("build with a valid config", func(t *testing.T) {
 		b, err := ioutil.ReadFile("testdata/build-input-with-valid-config.yaml")
@@ -36,9 +37,11 @@ RUN curl -o kubectl https://storage.googleapis.com/kubernetes-release/release/v1
 		require.NoError(t, err, "build failed")
 
 		wantOutput := fmt.Sprintf(buildOutput, m.HelmClientVersion, m.HelmClientPlatfrom, m.HelmClientArchitecture) +
-			"\nRUN helm3 repo add stable kubernetes-charts" +
-			"\nRUN helm3 repo update"
-
+			`USER ${BUNDLE_USER}
+RUN helm3 repo add stable kubernetes-charts
+RUN helm3 repo update
+USER root
+`
 		gotOutput := m.TestContext.GetOutput()
 		assert.Equal(t, wantOutput, gotOutput)
 	})
@@ -55,10 +58,13 @@ RUN curl -o kubectl https://storage.googleapis.com/kubernetes-release/release/v1
 		require.NoError(t, err, "build failed")
 
 		wantOutput := fmt.Sprintf(buildOutput, m.HelmClientVersion, m.HelmClientPlatfrom, m.HelmClientArchitecture) +
-			"\nRUN helm3 repo add harbor https://helm.getharbor.io" +
-			"\nRUN helm3 repo add jetstack https://charts.jetstack.io" +
-			"\nRUN helm3 repo add stable kubernetes-charts" +
-			"\nRUN helm3 repo update"
+			`USER ${BUNDLE_USER}
+RUN helm3 repo add harbor https://helm.getharbor.io
+RUN helm3 repo add jetstack https://charts.jetstack.io
+RUN helm3 repo add stable kubernetes-charts
+RUN helm3 repo update
+USER root
+`
 		gotOutput := m.TestContext.GetOutput()
 		assert.Equal(t, wantOutput, gotOutput)
 	})
@@ -74,7 +80,10 @@ RUN curl -o kubectl https://storage.googleapis.com/kubernetes-release/release/v1
 		err = m.Build()
 		require.NoError(t, err, "build failed")
 		wantOutput := fmt.Sprintf(buildOutput, m.HelmClientVersion, m.HelmClientPlatfrom, m.HelmClientArchitecture) +
-			"\nRUN helm3 repo update"
+			`USER ${BUNDLE_USER}
+RUN helm3 repo update
+USER root
+`
 		gotOutput := m.TestContext.GetOutput()
 		assert.Equal(t, wantOutput, gotOutput)
 	})

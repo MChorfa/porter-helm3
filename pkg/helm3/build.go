@@ -83,8 +83,11 @@ func (m *Mixin) Build() error {
 	fmt.Fprintf(m.Out, "\nRUN tar -xvf helm3.tar.gz && rm helm3.tar.gz")
 	fmt.Fprintf(m.Out, "\nRUN mv linux-amd64/helm /usr/local/bin/helm3")
 	fmt.Fprintf(m.Out, "\nRUN curl -o kubectl https://storage.googleapis.com/kubernetes-release/release/v1.22.1/bin/linux/amd64/kubectl &&\\")
-	fmt.Fprintf(m.Out, "\n    mv kubectl /usr/local/bin && chmod a+x /usr/local/bin/kubectl")
+	fmt.Fprintf(m.Out, "\n    mv kubectl /usr/local/bin && chmod a+x /usr/local/bin/kubectl\n")
 	if len(input.Config.Repositories) > 0 {
+		// Switch to a non-root user so helm is configured for the user the container will execute as
+		fmt.Fprintln(m.Out, "USER ${BUNDLE_USER}")
+
 		// Go through repositories
 		names := make([]string, 0, len(input.Config.Repositories))
 		for name := range input.Config.Repositories {
@@ -94,15 +97,20 @@ func (m *Mixin) Build() error {
 		for _, name := range names {
 			url := input.Config.Repositories[name].URL
 			repositoryCommand, err := getRepositoryCommand(name, url)
-			if err != nil && m.Debug {
-				fmt.Fprintf(m.Err, "DEBUG: addition of repository failed: %s\n", err.Error())
+			if err != nil {
+				if m.Debug {
+					fmt.Fprintf(m.Err, "DEBUG: addition of repository failed: %s\n", err.Error())
+				}
 			} else {
-				fmt.Fprintf(m.Out, strings.Join(repositoryCommand, " "))
+				fmt.Fprintln(m.Out, strings.Join(repositoryCommand, " "))
 			}
 		}
 		// Make sure we update  the helm repositories
 		// So we don\'t have to do it later
-		fmt.Fprintf(m.Out, "\nRUN helm3 repo update")
+		fmt.Fprintln(m.Out, "RUN helm3 repo update")
+
+		// Switch back to root so that subsequent mixins can install things
+		fmt.Fprintln(m.Out, "USER root")
 	}
 
 	return nil
@@ -116,7 +124,7 @@ func getRepositoryCommand(name, url string) (repositoryCommand []string, err err
 		return commandBuilder, fmt.Errorf("repository url must be supplied")
 	}
 
-	commandBuilder = append(commandBuilder, "\nRUN", "helm3", "repo", "add", name, url)
+	commandBuilder = append(commandBuilder, "RUN", "helm3", "repo", "add", name, url)
 
 	return commandBuilder, nil
 }
