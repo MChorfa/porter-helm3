@@ -2,6 +2,7 @@ package helm3
 
 import (
 	"fmt"
+	"os"
 	"strings"
 
 	"github.com/pkg/errors"
@@ -10,17 +11,21 @@ import (
 	"k8s.io/client-go/kubernetes"
 )
 
-func getSecret(client kubernetes.Interface, namespace, name, key string) ([]byte, error) {
+func (m *Mixin) getSecret(client kubernetes.Interface, namespace, name, key string) ([]byte, error) {
 	if namespace == "" {
 		namespace = "default"
 	}
+	if m.Debug {
+		fmt.Fprintf(os.Stderr, "Retrieving secret %s/%s and using key %s as an output\n", namespace, name, key)
+	}
+
 	secret, err := client.CoreV1().Secrets(namespace).Get(name, metav1.GetOptions{})
 	if apierrors.IsNotFound(err) {
-		return nil, fmt.Errorf("error getting secret %s from namespace %s: %s", name, namespace, err)
+		return nil, fmt.Errorf("error getting secret %s/%s: %s", namespace, name, err)
 	}
 	val, ok := secret.Data[key]
 	if !ok {
-		return nil, fmt.Errorf("couldn't find key %s in secret", key)
+		return nil, fmt.Errorf("couldn't find key %s in secret %s/%s", key, namespace, name)
 	}
 	return val, nil
 }
@@ -52,7 +57,7 @@ func (m *Mixin) handleOutputs(client kubernetes.Interface, namespace string, out
 				namespace = output.Namespace
 			}
 
-			val, err := getSecret(client, namespace, output.Secret, output.Key)
+			val, err := m.getSecret(client, namespace, output.Secret, output.Key)
 
 			if err != nil {
 				return err

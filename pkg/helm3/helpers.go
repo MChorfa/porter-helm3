@@ -18,7 +18,7 @@ type TestMixin struct {
 type testKubernetesFactory struct {
 }
 
-func (t *testKubernetesFactory) GetClient(configPath string) (kubernetes.Interface, error) {
+func (t *testKubernetesFactory) GetClient() (kubernetes.Interface, error) {
 	return testclient.NewSimpleClientset(), nil
 }
 

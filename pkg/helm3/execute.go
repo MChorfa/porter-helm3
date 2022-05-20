@@ -30,7 +30,7 @@ func (m *Mixin) Execute() error {
 		return errors.Wrapf(err, "invocation of action %s failed", action)
 	}
 
-	kubeClient, err := m.getKubernetesClient("/root/.kube/config")
+	kubeClient, err := m.getKubernetesClient()
 	if err != nil {
 		return errors.Wrap(err, "couldn't get kubernetes client")
 	}

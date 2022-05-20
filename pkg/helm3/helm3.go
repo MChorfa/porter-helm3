@@ -81,6 +81,6 @@ func (m *Mixin) ValidatePayload(b []byte) error {
 	return nil
 }
 
-func (m *Mixin) getKubernetesClient(kubeconfig string) (k8s.Interface, error) {
-	return m.ClientFactory.GetClient(kubeconfig)
+func (m *Mixin) getKubernetesClient() (k8s.Interface, error) {
+	return m.ClientFactory.GetClient()
 }

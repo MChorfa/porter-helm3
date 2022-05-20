@@ -13,7 +13,7 @@ import (
 
 // ClientFactory is an interface that knows how to create Kubernetes Clients
 type ClientFactory interface {
-	GetClient(configPath string) (k8s.Interface, error)
+	GetClient() (k8s.Interface, error)
 }
 
 // ClientFactory struct
@@ -21,9 +21,8 @@ type clientFactory struct {
 }
 
 // GetClient: Read the config and create Kubernetes Clients
-func (f *clientFactory) GetClient(configPath string) (k8s.Interface, error) {
-
-	config, err := clientcmd.BuildConfigFromFlags("", configPath)
+func (f *clientFactory) GetClient() (k8s.Interface, error) {
+	config, err := clientcmd.DefaultClientConfig.ClientConfig()
 	if err != nil {
 		return nil, fmt.Errorf("couldn't build kubernetes config: %s", err)
 	}
