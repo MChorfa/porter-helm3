@@ -14,7 +14,7 @@ import (
 	k8s "k8s.io/client-go/kubernetes"
 )
 
-const defaultClientVersion string = "v3.7.0"
+const defaultClientVersion string = "v3.8.2"
 const defaultClientPlatfrom string = "linux"
 const defaultClientArchitecture string = "amd64"
 

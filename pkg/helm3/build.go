@@ -23,7 +23,7 @@ type BuildInput struct {
 // MixinConfig represents configuration that can be set on the helm3 mixin in porter.yaml
 // mixins:
 // - helm3:
-// 	  clientVersion: v3.7.0
+// 	  clientVersion: v3.8.2
 // 	  clientPlatfrom: linux
 // 	  clientArchitecture: amd64 | arm64 | arm | i386
 //	  repositories:

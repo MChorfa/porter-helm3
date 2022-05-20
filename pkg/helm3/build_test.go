@@ -124,6 +124,6 @@ USER root
 		m.Debug = false
 		m.In = bytes.NewReader(b)
 		err = m.Build()
-		require.EqualError(t, err, `supplied client version "v3.7.0.0" cannot be parsed as semver: Invalid Semantic Version`)
+		require.EqualError(t, err, `supplied client version "v3.8.2.0" cannot be parsed as semver: Invalid Semantic Version`)
 	})
 }

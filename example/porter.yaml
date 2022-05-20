@@ -1,6 +1,6 @@
 mixins:
 - helm3:
-    clientVersion: v3.7.0
+    clientVersion: v3.8.2
     repositories:
       stable:
         url: "https://charts.helm.sh/stable"

@@ -8,7 +8,7 @@ import (
 	testclient "k8s.io/client-go/kubernetes/fake"
 )
 
-const MockHelmClientVersion string = "v3.7.0"
+const MockHelmClientVersion string = "v3.8.2"
 
 type TestMixin struct {
 	*Mixin
