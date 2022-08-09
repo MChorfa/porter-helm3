@@ -62,6 +62,10 @@
                 "type":"string"
               }
             },
+            "atomic": {
+              "type":"boolean",
+              "default": true
+            },
             "outputs":{
               "$ref":"#/definitions/outputs"
             }
@@ -144,6 +148,10 @@
             "reuseValues":{
               "type":"boolean",
               "default":false
+            },
+            "atomic": {
+              "type":"boolean",
+              "default": true
             },
             "outputs":{
               "$ref":"#/definitions/outputs"

@@ -24,11 +24,11 @@ type InstallArguments struct {
 	Namespace string            `yaml:"namespace"`
 	Name      string            `yaml:"name"`
 	Chart     string            `yaml:"chart"`
-	Devel     bool              `yaml:"devel`
+	Devel     bool              `yaml:"devel"`
 	NoHooks   bool              `yaml:"noHooks"`
 	Repo      string            `yaml:"repo"`
 	Set       map[string]string `yaml:"set"`
-	SkipCrds  bool              `yaml:"skipCrds`
+	SkipCrds  bool              `yaml:"skipCrds"`
 	Password  string            `yaml:"password"`
 	Username  string            `yaml:"username"`
 	Values    []string          `yaml:"values"`
@@ -36,6 +36,7 @@ type InstallArguments struct {
 	Wait      bool              `yaml:"wait"`
 	Timeout   string            `yaml:"timeout"`
 	Debug     bool              `yaml:"debug"`
+	Atomic    *bool             `yaml:"atomic",omitempty`
 }
 
 func (m *Mixin) Install() error {
@@ -102,8 +103,11 @@ func (m *Mixin) Install() error {
 	if step.Debug {
 		cmd.Args = append(cmd.Args, "--debug")
 	}
-	// This will ensure the installation process deletes the installation on failure.
-	cmd.Args = append(cmd.Args, "--atomic")
+
+	if step.Atomic == nil || *step.Atomic {
+		// This will ensure the installation process deletes the installation on failure.
+		cmd.Args = append(cmd.Args, "--atomic")
+	}
 	// This will ensure the creation of the release namespace if not present.
 	cmd.Args = append(cmd.Args, "--create-namespace")
 	// Set values

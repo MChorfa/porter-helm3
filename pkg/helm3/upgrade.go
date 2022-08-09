@@ -34,11 +34,12 @@ type UpgradeArguments struct {
 	ResetValues bool              `yaml:"resetValues"`
 	ReuseValues bool              `yaml:"reuseValues"`
 	Repo        string            `yaml:"repo"`
-	SkipCrds    bool              `yaml:"skipcrds`
+	SkipCrds    bool              `yaml:"skipcrds"`
 	Password    string            `yaml:"password"`
 	Username    string            `yaml:"username"`
 	Timeout     string            `yaml:"timeout"`
 	Debug       bool              `yaml:"debug"`
+	Atomic      *bool             `yaml:"atomic",omitempty`
 }
 
 // Upgrade issues a helm upgrade command for a release using the provided UpgradeArguments
@@ -97,8 +98,11 @@ func (m *Mixin) Upgrade() error {
 		cmd.Args = append(cmd.Args, "--debug")
 	}
 
-	// This will upgrade process rolls back changes made in case of failed upgrade.
-	cmd.Args = append(cmd.Args, "--atomic")
+	if step.Atomic == nil || *step.Atomic {
+		// This will upgrade process rolls back changes made in case of failed upgrade.
+		cmd.Args = append(cmd.Args, "--atomic")
+	}
+
 	// This will ensure the creation of the release namespace if not present.
 	cmd.Args = append(cmd.Args, "--create-namespace")
 
