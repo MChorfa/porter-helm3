@@ -1,0 +1,29 @@
+# yaml-language-server: $schema=https://json.schemastore.org/github-workflow.json
+name: build
+on: [workflow_dispatch, push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-go@v3
+        with:
+          go-version-file: go.mod
+          cache: true
+          cache-dependency-path: go.sum
+      - name: Build
+        run: make build
+      - name: Test
+        run: make test-unit
+      - name: Cross Compile
+        run: make xbuild-all
+      # publish is a manual step for now that devs build locally and upload to a release
+      #- name: Publish
+      #  if: ${{ github.event_name == 'push' }}
+      #  run: mage Publish
+      #  env:
+      #    GITHUB_TOKEN: ${{ secrets.PUBLISH_TOKEN }}
