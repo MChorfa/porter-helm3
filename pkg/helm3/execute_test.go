@@ -2,6 +2,7 @@ package helm3
 
 import (
 	"bytes"
+	"context"
 	"io/ioutil"
 	"os"
 	"sort"
@@ -11,7 +12,7 @@ import (
 	"get.porter.sh/porter/pkg/test"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	yaml "gopkg.in/yaml.v2"
+	"gopkg.in/yaml.v2"
 )
 
 func TestMixin_UnmarshalExecuteStep(t *testing.T) {
@@ -85,6 +86,8 @@ func TestMixin_UnmarshalExecuteLoginRegistryInsecureStep(t *testing.T) {
 }
 
 func TestMixin_Execute_Login_Registry(t *testing.T) {
+	ctx := context.Background()
+
 	defer os.Unsetenv(test.ExpectedCommandEnv)
 	os.Setenv(test.ExpectedCommandEnv, "helm3 registry login localhost:5000 --insecure -p mypass -u myuser")
 
@@ -122,11 +125,13 @@ func TestMixin_Execute_Login_Registry(t *testing.T) {
 	h := NewTestMixin(t)
 	h.In = bytes.NewReader(b)
 
-	err := h.Execute()
+	err := h.Execute(ctx)
 	require.NoError(t, err)
 }
 
 func TestMixin_Execute(t *testing.T) {
+	ctx := context.Background()
+
 	defer os.Unsetenv(test.ExpectedCommandEnv)
 	os.Setenv(test.ExpectedCommandEnv, "helm3 status mysql -o yaml")
 
@@ -156,6 +161,6 @@ func TestMixin_Execute(t *testing.T) {
 	h := NewTestMixin(t)
 	h.In = bytes.NewReader(b)
 
-	err := h.Execute()
+	err := h.Execute(ctx)
 	require.NoError(t, err)
 }

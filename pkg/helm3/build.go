@@ -1,6 +1,7 @@
 package helm3
 
 import (
+	"context"
 	"fmt"
 	"sort"
 	"strings"
@@ -8,7 +9,7 @@ import (
 	"get.porter.sh/porter/pkg/exec/builder"
 	"github.com/Masterminds/semver"
 	"github.com/pkg/errors"
-	yaml "gopkg.in/yaml.v2"
+	"gopkg.in/yaml.v2"
 )
 
 // clientVersionConstraint represents the semver constraint for the Helm client version
@@ -43,11 +44,11 @@ type Repository struct {
 
 // Build will generate the necessary Dockerfile lines
 // for an invocation image using this mixin
-func (m *Mixin) Build() error {
+func (m *Mixin) Build(ctx context.Context) error {
 
 	// Create new Builder.
 	var input BuildInput
-	err := builder.LoadAction(m.Context, "", func(contents []byte) (interface{}, error) {
+	err := builder.LoadAction(ctx, m.RuntimeConfig, "", func(contents []byte) (interface{}, error) {
 		err := yaml.Unmarshal(contents, &input)
 		return &input, err
 	})
@@ -98,7 +99,7 @@ func (m *Mixin) Build() error {
 			url := input.Config.Repositories[name].URL
 			repositoryCommand, err := getRepositoryCommand(name, url)
 			if err != nil {
-				if m.Debug {
+				if m.DebugMode {
 					fmt.Fprintf(m.Err, "DEBUG: addition of repository failed: %s\n", err.Error())
 				}
 			} else {

@@ -5,9 +5,8 @@ import (
 	"io/ioutil"
 	"strings"
 
-	"get.porter.sh/porter/pkg/context"
+	"get.porter.sh/porter/pkg/runtime"
 	"github.com/MChorfa/porter-helm3/pkg/kubernetes"
-
 	"github.com/ghodss/yaml" // We are not using go-yaml because of serialization problems with jsonschema, don't use this library elsewhere
 	"github.com/pkg/errors"
 	"github.com/xeipuuv/gojsonschema"
@@ -20,7 +19,7 @@ const defaultClientArchitecture string = "amd64"
 
 // Helm is the logic behind the helm mixin
 type Mixin struct {
-	*context.Context
+	runtime.RuntimeConfig
 	ClientFactory          kubernetes.ClientFactory
 	HelmClientVersion      string
 	HelmClientPlatfrom     string
@@ -30,7 +29,7 @@ type Mixin struct {
 // New helm mixin client, initialized with useful defaults.
 func New() *Mixin {
 	return &Mixin{
-		Context:                context.New(),
+		RuntimeConfig:          runtime.NewConfig(),
 		ClientFactory:          kubernetes.New(),
 		HelmClientVersion:      defaultClientVersion,
 		HelmClientPlatfrom:     defaultClientPlatfrom,

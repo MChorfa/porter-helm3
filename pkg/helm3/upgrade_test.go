@@ -2,6 +2,7 @@ package helm3
 
 import (
 	"bytes"
+	"context"
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -10,7 +11,7 @@ import (
 	"get.porter.sh/porter/pkg/test"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	yaml "gopkg.in/yaml.v2"
+	"gopkg.in/yaml.v2"
 )
 
 type UpgradeTest struct {
@@ -141,7 +142,7 @@ func TestMixin_Upgrade(t *testing.T) {
 	defer os.Unsetenv(test.ExpectedCommandEnv)
 	for _, upgradeTest := range upgradeTests {
 		t.Run(upgradeTest.expectedCommand, func(t *testing.T) {
-
+			ctx := context.Background()
 			os.Setenv(test.ExpectedCommandEnv, upgradeTest.expectedCommand)
 
 			action := UpgradeAction{Steps: []UpgradeStep{upgradeTest.upgradeStep}}
@@ -151,7 +152,7 @@ func TestMixin_Upgrade(t *testing.T) {
 			h := NewTestMixin(t)
 			h.In = bytes.NewReader(b)
 
-			err = h.Upgrade()
+			err = h.Upgrade(ctx)
 
 			require.NoError(t, err)
 		})

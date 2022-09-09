@@ -2,6 +2,7 @@ package helm3
 
 import (
 	"bytes"
+	"context"
 	"fmt"
 	"io/ioutil"
 	"testing"
@@ -11,9 +12,10 @@ import (
 )
 
 func TestMixin_Build(t *testing.T) {
+	ctx := context.Background()
 	m := NewTestMixin(t)
 
-	err := m.Build()
+	err := m.Build(ctx)
 	require.NoError(t, err)
 
 	buildOutput := `ENV HELM_EXPERIMENTAL_OCI=1
@@ -30,10 +32,10 @@ RUN curl -o kubectl https://storage.googleapis.com/kubernetes-release/release/v1
 		require.NoError(t, err)
 
 		m := NewTestMixin(t)
-		m.Debug = false
+		m.DebugMode = false
 		m.In = bytes.NewReader(b)
 
-		err = m.Build()
+		err = m.Build(ctx)
 		require.NoError(t, err, "build failed")
 
 		wantOutput := fmt.Sprintf(buildOutput, m.HelmClientVersion, m.HelmClientPlatfrom, m.HelmClientArchitecture) +
@@ -51,10 +53,10 @@ USER root
 		require.NoError(t, err)
 
 		m := NewTestMixin(t)
-		m.Debug = false
+		m.DebugMode = false
 		m.In = bytes.NewReader(b)
 
-		err = m.Build()
+		err = m.Build(ctx)
 		require.NoError(t, err, "build failed")
 
 		wantOutput := fmt.Sprintf(buildOutput, m.HelmClientVersion, m.HelmClientPlatfrom, m.HelmClientArchitecture) +
@@ -74,10 +76,10 @@ USER root
 		require.NoError(t, err)
 
 		m := NewTestMixin(t)
-		m.Debug = false
+		m.DebugMode = false
 		m.In = bytes.NewReader(b)
 
-		err = m.Build()
+		err = m.Build(ctx)
 		require.NoError(t, err, "build failed")
 		wantOutput := fmt.Sprintf(buildOutput, m.HelmClientVersion, m.HelmClientPlatfrom, m.HelmClientArchitecture) +
 			`USER ${BUNDLE_USER}
@@ -94,9 +96,9 @@ USER root
 		require.NoError(t, err)
 
 		m := NewTestMixin(t)
-		m.Debug = false
+		m.DebugMode = false
 		m.In = bytes.NewReader(b)
-		err = m.Build()
+		err = m.Build(ctx)
 		require.NoError(t, err, "build failed")
 		wantOutput := fmt.Sprintf(buildOutput, m.HelmClientVersion, m.HelmClientPlatfrom, m.HelmClientArchitecture)
 		gotOutput := m.TestContext.GetOutput()
@@ -109,9 +111,9 @@ USER root
 		require.NoError(t, err)
 
 		m := NewTestMixin(t)
-		m.Debug = false
+		m.DebugMode = false
 		m.In = bytes.NewReader(b)
-		err = m.Build()
+		err = m.Build(ctx)
 		require.EqualError(t, err, `supplied clientVersion "v2.16.1" does not meet semver constraint "^v3.x"`)
 	})
 
@@ -121,9 +123,9 @@ USER root
 		require.NoError(t, err)
 
 		m := NewTestMixin(t)
-		m.Debug = false
+		m.DebugMode = false
 		m.In = bytes.NewReader(b)
-		err = m.Build()
+		err = m.Build(ctx)
 		require.EqualError(t, err, `supplied client version "v3.8.2.0" cannot be parsed as semver: Invalid Semantic Version`)
 	})
 }
