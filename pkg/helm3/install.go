@@ -36,7 +36,7 @@ type InstallArguments struct {
 	Wait      bool              `yaml:"wait"`
 	Timeout   string            `yaml:"timeout"`
 	Debug     bool              `yaml:"debug"`
-	Atomic    *bool             `yaml:"atomic",omitempty`
+	Atomic    *bool             `yaml:"atomic,omitempty"`
 }
 
 func (m *Mixin) Install() error {

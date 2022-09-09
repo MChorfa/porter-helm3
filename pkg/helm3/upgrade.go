@@ -39,7 +39,7 @@ type UpgradeArguments struct {
 	Username    string            `yaml:"username"`
 	Timeout     string            `yaml:"timeout"`
 	Debug       bool              `yaml:"debug"`
-	Atomic      *bool             `yaml:"atomic",omitempty`
+	Atomic      *bool             `yaml:"atomic,omitempty"`
 }
 
 // Upgrade issues a helm upgrade command for a release using the provided UpgradeArguments
