@@ -77,12 +77,9 @@ func TestMixin_UnmarshalExecuteLoginRegistryInsecureStep(t *testing.T) {
 
 	assert.Equal(t, "Login to OCI registry", step.Description)
 	assert.Equal(t, []string{"registry", "login", "localhost:5000", "--insecure"}, step.Arguments)
-	wantFlags := builder.Flags{
-		builder.Flag{Name: "p", Values: []string{"mypass"}},
-		builder.Flag{Name: "u", Values: []string{"myuser"}},
-	}
-
-	assert.EqualValues(t, wantFlags, step.Flags)
+	assert.Contains(t, step.Flags, builder.Flag{Name: "p", Values: []string{"mypass"}})
+	assert.Contains(t, step.Flags, builder.Flag{Name: "u", Values: []string{"myuser"}})
+	require.Len(t, step.Flags, 2)
 }
 
 func TestMixin_Execute_Login_Registry(t *testing.T) {
