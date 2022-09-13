@@ -1,22 +1,24 @@
 package helm3
 
 import (
+	"context"
+
 	"get.porter.sh/porter/pkg/exec/builder"
 	"github.com/pkg/errors"
-	yaml "gopkg.in/yaml.v2"
+	"gopkg.in/yaml.v2"
 )
 
-func (m *Mixin) loadAction() (*Action, error) {
+func (m *Mixin) loadAction(ctx context.Context) (*Action, error) {
 	var action Action
-	err := builder.LoadAction(m.Context, "", func(contents []byte) (interface{}, error) {
+	err := builder.LoadAction(ctx, m.RuntimeConfig, "", func(contents []byte) (interface{}, error) {
 		err := yaml.Unmarshal(contents, &action)
 		return &action, err
 	})
 	return &action, err
 }
 
-func (m *Mixin) Execute() error {
-	action, err := m.loadAction()
+func (m *Mixin) Execute(ctx context.Context) error {
+	action, err := m.loadAction(ctx)
 	if err != nil {
 		return err
 	}
@@ -25,7 +27,7 @@ func (m *Mixin) Execute() error {
 	}
 	step := action.Steps[0]
 
-	_, err = builder.ExecuteSingleStepAction(m.Context, action)
+	_, err = builder.ExecuteSingleStepAction(ctx, m.RuntimeConfig, action)
 	if err != nil {
 		return errors.Wrapf(err, "invocation of action %s failed", action)
 	}
@@ -35,6 +37,6 @@ func (m *Mixin) Execute() error {
 		return errors.Wrap(err, "couldn't get kubernetes client")
 	}
 
-	err = m.handleOutputs(kubeClient, step.Namespace, step.Outputs)
+	err = m.handleOutputs(ctx, kubeClient, step.Namespace, step.Outputs)
 	return err
 }

@@ -1,13 +1,14 @@
 package helm3
 
 import (
+	"context"
 	"fmt"
 	"os/exec"
 	"sort"
 	"strings"
 
 	"github.com/pkg/errors"
-	yaml "gopkg.in/yaml.v2"
+	"gopkg.in/yaml.v2"
 )
 
 type InstallAction struct {
@@ -24,11 +25,11 @@ type InstallArguments struct {
 	Namespace string            `yaml:"namespace"`
 	Name      string            `yaml:"name"`
 	Chart     string            `yaml:"chart"`
-	Devel     bool              `yaml:"devel`
+	Devel     bool              `yaml:"devel"`
 	NoHooks   bool              `yaml:"noHooks"`
 	Repo      string            `yaml:"repo"`
 	Set       map[string]string `yaml:"set"`
-	SkipCrds  bool              `yaml:"skipCrds`
+	SkipCrds  bool              `yaml:"skipCrds"`
 	Password  string            `yaml:"password"`
 	Username  string            `yaml:"username"`
 	Values    []string          `yaml:"values"`
@@ -38,7 +39,7 @@ type InstallArguments struct {
 	Debug     bool              `yaml:"debug"`
 }
 
-func (m *Mixin) Install() error {
+func (m *Mixin) Install(ctx context.Context) error {
 
 	payload, err := m.getPayloadData()
 	if err != nil {
@@ -60,7 +61,7 @@ func (m *Mixin) Install() error {
 	}
 	step := action.Steps[0]
 
-	cmd := m.NewCommand("helm3")
+	cmd := m.NewCommand(ctx, "helm3")
 
 	cmd.Args = append(cmd.Args, "upgrade", "--install", step.Name, step.Chart)
 
@@ -127,7 +128,7 @@ func (m *Mixin) Install() error {
 	if err != nil {
 		return err
 	}
-	err = m.handleOutputs(kubeClient, step.Namespace, step.Outputs)
+	err = m.handleOutputs(ctx, kubeClient, step.Namespace, step.Outputs)
 	return err
 }
 

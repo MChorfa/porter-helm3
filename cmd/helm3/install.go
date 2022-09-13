@@ -18,7 +18,7 @@ func buildInstallCommand(m *helm3.Mixin) *cobra.Command {
 			return nil
 		},
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return m.Install()
+			return m.Install(cmd.Context())
 		},
 	}
 	return cmd

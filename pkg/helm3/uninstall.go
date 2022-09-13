@@ -2,6 +2,7 @@ package helm3
 
 import (
 	"bytes"
+	"context"
 	"fmt"
 	"io"
 	"strings"
@@ -32,7 +33,7 @@ type UninstallArguments struct {
 }
 
 // Uninstall deletes a provided set of Helm releases, supplying optional flags/params
-func (m *Mixin) Uninstall() error {
+func (m *Mixin) Uninstall(ctx context.Context) error {
 	payload, err := m.getPayloadData()
 	if err != nil {
 		return err
@@ -52,7 +53,7 @@ func (m *Mixin) Uninstall() error {
 	// This gives us more fine-grained error recovery and handling
 	var result error
 	for _, release := range step.Releases {
-		err = m.delete(release, step.Namespace, step.NoHooks, step.Wait, step.Timeout, step.Debug)
+		err = m.delete(ctx, release, step.Namespace, step.NoHooks, step.Wait, step.Timeout, step.Debug)
 		if err != nil {
 			result = multierror.Append(result, err)
 		}
@@ -60,8 +61,8 @@ func (m *Mixin) Uninstall() error {
 	return result
 }
 
-func (m *Mixin) delete(release string, namespace string, noHooks bool, wait bool, timeout string, debug bool) error {
-	cmd := m.NewCommand("helm3", "uninstall")
+func (m *Mixin) delete(ctx context.Context, release string, namespace string, noHooks bool, wait bool, timeout string, debug bool) error {
+	cmd := m.NewCommand(ctx, "helm3", "uninstall")
 
 	cmd.Args = append(cmd.Args, release)
 
