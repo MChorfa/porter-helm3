@@ -1,6 +1,6 @@
 config:
   clientVersion: v3.8.2
-  clientPlatfrom: linux
+  clientPlatform: linux
   clientArchitecture: amd64
 
 install:
