@@ -38,7 +38,7 @@ RUN curl -o kubectl https://storage.googleapis.com/kubernetes-release/release/v1
 		err = m.Build(ctx)
 		require.NoError(t, err, "build failed")
 
-		wantOutput := fmt.Sprintf(buildOutput, m.HelmClientVersion, m.HelmClientPlatfrom, m.HelmClientArchitecture) +
+		wantOutput := fmt.Sprintf(buildOutput, m.HelmClientVersion, m.HelmClientPlatform, m.HelmClientArchitecture) +
 			`USER ${BUNDLE_USER}
 RUN helm3 repo add stable kubernetes-charts
 RUN helm3 repo update
@@ -59,7 +59,7 @@ USER root
 		err = m.Build(ctx)
 		require.NoError(t, err, "build failed")
 
-		wantOutput := fmt.Sprintf(buildOutput, m.HelmClientVersion, m.HelmClientPlatfrom, m.HelmClientArchitecture) +
+		wantOutput := fmt.Sprintf(buildOutput, m.HelmClientVersion, m.HelmClientPlatform, m.HelmClientArchitecture) +
 			`USER ${BUNDLE_USER}
 RUN helm3 repo add harbor https://helm.getharbor.io
 RUN helm3 repo add jetstack https://charts.jetstack.io
@@ -81,7 +81,7 @@ USER root
 
 		err = m.Build(ctx)
 		require.NoError(t, err, "build failed")
-		wantOutput := fmt.Sprintf(buildOutput, m.HelmClientVersion, m.HelmClientPlatfrom, m.HelmClientArchitecture) +
+		wantOutput := fmt.Sprintf(buildOutput, m.HelmClientVersion, m.HelmClientPlatform, m.HelmClientArchitecture) +
 			`USER ${BUNDLE_USER}
 RUN helm3 repo update
 USER root
@@ -100,7 +100,7 @@ USER root
 		m.In = bytes.NewReader(b)
 		err = m.Build(ctx)
 		require.NoError(t, err, "build failed")
-		wantOutput := fmt.Sprintf(buildOutput, m.HelmClientVersion, m.HelmClientPlatfrom, m.HelmClientArchitecture)
+		wantOutput := fmt.Sprintf(buildOutput, m.HelmClientVersion, m.HelmClientPlatform, m.HelmClientArchitecture)
 		gotOutput := m.TestContext.GetOutput()
 		assert.Equal(t, wantOutput, gotOutput)
 	})
