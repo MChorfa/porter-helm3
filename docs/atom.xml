@@ -1,13 +1,23 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://github.com/MChorfa/porter-helm3</id>
     <title>Porter Helm3 Mixin</title>
-    <updated>2022-05-20T22:30:35Z</updated>
+    <updated>2022-09-13T20:59:55Z</updated>
     <link rel="self" href="https://mchorfa.github.io/porter-helm3/atom.xml"/>
     <author>
         <name>Mohamed chorfa</name>
         <uri>https://github.com/MChorfa/porter-helm3</uri>
     </author>
     <category term="helm3"/>
+    <entry>
+        <id>https://github.com/MChorfa/porter-helm3/releases/download/v1.0.0-rc.1/helm3</id>
+        <title>helm3 @ v1.0.0-rc.1</title>
+        <updated>2022-09-13T20:59:55Z</updated>
+        <category term="helm3"/>
+        <content>v1.0.0-rc.1</content>
+        <link rel="download" href="https://github.com/MChorfa/porter-helm3/releases/download/v1.0.0-rc.1/helm3-darwin-amd64" />
+        <link rel="download" href="https://github.com/MChorfa/porter-helm3/releases/download/v1.0.0-rc.1/helm3-linux-amd64" />
+        <link rel="download" href="https://github.com/MChorfa/porter-helm3/releases/download/v1.0.0-rc.1/helm3-windows-amd64.exe" />
+    </entry>
     <entry>
         <id>https://github.com/MChorfa/porter-helm3/releases/download/v0.1.16/helm3</id>
         <title>helm3 @ v0.1.16</title>
