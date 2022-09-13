@@ -37,6 +37,7 @@ type InstallArguments struct {
 	Wait      bool              `yaml:"wait"`
 	Timeout   string            `yaml:"timeout"`
 	Debug     bool              `yaml:"debug"`
+	Atomic    *bool             `yaml:"atomic,omitempty"`
 }
 
 func (m *Mixin) Install(ctx context.Context) error {
@@ -103,8 +104,11 @@ func (m *Mixin) Install(ctx context.Context) error {
 	if step.Debug {
 		cmd.Args = append(cmd.Args, "--debug")
 	}
-	// This will ensure the installation process deletes the installation on failure.
-	cmd.Args = append(cmd.Args, "--atomic")
+
+	if step.Atomic == nil || *step.Atomic {
+		// This will ensure the installation process deletes the installation on failure.
+		cmd.Args = append(cmd.Args, "--atomic")
+	}
 	// This will ensure the creation of the release namespace if not present.
 	cmd.Args = append(cmd.Args, "--create-namespace")
 	// Set values

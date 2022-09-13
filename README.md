@@ -49,6 +49,7 @@ install:
       noHooks: BOOL # disable pre/post upgrade hooks (default false)
       skipCrds: BOOL # if set, no CRDs will be installed (default false)
       timeout:  DURATION # time to wait for any individual Kubernetes operation
+      atomic: BOOL # if set to false, the install process will not roll back changes made in case the install fails (default true)
       debug: BOOL # enable verbose output (default false)
       set:
         VAR1: VALUE1
@@ -75,6 +76,7 @@ upgrade:
       noHooks: BOOL # disable pre/post upgrade hooks (default false)
       skipCrds: BOOL # if set, no CRDs will be installed (default false)
       timeout:  DURATION # time to wait for any individual Kubernetes operation
+      atomic: BOOL # if set to false, the upgrade process will not roll back changes made in case the upgrade fails (default true)
       debug: BOOL # enable verbose output (default false)
       set:
         VAR1: VALUE1

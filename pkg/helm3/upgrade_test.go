@@ -40,6 +40,33 @@ func TestMixin_UnmarshalUpgradeStep(t *testing.T) {
 	assert.True(t, step.ResetValues)
 	assert.Equal(t, map[string]string{"mysqlDatabase": "mydb", "mysqlUser": "myuser",
 		"livenessProbe.initialDelaySeconds": "30", "persistence.enabled": "true"}, step.Set)
+	assert.Nil(t, step.Atomic)
+}
+
+func TestMixin_UnmarshalUpgradeStepAtomicFalse(t *testing.T) {
+	b, err := ioutil.ReadFile("testdata/upgrade-input-atomic-false.yaml")
+	require.NoError(t, err)
+
+	var action UpgradeAction
+	err = yaml.Unmarshal(b, &action)
+	require.NoError(t, err)
+	require.Len(t, action.Steps, 1)
+	step := action.Steps[0]
+
+	assert.False(t, *step.Atomic)
+}
+
+func TestMixin_UnmarshalUpgradeStepAtomicTrue(t *testing.T) {
+	b, err := ioutil.ReadFile("testdata/upgrade-input-atomic-true.yaml")
+	require.NoError(t, err)
+
+	var action UpgradeAction
+	err = yaml.Unmarshal(b, &action)
+	require.NoError(t, err)
+	require.Len(t, action.Steps, 1)
+	step := action.Steps[0]
+
+	assert.True(t, *step.Atomic)
 }
 
 func TestMixin_Upgrade(t *testing.T) {
@@ -60,6 +87,9 @@ func TestMixin_Upgrade(t *testing.T) {
 	baseValues := `--values /tmp/val1.yaml --values /tmp/val2.yaml`
 	baseSetArgs := `--set baz=qux --set foo=bar`
 	baseAddFlags := `--atomic --create-namespace`
+
+	valueTrue := true
+	valueFalse := false
 
 	upgradeTests := []UpgradeTest{
 		{
@@ -134,6 +164,36 @@ func TestMixin_Upgrade(t *testing.T) {
 					Values:    values,
 					Timeout:   "600",
 					Debug:     true,
+				},
+			},
+		},
+		{
+			expectedCommand: fmt.Sprintf(`%s %s %s %s`, baseUpgrade, baseValues, `--create-namespace`, baseSetArgs),
+			upgradeStep: UpgradeStep{
+				UpgradeArguments: UpgradeArguments{
+					Step:      Step{Description: "Upgrade Foo"},
+					Namespace: namespace,
+					Name:      name,
+					Chart:     chart,
+					Version:   version,
+					Set:       setArgs,
+					Values:    values,
+					Atomic:    &valueFalse,
+				},
+			},
+		},
+		{
+			expectedCommand: fmt.Sprintf(`%s %s %s %s`, baseUpgrade, baseValues, baseAddFlags, baseSetArgs),
+			upgradeStep: UpgradeStep{
+				UpgradeArguments: UpgradeArguments{
+					Step:      Step{Description: "Upgrade Foo"},
+					Namespace: namespace,
+					Name:      name,
+					Chart:     chart,
+					Version:   version,
+					Set:       setArgs,
+					Values:    values,
+					Atomic:    &valueTrue,
 				},
 			},
 		},
