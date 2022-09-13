@@ -2,6 +2,7 @@ package helm3
 
 import (
 	"bytes"
+	"context"
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -10,7 +11,7 @@ import (
 	"get.porter.sh/porter/pkg/test"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	yaml "gopkg.in/yaml.v2"
+	"gopkg.in/yaml.v2"
 )
 
 type InstallTest struct {
@@ -219,6 +220,7 @@ func TestMixin_Install(t *testing.T) {
 	defer os.Unsetenv(test.ExpectedCommandEnv)
 	for _, installTest := range installTests {
 		t.Run(installTest.expectedCommand, func(t *testing.T) {
+			ctx := context.Background()
 			os.Setenv(test.ExpectedCommandEnv, installTest.expectedCommand)
 
 			action := InstallAction{Steps: []InstallStep{installTest.installStep}}
@@ -227,7 +229,7 @@ func TestMixin_Install(t *testing.T) {
 			h := NewTestMixin(t)
 			h.In = bytes.NewReader(b)
 
-			err := h.Install()
+			err := h.Install(ctx)
 
 			require.NoError(t, err)
 		})

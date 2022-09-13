@@ -2,6 +2,7 @@ package helm3
 
 import (
 	"bytes"
+	"context"
 	"io/ioutil"
 	"os"
 	"testing"
@@ -9,7 +10,7 @@ import (
 	"get.porter.sh/porter/pkg/test"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	yaml "gopkg.in/yaml.v2"
+	"gopkg.in/yaml.v2"
 )
 
 type UninstallTest struct {
@@ -91,6 +92,7 @@ func TestMixin_Uninstall(t *testing.T) {
 	defer os.Unsetenv(test.ExpectedCommandEnv)
 	for _, uninstallTest := range uninstallTests {
 		t.Run(uninstallTest.expectedCommand, func(t *testing.T) {
+			ctx := context.Background()
 			os.Setenv(test.ExpectedCommandEnv, uninstallTest.expectedCommand)
 
 			action := UninstallAction{Steps: []UninstallStep{uninstallTest.uninstallStep}}
@@ -99,7 +101,7 @@ func TestMixin_Uninstall(t *testing.T) {
 			h := NewTestMixin(t)
 			h.In = bytes.NewReader(b)
 
-			err := h.Uninstall()
+			err := h.Uninstall(ctx)
 
 			require.NoError(t, err)
 		})

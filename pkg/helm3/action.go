@@ -5,10 +5,28 @@ import (
 )
 
 var _ builder.ExecutableAction = Action{}
+var _ builder.BuildableAction = Action{}
 var _ builder.ExecutableStep = ExecuteStep{}
 
 type Action struct {
+	// Name of the action: install, upgrade, invoke, uninstall.
+	Name  string
 	Steps []ExecuteSteps // using UnmarshalYAML so that we don't need a custom type per action
+}
+
+// MarshalYAML converts the action back to a YAML representation
+// install:
+//   exec:
+//     ...
+//   helm3:
+//     ...
+func (a Action) MarshalYAML() (interface{}, error) {
+	return map[string]interface{}{a.Name: a.Steps}, nil
+}
+
+// MakeSteps builds a slice of Steps for data to be unmarshaled into.
+func (a Action) MakeSteps() interface{} {
+	return &[]ExecuteSteps{}
 }
 
 // UnmarshalYAML takes any yaml in this form
@@ -16,15 +34,18 @@ type Action struct {
 // - helm3: ...
 // and puts the steps into the Action.Steps field
 func (a *Action) UnmarshalYAML(unmarshal func(interface{}) error) error {
-	var steps []ExecuteSteps
-	results, err := builder.UnmarshalAction(unmarshal, &steps)
+	results, err := builder.UnmarshalAction(unmarshal, a)
 	if err != nil {
 		return err
 	}
 
-	for _, result := range results {
-		step := result.(*[]ExecuteSteps)
-		a.Steps = append(a.Steps, *step...)
+	for actionName, action := range results {
+		a.Name = actionName
+		for _, result := range action {
+			step := result.(*[]ExecuteSteps)
+			a.Steps = append(a.Steps, *step...)
+		}
+		break // There is only 1 action
 	}
 	return nil
 }
@@ -47,6 +68,10 @@ type ExecuteStep struct {
 	Namespace string        `yaml:"namespace,omitempty"`
 	Arguments []string      `yaml:"arguments,omitempty"`
 	Flags     builder.Flags `yaml:"flags,omitempty"`
+}
+
+func (s ExecuteStep) GetWorkingDir() string {
+	return "."
 }
 
 func (s ExecuteStep) GetCommand() string {

@@ -1,13 +1,14 @@
 package helm3
 
 import (
+	"context"
 	"fmt"
 	"os/exec"
 	"sort"
 	"strings"
 
 	"github.com/pkg/errors"
-	yaml "gopkg.in/yaml.v2"
+	"gopkg.in/yaml.v2"
 )
 
 type UpgradeAction struct {
@@ -34,7 +35,7 @@ type UpgradeArguments struct {
 	ResetValues bool              `yaml:"resetValues"`
 	ReuseValues bool              `yaml:"reuseValues"`
 	Repo        string            `yaml:"repo"`
-	SkipCrds    bool              `yaml:"skipcrds"`
+	SkipCrds    bool              `yaml:"skipCrds"`
 	Password    string            `yaml:"password"`
 	Username    string            `yaml:"username"`
 	Timeout     string            `yaml:"timeout"`
@@ -43,7 +44,7 @@ type UpgradeArguments struct {
 }
 
 // Upgrade issues a helm upgrade command for a release using the provided UpgradeArguments
-func (m *Mixin) Upgrade() error {
+func (m *Mixin) Upgrade(ctx context.Context) error {
 	payload, err := m.getPayloadData()
 	if err != nil {
 		return err
@@ -64,7 +65,7 @@ func (m *Mixin) Upgrade() error {
 	}
 	step := action.Steps[0]
 
-	cmd := m.NewCommand("helm3", "upgrade", "--install", step.Name, step.Chart)
+	cmd := m.NewCommand(ctx, "helm3", "upgrade", "--install", step.Name, step.Chart)
 
 	if step.Namespace != "" {
 		cmd.Args = append(cmd.Args, "--namespace", step.Namespace)
@@ -123,7 +124,7 @@ func (m *Mixin) Upgrade() error {
 		return err
 	}
 
-	err = m.handleOutputs(kubeClient, step.Namespace, step.Outputs)
+	err = m.handleOutputs(ctx, kubeClient, step.Namespace, step.Outputs)
 	return err
 }
 
