@@ -2,11 +2,3 @@ config:
   clientVersion: v3.8.2
   clientPlatform: linux
   clientArchitecture: amd64
-
-install:
-  - helm3:
-      description: "Install MySQL"
-      name: porter-ci-mysql
-      chart: stable/mysql
-      version: 0.10.2
-

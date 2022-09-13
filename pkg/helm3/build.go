@@ -32,10 +32,10 @@ type BuildInput struct {
 //		  url: "https://charts.helm.sh/stable"
 
 type MixinConfig struct {
-	ClientVersion      string `yaml:"clientVersion,omitempty"`
-	ClientArchitecture string `yaml:"clientArchitecture,omitempty"`
-	Repositories       map[string]Repository
+	ClientVersion      string                `yaml:"clientVersion,omitempty"`
 	ClientPlatform     string                `yaml:"clientPlatform,omitempty"`
+	ClientArchitecture string                `yaml:"clientArchitecture,omitempty"`
+	Repositories       map[string]Repository `yaml:"repositories,omitempty"`
 }
 
 type Repository struct {

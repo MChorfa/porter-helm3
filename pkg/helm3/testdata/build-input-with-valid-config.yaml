@@ -1,9 +1,7 @@
 config:
+  clientVersion: 3.17.0
+  clientPlatform: linux
+  clientArchitecture: amd64
   repositories:
     stable:
       url: "kubernetes-charts"
-install:
-  - helm3:
-      description: "Install MySQL"
-      chart: stable/mysql
-      version: 0.10.2

@@ -1,6 +1,58 @@
 {
   "$schema":"http://json-schema.org/draft-07/schema#",
   "definitions":{
+    "declaration": {
+      "oneOf": [
+        {
+          "description": "Declare the helm3 mixin without configuration",
+          "type": "string",
+          "enum": ["helm3"]
+        },
+        {"$ref": "#/definitions/config"}
+      ]
+    },
+    "config": {
+      "description": "Declare the helm3 mixin with additional configuration",
+      "type": "object",
+      "properties": {
+        "helm3": {
+          "description": "helm3 mixin configuration",
+          "type": "object",
+          "properties": {
+            "clientVersion": {
+              "description": "Version of helm to install in the bundle",
+              "type": "string"
+            },
+            "clientPlatform": {
+              "description": "Operating system of the helm client to install in the bundle, for example linux",
+              "type": "string"
+            },
+            "clientArchitecture": {
+              "description": "Architecture of the helm client to install in the bundle, for example amd64",
+              "type": "string"
+            },
+            "repositories": {
+              "description": "Helm repositories to initialize in the bundle, keyed by the repository alias",
+              "type": "object",
+              "additionalProperties":{
+                "type": "object",
+                "properties": {
+                  "url": {
+                    "description": "URL of the helm chart repository",
+                    "type": "string"
+                  }
+              },
+              "additionalProperties": false,
+              "required": ["url"]
+              }
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false,
+      "required": ["helm3"]
+    },
     "installStep":{
       "type":"object",
       "properties":{
@@ -308,13 +360,16 @@
       "items":{
         "$ref":"#/definitions/uninstallStep"
       }
+    },
+    "mixins": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/declaration" }
     }
   },
-  "additionalProperties":{
-    "type":"array",
-    "items":{
-      "$ref":"#/definitions/invokeStep"
+  "additionalProperties": {
+    "type": "array",
+    "items": {
+      "$ref": "#/definitions/invokeStep"
     }
-  },
-  "additionalProperties":false
+  }
 }
