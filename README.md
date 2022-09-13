@@ -11,7 +11,7 @@ appropriate helm command based on which action it is included within: `install`,
 Currently we only support the installation via `--feed-url`. Please make sure to install the mixin as follow:
 
 ```shell
-porter mixin install helm3 --feed-url https://mchorfa.github.io/porter-helm3/atom.xml
+porter mixin install helm3 --version v1.0.0-rc.1 --feed-url https://mchorfa.github.io/porter-helm3/atom.xml
 ```
 
 ### Mixin Configuration
