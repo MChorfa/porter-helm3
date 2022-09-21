@@ -9,7 +9,7 @@ go 1.18
 replace github.com/spf13/viper => github.com/getporter/viper v1.7.1-porter.2.0.20210514172839-3ea827168363
 
 require (
-	get.porter.sh/porter v1.0.0-rc.1.0.20220919191751-edd731c0f07b
+	get.porter.sh/porter v1.0.0-rc.2
 	github.com/Masterminds/semver v1.5.0
 	github.com/PaesslerAG/jsonpath v0.1.1
 	github.com/ghodss/yaml v1.0.0
