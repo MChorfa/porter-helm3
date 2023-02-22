@@ -24,23 +24,24 @@ type UpgradeStep struct {
 type UpgradeArguments struct {
 	Step `yaml:",inline"`
 
-	Namespace   string            `yaml:"namespace"`
-	Name        string            `yaml:"name"`
-	Chart       string            `yaml:"chart"`
-	Version     string            `yaml:"version"`
-	NoHooks     bool              `yaml:"nohooks"`
-	Set         map[string]string `yaml:"set"`
-	Values      []string          `yaml:"values"`
-	Wait        bool              `yaml:"wait"`
-	ResetValues bool              `yaml:"resetValues"`
-	ReuseValues bool              `yaml:"reuseValues"`
-	Repo        string            `yaml:"repo"`
-	SkipCrds    bool              `yaml:"skipCrds"`
-	Password    string            `yaml:"password"`
-	Username    string            `yaml:"username"`
-	Timeout     string            `yaml:"timeout"`
-	Debug       bool              `yaml:"debug"`
-	Atomic      *bool             `yaml:"atomic,omitempty"`
+	Namespace       string            `yaml:"namespace"`
+	Name            string            `yaml:"name"`
+	Chart           string            `yaml:"chart"`
+	Version         string            `yaml:"version"`
+	NoHooks         bool              `yaml:"nohooks"`
+	Set             map[string]string `yaml:"set"`
+	Values          []string          `yaml:"values"`
+	Wait            bool              `yaml:"wait"`
+	ResetValues     bool              `yaml:"resetValues"`
+	ReuseValues     bool              `yaml:"reuseValues"`
+	Repo            string            `yaml:"repo"`
+	SkipCrds        bool              `yaml:"skipCrds"`
+	Password        string            `yaml:"password"`
+	Username        string            `yaml:"username"`
+	Timeout         string            `yaml:"timeout"`
+	Debug           bool              `yaml:"debug"`
+	Atomic          *bool             `yaml:"atomic,omitempty"`
+	CreateNamespace *bool             `yaml:"createNamespace,omitempty"`
 }
 
 // Upgrade issues a helm upgrade command for a release using the provided UpgradeArguments
@@ -104,8 +105,10 @@ func (m *Mixin) Upgrade(ctx context.Context) error {
 		cmd.Args = append(cmd.Args, "--atomic")
 	}
 
-	// This will ensure the creation of the release namespace if not present.
-	cmd.Args = append(cmd.Args, "--create-namespace")
+	if step.CreateNamespace == nil || *step.CreateNamespace {
+		// This will ensure the creation of the release namespace if not present.
+		cmd.Args = append(cmd.Args, "--create-namespace")
+	}
 
 	cmd.Args = HandleSettingChartValuesForUpgrade(step, cmd)
 

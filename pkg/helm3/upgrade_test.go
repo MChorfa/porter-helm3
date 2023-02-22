@@ -69,6 +69,32 @@ func TestMixin_UnmarshalUpgradeStepAtomicTrue(t *testing.T) {
 	assert.True(t, *step.Atomic)
 }
 
+func TestMixin_UnmarshalUpgradeStepCreateNamespaceFalse(t *testing.T) {
+	b, err := ioutil.ReadFile("testdata/upgrade-input-create-namespace-false.yaml")
+	require.NoError(t, err)
+
+	var action UpgradeAction
+	err = yaml.Unmarshal(b, &action)
+	require.NoError(t, err)
+	require.Len(t, action.Steps, 1)
+	step := action.Steps[0]
+
+	assert.False(t, *step.CreateNamespace)
+}
+
+func TestMixin_UnmarshalUpgradeStepCreateNamespaceTrue(t *testing.T) {
+	b, err := ioutil.ReadFile("testdata/upgrade-input-create-namespace-true.yaml")
+	require.NoError(t, err)
+
+	var action UpgradeAction
+	err = yaml.Unmarshal(b, &action)
+	require.NoError(t, err)
+	require.Len(t, action.Steps, 1)
+	step := action.Steps[0]
+
+	assert.True(t, *step.CreateNamespace)
+}
+
 func TestMixin_Upgrade(t *testing.T) {
 	namespace := "MY-NAMESPACE"
 	name := "MY-RELEASE"

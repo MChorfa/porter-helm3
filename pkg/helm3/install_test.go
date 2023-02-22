@@ -72,6 +72,32 @@ func TestMixin_UnmarshalInstallAtomicExplicitTrue(t *testing.T) {
 	assert.True(t, *step.Atomic)
 }
 
+func TestMixin_UnmarshalInstallCreateNamespaceFalse(t *testing.T) {
+	b, err := ioutil.ReadFile("testdata/install-input-create-namespace-false.yaml")
+	require.NoError(t, err)
+
+	var action InstallAction
+	err = yaml.Unmarshal(b, &action)
+	require.NoError(t, err)
+	require.Len(t, action.Steps, 1)
+	step := action.Steps[0]
+
+	assert.False(t, *step.CreateNamespace)
+}
+
+func TestMixin_UnmarshalInstallCreateNamespaceExplicitTrue(t *testing.T) {
+	b, err := ioutil.ReadFile("testdata/install-input-create-namespace-true.yaml")
+	require.NoError(t, err)
+
+	var action InstallAction
+	err = yaml.Unmarshal(b, &action)
+	require.NoError(t, err)
+	require.Len(t, action.Steps, 1)
+	step := action.Steps[0]
+
+	assert.True(t, *step.CreateNamespace)
+}
+
 func TestMixin_Install(t *testing.T) {
 	namespace := "MY-NAMESPACE"
 	name := "MYRELEASE"
