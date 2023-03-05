@@ -4,11 +4,12 @@ import (
 	"testing"
 
 	"get.porter.sh/porter/pkg/portercontext"
-	"k8s.io/client-go/kubernetes"
+	k8s "k8s.io/client-go/kubernetes"
 	testclient "k8s.io/client-go/kubernetes/fake"
 )
 
-const MockHelmClientVersion string = "v3.8.2"
+const MockHelmClientVersion string = "v3.11.1"
+const MockNameSpace string = "MY-NAMESPACE"
 
 type TestMixin struct {
 	*Mixin
@@ -18,7 +19,7 @@ type TestMixin struct {
 type testKubernetesFactory struct {
 }
 
-func (t *testKubernetesFactory) GetClient() (kubernetes.Interface, error) {
+func (t *testKubernetesFactory) GetClient() (k8s.Interface, error) {
 	return testclient.NewSimpleClientset(), nil
 }
 

@@ -9,6 +9,7 @@ import (
 
 	"github.com/pkg/errors"
 	"gopkg.in/yaml.v2"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
 type UpgradeAction struct {
@@ -32,6 +33,7 @@ type UpgradeArguments struct {
 	Set         map[string]string `yaml:"set"`
 	Values      []string          `yaml:"values"`
 	Wait        bool              `yaml:"wait"`
+	WaitForJobs bool              `yaml:"waitForJobs"`
 	ResetValues bool              `yaml:"resetValues"`
 	ReuseValues bool              `yaml:"reuseValues"`
 	Repo        string            `yaml:"repo"`
@@ -69,6 +71,14 @@ func (m *Mixin) Upgrade(ctx context.Context) error {
 
 	if step.Namespace != "" {
 		cmd.Args = append(cmd.Args, "--namespace", step.Namespace)
+		// check if namespace exist
+		if _, err := kubeClient.CoreV1().Namespaces().Get(ctx, step.Namespace, metav1.GetOptions{}); err != nil {
+			fmt.Fprintln(m.Out, "namespace defined but don't exist, appending '--create-namespace' to ensure the namespace creation")
+			cmd.Args = append(cmd.Args, "--create-namespace")
+		}
+	} else {
+		// The namespace was not defined. will try ensure the creation of the release namespace if not present.
+		cmd.Args = append(cmd.Args, "--create-namespace")
 	}
 
 	if step.Version != "" {
@@ -87,6 +97,10 @@ func (m *Mixin) Upgrade(ctx context.Context) error {
 		cmd.Args = append(cmd.Args, "--wait")
 	}
 
+	if step.WaitForJobs && step.Wait {
+		cmd.Args = append(cmd.Args, "--wait-for-jobs")
+	}
+
 	for _, v := range step.Values {
 		cmd.Args = append(cmd.Args, "--values", v)
 	}
@@ -103,9 +117,6 @@ func (m *Mixin) Upgrade(ctx context.Context) error {
 		// This will upgrade process rolls back changes made in case of failed upgrade.
 		cmd.Args = append(cmd.Args, "--atomic")
 	}
-
-	// This will ensure the creation of the release namespace if not present.
-	cmd.Args = append(cmd.Args, "--create-namespace")
 
 	cmd.Args = HandleSettingChartValuesForUpgrade(step, cmd)
 

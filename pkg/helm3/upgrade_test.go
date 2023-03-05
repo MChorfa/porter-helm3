@@ -83,10 +83,10 @@ func TestMixin_Upgrade(t *testing.T) {
 		"/tmp/val2.yaml",
 	}
 
-	baseUpgrade := fmt.Sprintf(`helm3 upgrade --install %s %s --namespace %s --version %s`, name, chart, namespace, version)
+	baseUpgrade := fmt.Sprintf(`helm3 upgrade --install %s %s --namespace %s --create-namespace --version %s`, name, chart, namespace, version)
 	baseValues := `--values /tmp/val1.yaml --values /tmp/val2.yaml`
 	baseSetArgs := `--set baz=qux --set foo=bar`
-	baseAddFlags := `--atomic --create-namespace`
+	baseAddFlags := `--atomic`
 
 	valueTrue := true
 	valueFalse := false
@@ -168,7 +168,7 @@ func TestMixin_Upgrade(t *testing.T) {
 			},
 		},
 		{
-			expectedCommand: fmt.Sprintf(`%s %s %s %s`, baseUpgrade, baseValues, `--create-namespace`, baseSetArgs),
+			expectedCommand: fmt.Sprintf(`%s %s %s`, baseUpgrade, baseValues, baseSetArgs),
 			upgradeStep: UpgradeStep{
 				UpgradeArguments: UpgradeArguments{
 					Step:      Step{Description: "Upgrade Foo"},

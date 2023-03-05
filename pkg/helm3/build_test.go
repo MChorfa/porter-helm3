@@ -23,7 +23,7 @@ RUN apt-get update && apt-get install -y curl
 RUN curl https://get.helm.sh/helm-%s-%s-%s.tar.gz --output helm3.tar.gz
 RUN tar -xvf helm3.tar.gz && rm helm3.tar.gz
 RUN mv linux-amd64/helm /usr/local/bin/helm3
-RUN curl -o kubectl https://storage.googleapis.com/kubernetes-release/release/v1.22.1/bin/linux/amd64/kubectl &&\
+RUN curl -o kubectl https://storage.googleapis.com/kubernetes-release/release/v1.26.1/bin/linux/amd64/kubectl &&\
     mv kubectl /usr/local/bin && chmod a+x /usr/local/bin/kubectl
 `
 
@@ -126,6 +126,6 @@ USER root
 		m.DebugMode = false
 		m.In = bytes.NewReader(b)
 		err = m.Build(ctx)
-		require.EqualError(t, err, `supplied client version "v3.8.2.0" cannot be parsed as semver: Invalid Semantic Version`)
+		require.EqualError(t, err, `supplied client version "v3.11.1.0" cannot be parsed as semver: Invalid Semantic Version`)
 	})
 }

@@ -86,17 +86,18 @@ func TestMixin_Install(t *testing.T) {
 		"/tmp/val2.yaml",
 	}
 
-	baseInstall := fmt.Sprintf(`helm3 upgrade --install %s %s --namespace %s --version %s`, name, chart, namespace, version)
+	baseInstall := fmt.Sprintf(`helm3 upgrade --install %s %s --namespace %s --create-namespace --version %s`, name, chart, namespace, version)
+	// baseNamespaceCreationFlag := `--create-namespace`
 	baseValues := `--values /tmp/val1.yaml --values /tmp/val2.yaml`
 	baseSetArgs := `--set baz=qux --set foo=bar`
-	baseAddFlags := `--atomic --create-namespace`
+	baseAtomicFlag := `--atomic`
 
 	valueTrue := true
 	valueFalse := false
 
 	installTests := []InstallTest{
 		{
-			expectedCommand: fmt.Sprintf(`%s %s %s %s`, baseInstall, baseValues, baseAddFlags, baseSetArgs),
+			expectedCommand: fmt.Sprintf(`%s %s %s %s`, baseInstall, baseValues, baseAtomicFlag, baseSetArgs),
 			installStep: InstallStep{
 				InstallArguments: InstallArguments{
 					Step:      Step{Description: "Install Foo"},
@@ -110,7 +111,7 @@ func TestMixin_Install(t *testing.T) {
 			},
 		},
 		{
-			expectedCommand: fmt.Sprintf(`%s %s %s %s %s`, baseInstall, baseValues, `--no-hooks`, baseAddFlags, baseSetArgs),
+			expectedCommand: fmt.Sprintf(`%s %s %s %s %s`, baseInstall, baseValues, `--no-hooks`, baseAtomicFlag, baseSetArgs),
 			installStep: InstallStep{
 				InstallArguments: InstallArguments{
 					Step:      Step{Description: "Install Foo"},
@@ -125,7 +126,7 @@ func TestMixin_Install(t *testing.T) {
 			},
 		},
 		{
-			expectedCommand: fmt.Sprintf(`%s %s %s %s %s`, baseInstall, baseValues, `--skip-crds`, baseAddFlags, baseSetArgs),
+			expectedCommand: fmt.Sprintf(`%s %s %s %s %s`, baseInstall, baseValues, `--skip-crds`, baseAtomicFlag, baseSetArgs),
 			installStep: InstallStep{
 				InstallArguments: InstallArguments{
 					Step:      Step{Description: "Install Foo"},
@@ -140,7 +141,7 @@ func TestMixin_Install(t *testing.T) {
 			},
 		},
 		{
-			expectedCommand: fmt.Sprintf(`%s %s %s %s %s`, baseInstall, `--devel`, baseValues, baseAddFlags, baseSetArgs),
+			expectedCommand: fmt.Sprintf(`%s %s %s %s %s`, baseInstall, `--devel`, baseValues, baseAtomicFlag, baseSetArgs),
 			installStep: InstallStep{
 				InstallArguments: InstallArguments{
 					Step:      Step{Description: "Install Foo"},
@@ -155,7 +156,7 @@ func TestMixin_Install(t *testing.T) {
 			},
 		},
 		{
-			expectedCommand: fmt.Sprintf(`%s %s %s %s %s`, baseInstall, `--wait`, baseValues, baseAddFlags, baseSetArgs),
+			expectedCommand: fmt.Sprintf(`%s %s %s %s %s`, baseInstall, `--wait`, baseValues, baseAtomicFlag, baseSetArgs),
 			installStep: InstallStep{
 				InstallArguments: InstallArguments{
 					Step:      Step{Description: "Install Foo"},
@@ -170,7 +171,7 @@ func TestMixin_Install(t *testing.T) {
 			},
 		},
 		{
-			expectedCommand: fmt.Sprintf(`%s %s %s %s %s`, baseInstall, baseValues, `--timeout 600 --debug`, baseAddFlags, baseSetArgs),
+			expectedCommand: fmt.Sprintf(`%s %s %s %s %s`, baseInstall, baseValues, `--timeout 600 --debug`, baseAtomicFlag, baseSetArgs),
 			installStep: InstallStep{
 				InstallArguments: InstallArguments{
 					Step:      Step{Description: "Install Foo"},
@@ -186,7 +187,7 @@ func TestMixin_Install(t *testing.T) {
 			},
 		},
 		{
-			expectedCommand: fmt.Sprintf(`%s %s %s %s`, baseInstall, baseValues, `--create-namespace`, baseSetArgs),
+			expectedCommand: fmt.Sprintf(`%s %s %s`, baseInstall, baseValues, baseSetArgs),
 			installStep: InstallStep{
 				InstallArguments: InstallArguments{
 					Step:      Step{Description: "Install Foo"},
@@ -201,7 +202,7 @@ func TestMixin_Install(t *testing.T) {
 			},
 		},
 		{
-			expectedCommand: fmt.Sprintf(`%s %s %s %s`, baseInstall, baseValues, baseAddFlags, baseSetArgs),
+			expectedCommand: fmt.Sprintf(`%s %s %s %s`, baseInstall, baseValues, baseAtomicFlag, baseSetArgs),
 			installStep: InstallStep{
 				InstallArguments: InstallArguments{
 					Step:      Step{Description: "Install Foo"},
@@ -228,6 +229,7 @@ func TestMixin_Install(t *testing.T) {
 
 			h := NewTestMixin(t)
 			h.In = bytes.NewReader(b)
+			h.ClientFactory.GetClient()
 
 			err := h.Install(ctx)
 

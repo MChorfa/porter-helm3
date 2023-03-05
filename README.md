@@ -20,7 +20,7 @@ Helm client version configuration. You can define others minors and patch versio
 
 ```yaml
 - helm3:
-    clientVersion: v3.8.2
+    clientVersion: v3.11.1
 ```
 
 Repositories
@@ -46,6 +46,7 @@ install:
       namespace: NAMESPACE
       devel: BOOL
       wait: BOOL # default true
+      waitForJobs: BOOL # if set and --wait enabled, will wait until all Jobs have been completed before marking the release as successful. It will wait for as long as --timeout
       noHooks: BOOL # disable pre/post upgrade hooks (default false)
       skipCrds: BOOL # if set, no CRDs will be installed (default false)
       timeout:  DURATION # time to wait for any individual Kubernetes operation
@@ -73,6 +74,7 @@ upgrade:
       resetValues: BOOL
       reuseValues: BOOL
       wait: BOOL # default true
+      waitForJobs: BOOL # if set and --wait enabled, will wait until all Jobs have been completed before marking the release as successful. It will wait for as long as --timeout (default false)
       noHooks: BOOL # disable pre/post upgrade hooks (default false)
       skipCrds: BOOL # if set, no CRDs will be installed (default false)
       timeout:  DURATION # time to wait for any individual Kubernetes operation

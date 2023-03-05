@@ -9,6 +9,7 @@ import (
 
 	"github.com/pkg/errors"
 	"gopkg.in/yaml.v2"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
 type InstallAction struct {
@@ -22,22 +23,23 @@ type InstallStep struct {
 type InstallArguments struct {
 	Step `yaml:",inline"`
 
-	Namespace string            `yaml:"namespace"`
-	Name      string            `yaml:"name"`
-	Chart     string            `yaml:"chart"`
-	Devel     bool              `yaml:"devel"`
-	NoHooks   bool              `yaml:"noHooks"`
-	Repo      string            `yaml:"repo"`
-	Set       map[string]string `yaml:"set"`
-	SkipCrds  bool              `yaml:"skipCrds"`
-	Password  string            `yaml:"password"`
-	Username  string            `yaml:"username"`
-	Values    []string          `yaml:"values"`
-	Version   string            `yaml:"version"`
-	Wait      bool              `yaml:"wait"`
-	Timeout   string            `yaml:"timeout"`
-	Debug     bool              `yaml:"debug"`
-	Atomic    *bool             `yaml:"atomic,omitempty"`
+	Namespace   string            `yaml:"namespace"`
+	Name        string            `yaml:"name"`
+	Chart       string            `yaml:"chart"`
+	Devel       bool              `yaml:"devel"`
+	NoHooks     bool              `yaml:"noHooks"`
+	Repo        string            `yaml:"repo"`
+	Set         map[string]string `yaml:"set"`
+	SkipCrds    bool              `yaml:"skipCrds"`
+	Password    string            `yaml:"password"`
+	Username    string            `yaml:"username"`
+	Values      []string          `yaml:"values"`
+	Version     string            `yaml:"version"`
+	Wait        bool              `yaml:"wait"`
+	WaitForJobs bool              `yaml:"waitForJobs"`
+	Timeout     string            `yaml:"timeout"`
+	Debug       bool              `yaml:"debug"`
+	Atomic      *bool             `yaml:"atomic,omitempty"`
 }
 
 func (m *Mixin) Install(ctx context.Context) error {
@@ -68,6 +70,14 @@ func (m *Mixin) Install(ctx context.Context) error {
 
 	if step.Namespace != "" {
 		cmd.Args = append(cmd.Args, "--namespace", step.Namespace)
+		// check if namespace exist
+		if _, err := kubeClient.CoreV1().Namespaces().Get(ctx, step.Namespace, metav1.GetOptions{}); err != nil {
+			fmt.Fprintln(m.Out, "namespace defined but don't exist, appending '--create-namespace' to ensure the namespace creation")
+			cmd.Args = append(cmd.Args, "--create-namespace")
+		}
+	} else {
+		// The namespace was not defined. will try ensure the creation of the release namespace if not present.
+		cmd.Args = append(cmd.Args, "--create-namespace")
 	}
 
 	if step.Version != "" {
@@ -76,6 +86,10 @@ func (m *Mixin) Install(ctx context.Context) error {
 
 	if step.Wait {
 		cmd.Args = append(cmd.Args, "--wait")
+	}
+
+	if step.WaitForJobs && step.Wait {
+		cmd.Args = append(cmd.Args, "--wait-for-jobs")
 	}
 
 	if step.Devel {
@@ -109,8 +123,7 @@ func (m *Mixin) Install(ctx context.Context) error {
 		// This will ensure the installation process deletes the installation on failure.
 		cmd.Args = append(cmd.Args, "--atomic")
 	}
-	// This will ensure the creation of the release namespace if not present.
-	cmd.Args = append(cmd.Args, "--create-namespace")
+
 	// Set values
 	cmd.Args = HandleSettingChartValuesForInstall(step, cmd)
 

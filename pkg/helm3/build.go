@@ -24,7 +24,7 @@ type BuildInput struct {
 // MixinConfig represents configuration that can be set on the helm3 mixin in porter.yaml
 // mixins:
 // - helm3:
-// 	  clientVersion: v3.8.2
+// 	  clientVersion: v3.11.1
 // 	  clientPlatform: linux
 // 	  clientArchitecture: amd64 | arm64 | arm | i386
 //	  repositories:
@@ -83,7 +83,7 @@ func (m *Mixin) Build(ctx context.Context) error {
 		m.HelmClientVersion, m.HelmClientPlatform, m.HelmClientArchitecture)
 	fmt.Fprintf(m.Out, "\nRUN tar -xvf helm3.tar.gz && rm helm3.tar.gz")
 	fmt.Fprintf(m.Out, "\nRUN mv linux-amd64/helm /usr/local/bin/helm3")
-	fmt.Fprintf(m.Out, "\nRUN curl -o kubectl https://storage.googleapis.com/kubernetes-release/release/v1.22.1/bin/linux/amd64/kubectl &&\\")
+	fmt.Fprintf(m.Out, "\nRUN curl -o kubectl https://storage.googleapis.com/kubernetes-release/release/v1.26.1/bin/linux/amd64/kubectl &&\\")
 	fmt.Fprintf(m.Out, "\n    mv kubectl /usr/local/bin && chmod a+x /usr/local/bin/kubectl\n")
 	if len(input.Config.Repositories) > 0 {
 		// Switch to a non-root user so helm is configured for the user the container will execute as

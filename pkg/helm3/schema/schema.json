@@ -94,6 +94,11 @@
             "wait":{
               "type":"boolean"
             },
+            "waitForJobs":{
+              "type":"boolean",
+              "description": "It will wait for as long as --timeout",
+              "default":false
+            },
             "timeout":{
               "type":"string"
             },
@@ -174,6 +179,11 @@
             },
             "wait":{
               "type":"boolean",
+              "default":false
+            },
+            "waitForJobs":{
+              "type":"boolean",
+              "description": "It will wait for as long as --timeout",
               "default":false
             },
             "timeout":{
