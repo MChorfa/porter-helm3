@@ -9,7 +9,6 @@ import (
 
 	"github.com/pkg/errors"
 	"gopkg.in/yaml.v2"
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
 type UpgradeAction struct {
@@ -25,24 +24,25 @@ type UpgradeStep struct {
 type UpgradeArguments struct {
 	Step `yaml:",inline"`
 
-	Namespace   string            `yaml:"namespace"`
-	Name        string            `yaml:"name"`
-	Chart       string            `yaml:"chart"`
-	Version     string            `yaml:"version"`
-	NoHooks     bool              `yaml:"nohooks"`
-	Set         map[string]string `yaml:"set"`
-	Values      []string          `yaml:"values"`
-	Wait        bool              `yaml:"wait"`
-	WaitForJobs bool              `yaml:"waitForJobs"`
-	ResetValues bool              `yaml:"resetValues"`
-	ReuseValues bool              `yaml:"reuseValues"`
-	Repo        string            `yaml:"repo"`
-	SkipCrds    bool              `yaml:"skipCrds"`
-	Password    string            `yaml:"password"`
-	Username    string            `yaml:"username"`
-	Timeout     string            `yaml:"timeout"`
-	Debug       bool              `yaml:"debug"`
-	Atomic      *bool             `yaml:"atomic,omitempty"`
+	Namespace       string            `yaml:"namespace"`
+	Name            string            `yaml:"name"`
+	Chart           string            `yaml:"chart"`
+	Version         string            `yaml:"version"`
+	NoHooks         bool              `yaml:"nohooks"`
+	Set             map[string]string `yaml:"set"`
+	Values          []string          `yaml:"values"`
+	Wait            bool              `yaml:"wait"`
+	WaitForJobs     bool              `yaml:"waitForJobs"`
+	ResetValues     bool              `yaml:"resetValues"`
+	ReuseValues     bool              `yaml:"reuseValues"`
+	Repo            string            `yaml:"repo"`
+	SkipCrds        bool              `yaml:"skipCrds"`
+	Password        string            `yaml:"password"`
+	Username        string            `yaml:"username"`
+	Timeout         string            `yaml:"timeout"`
+	Debug           bool              `yaml:"debug"`
+	Atomic          *bool             `yaml:"atomic,omitempty"`
+	CreateNamespace *bool             `yaml:"createNamespace,omitempty"`
 }
 
 // Upgrade issues a helm upgrade command for a release using the provided UpgradeArguments
@@ -71,14 +71,6 @@ func (m *Mixin) Upgrade(ctx context.Context) error {
 
 	if step.Namespace != "" {
 		cmd.Args = append(cmd.Args, "--namespace", step.Namespace)
-		// check if namespace exist
-		if _, err := kubeClient.CoreV1().Namespaces().Get(ctx, step.Namespace, metav1.GetOptions{}); err != nil {
-			fmt.Fprintln(m.Out, "namespace defined but don't exist, appending '--create-namespace' to ensure the namespace creation")
-			cmd.Args = append(cmd.Args, "--create-namespace")
-		}
-	} else {
-		// The namespace was not defined. will try ensure the creation of the release namespace if not present.
-		cmd.Args = append(cmd.Args, "--create-namespace")
 	}
 
 	if step.Version != "" {
@@ -116,6 +108,11 @@ func (m *Mixin) Upgrade(ctx context.Context) error {
 	if step.Atomic == nil || *step.Atomic {
 		// This will upgrade process rolls back changes made in case of failed upgrade.
 		cmd.Args = append(cmd.Args, "--atomic")
+	}
+
+	if step.CreateNamespace == nil || *step.CreateNamespace {
+		// This will ensure the creation of the release namespace if not present.
+		cmd.Args = append(cmd.Args, "--create-namespace")
 	}
 
 	cmd.Args = HandleSettingChartValuesForUpgrade(step, cmd)

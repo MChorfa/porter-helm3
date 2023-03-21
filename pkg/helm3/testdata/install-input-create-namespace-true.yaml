@@ -1,0 +1,3 @@
+install:
+- helm3:
+    createNamespace: true

@@ -72,6 +72,32 @@ func TestMixin_UnmarshalInstallAtomicExplicitTrue(t *testing.T) {
 	assert.True(t, *step.Atomic)
 }
 
+func TestMixin_UnmarshalInstallCreateNamespaceFalse(t *testing.T) {
+	b, err := ioutil.ReadFile("testdata/install-input-create-namespace-false.yaml")
+	require.NoError(t, err)
+
+	var action InstallAction
+	err = yaml.Unmarshal(b, &action)
+	require.NoError(t, err)
+	require.Len(t, action.Steps, 1)
+	step := action.Steps[0]
+
+	assert.False(t, *step.CreateNamespace)
+}
+
+func TestMixin_UnmarshalInstallCreateNamespaceExplicitTrue(t *testing.T) {
+	b, err := ioutil.ReadFile("testdata/install-input-create-namespace-true.yaml")
+	require.NoError(t, err)
+
+	var action InstallAction
+	err = yaml.Unmarshal(b, &action)
+	require.NoError(t, err)
+	require.Len(t, action.Steps, 1)
+	step := action.Steps[0]
+
+	assert.True(t, *step.CreateNamespace)
+}
+
 func TestMixin_Install(t *testing.T) {
 	namespace := "MY-NAMESPACE"
 	name := "MYRELEASE"
@@ -86,8 +112,8 @@ func TestMixin_Install(t *testing.T) {
 		"/tmp/val2.yaml",
 	}
 
-	baseInstall := fmt.Sprintf(`helm3 upgrade --install %s %s --namespace %s --create-namespace --version %s`, name, chart, namespace, version)
-	// baseNamespaceCreationFlag := `--create-namespace`
+	baseInstall := fmt.Sprintf(`helm3 upgrade --install %s %s --namespace %s --version %s`, name, chart, namespace, version)
+	baseNamespaceCreationFlag := `--create-namespace`
 	baseValues := `--values /tmp/val1.yaml --values /tmp/val2.yaml`
 	baseSetArgs := `--set baz=qux --set foo=bar`
 	baseAtomicFlag := `--atomic`
@@ -97,7 +123,7 @@ func TestMixin_Install(t *testing.T) {
 
 	installTests := []InstallTest{
 		{
-			expectedCommand: fmt.Sprintf(`%s %s %s %s`, baseInstall, baseValues, baseAtomicFlag, baseSetArgs),
+			expectedCommand: fmt.Sprintf(`%s %s %s %s %s`, baseInstall, baseValues, baseAtomicFlag, baseNamespaceCreationFlag, baseSetArgs),
 			installStep: InstallStep{
 				InstallArguments: InstallArguments{
 					Step:      Step{Description: "Install Foo"},
@@ -111,7 +137,7 @@ func TestMixin_Install(t *testing.T) {
 			},
 		},
 		{
-			expectedCommand: fmt.Sprintf(`%s %s %s %s %s`, baseInstall, baseValues, `--no-hooks`, baseAtomicFlag, baseSetArgs),
+			expectedCommand: fmt.Sprintf(`%s %s %s %s %s`, baseInstall, baseValues, `--no-hooks`, baseNamespaceCreationFlag, baseSetArgs),
 			installStep: InstallStep{
 				InstallArguments: InstallArguments{
 					Step:      Step{Description: "Install Foo"},
@@ -122,11 +148,12 @@ func TestMixin_Install(t *testing.T) {
 					Set:       setArgs,
 					Values:    values,
 					NoHooks:   true,
+					Atomic:    &valueFalse,
 				},
 			},
 		},
 		{
-			expectedCommand: fmt.Sprintf(`%s %s %s %s %s`, baseInstall, baseValues, `--skip-crds`, baseAtomicFlag, baseSetArgs),
+			expectedCommand: fmt.Sprintf(`%s %s %s %s %s %s`, baseInstall, baseValues, `--skip-crds`, baseAtomicFlag, baseNamespaceCreationFlag, baseSetArgs),
 			installStep: InstallStep{
 				InstallArguments: InstallArguments{
 					Step:      Step{Description: "Install Foo"},
@@ -141,7 +168,7 @@ func TestMixin_Install(t *testing.T) {
 			},
 		},
 		{
-			expectedCommand: fmt.Sprintf(`%s %s %s %s %s`, baseInstall, `--devel`, baseValues, baseAtomicFlag, baseSetArgs),
+			expectedCommand: fmt.Sprintf(`%s %s %s %s %s %s`, baseInstall, `--devel`, baseValues, baseAtomicFlag, baseNamespaceCreationFlag, baseSetArgs),
 			installStep: InstallStep{
 				InstallArguments: InstallArguments{
 					Step:      Step{Description: "Install Foo"},
@@ -156,7 +183,7 @@ func TestMixin_Install(t *testing.T) {
 			},
 		},
 		{
-			expectedCommand: fmt.Sprintf(`%s %s %s %s %s`, baseInstall, `--wait`, baseValues, baseAtomicFlag, baseSetArgs),
+			expectedCommand: fmt.Sprintf(`%s %s %s %s %s %s`, baseInstall, `--wait`, baseValues, baseAtomicFlag, baseNamespaceCreationFlag, baseSetArgs),
 			installStep: InstallStep{
 				InstallArguments: InstallArguments{
 					Step:      Step{Description: "Install Foo"},
@@ -171,7 +198,7 @@ func TestMixin_Install(t *testing.T) {
 			},
 		},
 		{
-			expectedCommand: fmt.Sprintf(`%s %s %s %s %s`, baseInstall, baseValues, `--timeout 600 --debug`, baseAtomicFlag, baseSetArgs),
+			expectedCommand: fmt.Sprintf(`%s %s %s %s %s %s`, baseInstall, baseValues, `--timeout 600 --debug`, baseAtomicFlag, baseNamespaceCreationFlag, baseSetArgs),
 			installStep: InstallStep{
 				InstallArguments: InstallArguments{
 					Step:      Step{Description: "Install Foo"},
@@ -190,14 +217,15 @@ func TestMixin_Install(t *testing.T) {
 			expectedCommand: fmt.Sprintf(`%s %s %s`, baseInstall, baseValues, baseSetArgs),
 			installStep: InstallStep{
 				InstallArguments: InstallArguments{
-					Step:      Step{Description: "Install Foo"},
-					Namespace: namespace,
-					Name:      name,
-					Chart:     chart,
-					Version:   version,
-					Set:       setArgs,
-					Values:    values,
-					Atomic:    &valueFalse,
+					Step:            Step{Description: "Install Foo"},
+					Namespace:       namespace,
+					Name:            name,
+					Chart:           chart,
+					Version:         version,
+					Set:             setArgs,
+					Values:          values,
+					Atomic:          &valueFalse,
+					CreateNamespace: &valueFalse,
 				},
 			},
 		},
@@ -205,14 +233,15 @@ func TestMixin_Install(t *testing.T) {
 			expectedCommand: fmt.Sprintf(`%s %s %s %s`, baseInstall, baseValues, baseAtomicFlag, baseSetArgs),
 			installStep: InstallStep{
 				InstallArguments: InstallArguments{
-					Step:      Step{Description: "Install Foo"},
-					Namespace: namespace,
-					Name:      name,
-					Chart:     chart,
-					Version:   version,
-					Set:       setArgs,
-					Values:    values,
-					Atomic:    &valueTrue,
+					Step:            Step{Description: "Install Foo"},
+					Namespace:       namespace,
+					Name:            name,
+					Chart:           chart,
+					Version:         version,
+					Set:             setArgs,
+					Values:          values,
+					Atomic:          &valueTrue,
+					CreateNamespace: &valueFalse,
 				},
 			},
 		},

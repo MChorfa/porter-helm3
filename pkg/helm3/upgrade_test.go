@@ -69,6 +69,32 @@ func TestMixin_UnmarshalUpgradeStepAtomicTrue(t *testing.T) {
 	assert.True(t, *step.Atomic)
 }
 
+func TestMixin_UnmarshalUpgradeStepCreateNamespaceFalse(t *testing.T) {
+	b, err := ioutil.ReadFile("testdata/upgrade-input-create-namespace-false.yaml")
+	require.NoError(t, err)
+
+	var action UpgradeAction
+	err = yaml.Unmarshal(b, &action)
+	require.NoError(t, err)
+	require.Len(t, action.Steps, 1)
+	step := action.Steps[0]
+
+	assert.False(t, *step.CreateNamespace)
+}
+
+func TestMixin_UnmarshalUpgradeStepCreateNamespaceTrue(t *testing.T) {
+	b, err := ioutil.ReadFile("testdata/upgrade-input-create-namespace-true.yaml")
+	require.NoError(t, err)
+
+	var action UpgradeAction
+	err = yaml.Unmarshal(b, &action)
+	require.NoError(t, err)
+	require.Len(t, action.Steps, 1)
+	step := action.Steps[0]
+
+	assert.True(t, *step.CreateNamespace)
+}
+
 func TestMixin_Upgrade(t *testing.T) {
 	namespace := "MY-NAMESPACE"
 	name := "MY-RELEASE"
@@ -83,7 +109,8 @@ func TestMixin_Upgrade(t *testing.T) {
 		"/tmp/val2.yaml",
 	}
 
-	baseUpgrade := fmt.Sprintf(`helm3 upgrade --install %s %s --namespace %s --create-namespace --version %s`, name, chart, namespace, version)
+	baseUpgrade := fmt.Sprintf(`helm3 upgrade --install %s %s --namespace %s --version %s`, name, chart, namespace, version)
+	baseNamespaceCreationFlag := `--create-namespace`
 	baseValues := `--values /tmp/val1.yaml --values /tmp/val2.yaml`
 	baseSetArgs := `--set baz=qux --set foo=bar`
 	baseAddFlags := `--atomic`
@@ -96,13 +123,14 @@ func TestMixin_Upgrade(t *testing.T) {
 			expectedCommand: fmt.Sprintf(`%s %s %s %s`, baseUpgrade, baseValues, baseAddFlags, baseSetArgs),
 			upgradeStep: UpgradeStep{
 				UpgradeArguments: UpgradeArguments{
-					Step:      Step{Description: "Upgrade Foo"},
-					Namespace: namespace,
-					Name:      name,
-					Chart:     chart,
-					Version:   version,
-					Set:       setArgs,
-					Values:    values,
+					Step:            Step{Description: "Upgrade Foo"},
+					Namespace:       namespace,
+					Name:            name,
+					Chart:           chart,
+					Version:         version,
+					Set:             setArgs,
+					Values:          values,
+					CreateNamespace: &valueFalse,
 				},
 			},
 		},
@@ -110,14 +138,15 @@ func TestMixin_Upgrade(t *testing.T) {
 			expectedCommand: fmt.Sprintf(`%s %s %s %s %s`, baseUpgrade, `--reset-values`, baseValues, baseAddFlags, baseSetArgs),
 			upgradeStep: UpgradeStep{
 				UpgradeArguments: UpgradeArguments{
-					Step:        Step{Description: "Upgrade Foo"},
-					Namespace:   namespace,
-					Name:        name,
-					Chart:       chart,
-					Version:     version,
-					Set:         setArgs,
-					Values:      values,
-					ResetValues: true,
+					Step:            Step{Description: "Upgrade Foo"},
+					Namespace:       namespace,
+					Name:            name,
+					Chart:           chart,
+					Version:         version,
+					Set:             setArgs,
+					Values:          values,
+					ResetValues:     true,
+					CreateNamespace: &valueFalse,
 				},
 			},
 		},
@@ -125,19 +154,20 @@ func TestMixin_Upgrade(t *testing.T) {
 			expectedCommand: fmt.Sprintf(`%s %s %s %s %s`, baseUpgrade, `--reuse-values`, baseValues, baseAddFlags, baseSetArgs),
 			upgradeStep: UpgradeStep{
 				UpgradeArguments: UpgradeArguments{
-					Step:        Step{Description: "Upgrade Foo"},
-					Namespace:   namespace,
-					Name:        name,
-					Chart:       chart,
-					Version:     version,
-					Set:         setArgs,
-					Values:      values,
-					ReuseValues: true,
+					Step:            Step{Description: "Upgrade Foo"},
+					Namespace:       namespace,
+					Name:            name,
+					Chart:           chart,
+					Version:         version,
+					Set:             setArgs,
+					Values:          values,
+					ReuseValues:     true,
+					CreateNamespace: &valueFalse,
 				},
 			},
 		},
 		{
-			expectedCommand: fmt.Sprintf(`%s %s %s %s %s`, baseUpgrade, `--wait`, baseValues, baseAddFlags, baseSetArgs),
+			expectedCommand: fmt.Sprintf(`%s %s %s %s %s %s`, baseUpgrade, `--wait`, baseValues, baseAddFlags, baseNamespaceCreationFlag, baseSetArgs),
 			upgradeStep: UpgradeStep{
 				UpgradeArguments: UpgradeArguments{
 					Step:      Step{Description: "Upgrade Foo"},
@@ -155,15 +185,16 @@ func TestMixin_Upgrade(t *testing.T) {
 			expectedCommand: fmt.Sprintf(`%s %s %s %s %s`, baseUpgrade, baseValues, `--timeout 600 --debug`, baseAddFlags, baseSetArgs),
 			upgradeStep: UpgradeStep{
 				UpgradeArguments: UpgradeArguments{
-					Step:      Step{Description: "Upgrade Foo"},
-					Namespace: namespace,
-					Name:      name,
-					Chart:     chart,
-					Version:   version,
-					Set:       setArgs,
-					Values:    values,
-					Timeout:   "600",
-					Debug:     true,
+					Step:            Step{Description: "Upgrade Foo"},
+					Namespace:       namespace,
+					Name:            name,
+					Chart:           chart,
+					Version:         version,
+					Set:             setArgs,
+					Values:          values,
+					Timeout:         "600",
+					Debug:           true,
+					CreateNamespace: &valueFalse,
 				},
 			},
 		},
@@ -171,29 +202,31 @@ func TestMixin_Upgrade(t *testing.T) {
 			expectedCommand: fmt.Sprintf(`%s %s %s`, baseUpgrade, baseValues, baseSetArgs),
 			upgradeStep: UpgradeStep{
 				UpgradeArguments: UpgradeArguments{
-					Step:      Step{Description: "Upgrade Foo"},
-					Namespace: namespace,
-					Name:      name,
-					Chart:     chart,
-					Version:   version,
-					Set:       setArgs,
-					Values:    values,
-					Atomic:    &valueFalse,
+					Step:            Step{Description: "Upgrade Foo"},
+					Namespace:       namespace,
+					Name:            name,
+					Chart:           chart,
+					Version:         version,
+					Set:             setArgs,
+					Values:          values,
+					Atomic:          &valueFalse,
+					CreateNamespace: &valueFalse,
 				},
 			},
 		},
 		{
-			expectedCommand: fmt.Sprintf(`%s %s %s %s`, baseUpgrade, baseValues, baseAddFlags, baseSetArgs),
+			expectedCommand: fmt.Sprintf(`%s %s %s %s %s`, baseUpgrade, baseValues, baseAddFlags, baseNamespaceCreationFlag, baseSetArgs),
 			upgradeStep: UpgradeStep{
 				UpgradeArguments: UpgradeArguments{
-					Step:      Step{Description: "Upgrade Foo"},
-					Namespace: namespace,
-					Name:      name,
-					Chart:     chart,
-					Version:   version,
-					Set:       setArgs,
-					Values:    values,
-					Atomic:    &valueTrue,
+					Step:            Step{Description: "Upgrade Foo"},
+					Namespace:       namespace,
+					Name:            name,
+					Chart:           chart,
+					Version:         version,
+					Set:             setArgs,
+					Values:          values,
+					Atomic:          &valueTrue,
+					CreateNamespace: &valueTrue,
 				},
 			},
 		},

@@ -59,7 +59,7 @@ test: test-unit
 	$(BINDIR)/$(MIXIN)$(FILE_EXT) version
 
 test-unit: build
-	$(GO) test ./...
+	$(GO) test -covermode=atomic -count=1 ./... 
 
 test-integration: xbuild
 	# Test against the cross-built client binary that we will publish
@@ -95,5 +95,6 @@ install:
 	install $(BINDIR)/$(MIXIN)$(FILE_EXT) $(PORTER_HOME)/mixins/$(MIXIN)/$(MIXIN)$(FILE_EXT)
 	install $(BINDIR)/$(MIXIN)-runtime$(FILE_EXT) $(PORTER_HOME)/mixins/$(MIXIN)/runtimes/$(MIXIN)-runtime$(FILE_EXT)
 	# @porter mixin list
+
 clean:
 	-rm -fr bin/
