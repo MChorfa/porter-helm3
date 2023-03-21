@@ -118,6 +118,10 @@
               "type":"boolean",
               "description": "if set to false, the install process will not roll back changes made in case the install fails"
             },
+            "createNamespace": {
+              "type":"boolean",
+              "description": "if set to false, the install process will not create create the namespace if not present"
+            },
             "outputs":{
               "$ref":"#/definitions/outputs"
             }
@@ -204,6 +208,10 @@
             "atomic": {
               "type":"boolean",
               "description": "if set to false, the upgrade process will not roll back changes made in case the upgrade fails"
+            },
+            "createNamespace": {
+              "type":"boolean",
+              "description": "if set to false, the upgrade process will not create create the namespace if not present"
             },
             "outputs":{
               "$ref":"#/definitions/outputs"

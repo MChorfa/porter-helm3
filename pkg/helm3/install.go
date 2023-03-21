@@ -22,22 +22,23 @@ type InstallStep struct {
 type InstallArguments struct {
 	Step `yaml:",inline"`
 
-	Namespace string            `yaml:"namespace"`
-	Name      string            `yaml:"name"`
-	Chart     string            `yaml:"chart"`
-	Devel     bool              `yaml:"devel"`
-	NoHooks   bool              `yaml:"noHooks"`
-	Repo      string            `yaml:"repo"`
-	Set       map[string]string `yaml:"set"`
-	SkipCrds  bool              `yaml:"skipCrds"`
-	Password  string            `yaml:"password"`
-	Username  string            `yaml:"username"`
-	Values    []string          `yaml:"values"`
-	Version   string            `yaml:"version"`
-	Wait      bool              `yaml:"wait"`
-	Timeout   string            `yaml:"timeout"`
-	Debug     bool              `yaml:"debug"`
-	Atomic    *bool             `yaml:"atomic,omitempty"`
+	Namespace       string            `yaml:"namespace"`
+	Name            string            `yaml:"name"`
+	Chart           string            `yaml:"chart"`
+	Devel           bool              `yaml:"devel"`
+	NoHooks         bool              `yaml:"noHooks"`
+	Repo            string            `yaml:"repo"`
+	Set             map[string]string `yaml:"set"`
+	SkipCrds        bool              `yaml:"skipCrds"`
+	Password        string            `yaml:"password"`
+	Username        string            `yaml:"username"`
+	Values          []string          `yaml:"values"`
+	Version         string            `yaml:"version"`
+	Wait            bool              `yaml:"wait"`
+	Timeout         string            `yaml:"timeout"`
+	Debug           bool              `yaml:"debug"`
+	Atomic          *bool             `yaml:"atomic,omitempty"`
+	CreateNamespace *bool             `yaml:"createNamespace,omitempty"`
 }
 
 func (m *Mixin) Install(ctx context.Context) error {
@@ -101,6 +102,7 @@ func (m *Mixin) Install(ctx context.Context) error {
 	if step.Timeout != "" {
 		cmd.Args = append(cmd.Args, "--timeout", step.Timeout)
 	}
+
 	if step.Debug {
 		cmd.Args = append(cmd.Args, "--debug")
 	}
@@ -109,8 +111,12 @@ func (m *Mixin) Install(ctx context.Context) error {
 		// This will ensure the installation process deletes the installation on failure.
 		cmd.Args = append(cmd.Args, "--atomic")
 	}
-	// This will ensure the creation of the release namespace if not present.
-	cmd.Args = append(cmd.Args, "--create-namespace")
+
+	if step.CreateNamespace == nil || *step.CreateNamespace {
+		// This will ensure the creation of the release namespace if not present.
+		cmd.Args = append(cmd.Args, "--create-namespace")
+	}
+
 	// Set values
 	cmd.Args = HandleSettingChartValuesForInstall(step, cmd)
 

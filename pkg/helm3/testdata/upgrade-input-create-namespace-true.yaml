@@ -1,0 +1,3 @@
+upgrade:
+- helm3:
+    createNamespace: true
