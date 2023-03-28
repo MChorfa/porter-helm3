@@ -1,7 +1,7 @@
 package helm3
 
 import (
-	"io/ioutil"
+	"os"
 	"testing"
 
 	"get.porter.sh/porter/pkg/exec/builder"
@@ -11,7 +11,7 @@ import (
 )
 
 func TestMixin_UnmarshalStep(t *testing.T) {
-	b, err := ioutil.ReadFile("testdata/step-input.yaml")
+	b, err := os.ReadFile("testdata/step-input.yaml")
 	require.NoError(t, err)
 
 	var action Action

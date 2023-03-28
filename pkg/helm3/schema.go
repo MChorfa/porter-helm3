@@ -11,7 +11,7 @@ var schemaDoc string
 func (m *Mixin) PrintSchema() error {
 	schema := m.GetSchema()
 
-	fmt.Fprintf(m.Out, schema)
+	fmt.Fprintf(m.Out, "%s", schema)
 
 	return nil
 }

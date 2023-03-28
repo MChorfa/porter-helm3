@@ -3,7 +3,6 @@ package helm3
 import (
 	"bytes"
 	"context"
-	"io/ioutil"
 	"os"
 	"sort"
 	"testing"
@@ -16,7 +15,7 @@ import (
 )
 
 func TestMixin_UnmarshalExecuteStep(t *testing.T) {
-	b, err := ioutil.ReadFile("testdata/execute-input.yaml")
+	b, err := os.ReadFile("testdata/execute-input.yaml")
 	require.NoError(t, err)
 
 	var action Action
@@ -45,7 +44,7 @@ func TestMixin_UnmarshalExecuteStep(t *testing.T) {
 }
 
 func TestMixin_UnmarshalExecuteLoginRegistryStep(t *testing.T) {
-	b, err := ioutil.ReadFile("testdata/execute-input-login-registry-private.yaml")
+	b, err := os.ReadFile("testdata/execute-input-login-registry-private.yaml")
 	require.NoError(t, err)
 
 	var action Action
@@ -66,7 +65,7 @@ func TestMixin_UnmarshalExecuteLoginRegistryStep(t *testing.T) {
 }
 
 func TestMixin_UnmarshalExecuteLoginRegistryInsecureStep(t *testing.T) {
-	b, err := ioutil.ReadFile("testdata/execute-input-login-registry-insecure.yaml")
+	b, err := os.ReadFile("testdata/execute-input-login-registry-insecure.yaml")
 	require.NoError(t, err)
 
 	var action Action

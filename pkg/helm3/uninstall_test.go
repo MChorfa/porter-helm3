@@ -3,7 +3,6 @@ package helm3
 import (
 	"bytes"
 	"context"
-	"io/ioutil"
 	"os"
 	"testing"
 
@@ -19,7 +18,7 @@ type UninstallTest struct {
 }
 
 func TestMixin_UnmarshalUninstallStep(t *testing.T) {
-	b, err := ioutil.ReadFile("testdata/uninstall-input.yaml")
+	b, err := os.ReadFile("testdata/uninstall-input.yaml")
 	require.NoError(t, err)
 
 	var action UninstallAction

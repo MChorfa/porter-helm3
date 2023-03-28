@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"context"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"testing"
 
@@ -20,7 +19,7 @@ type UpgradeTest struct {
 }
 
 func TestMixin_UnmarshalUpgradeStep(t *testing.T) {
-	b, err := ioutil.ReadFile("testdata/upgrade-input.yaml")
+	b, err := os.ReadFile("testdata/upgrade-input.yaml")
 	require.NoError(t, err)
 
 	var action UpgradeAction
@@ -44,7 +43,7 @@ func TestMixin_UnmarshalUpgradeStep(t *testing.T) {
 }
 
 func TestMixin_UnmarshalUpgradeStepAtomicFalse(t *testing.T) {
-	b, err := ioutil.ReadFile("testdata/upgrade-input-atomic-false.yaml")
+	b, err := os.ReadFile("testdata/upgrade-input-atomic-false.yaml")
 	require.NoError(t, err)
 
 	var action UpgradeAction
@@ -57,7 +56,7 @@ func TestMixin_UnmarshalUpgradeStepAtomicFalse(t *testing.T) {
 }
 
 func TestMixin_UnmarshalUpgradeStepAtomicTrue(t *testing.T) {
-	b, err := ioutil.ReadFile("testdata/upgrade-input-atomic-true.yaml")
+	b, err := os.ReadFile("testdata/upgrade-input-atomic-true.yaml")
 	require.NoError(t, err)
 
 	var action UpgradeAction
@@ -70,7 +69,7 @@ func TestMixin_UnmarshalUpgradeStepAtomicTrue(t *testing.T) {
 }
 
 func TestMixin_UnmarshalUpgradeStepCreateNamespaceFalse(t *testing.T) {
-	b, err := ioutil.ReadFile("testdata/upgrade-input-create-namespace-false.yaml")
+	b, err := os.ReadFile("testdata/upgrade-input-create-namespace-false.yaml")
 	require.NoError(t, err)
 
 	var action UpgradeAction
@@ -83,7 +82,7 @@ func TestMixin_UnmarshalUpgradeStepCreateNamespaceFalse(t *testing.T) {
 }
 
 func TestMixin_UnmarshalUpgradeStepCreateNamespaceTrue(t *testing.T) {
-	b, err := ioutil.ReadFile("testdata/upgrade-input-create-namespace-true.yaml")
+	b, err := os.ReadFile("testdata/upgrade-input-create-namespace-true.yaml")
 	require.NoError(t, err)
 
 	var action UpgradeAction

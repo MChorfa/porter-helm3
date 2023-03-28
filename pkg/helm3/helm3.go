@@ -2,7 +2,7 @@ package helm3
 
 import (
 	"bufio"
-	"io/ioutil"
+	"io"
 	"strings"
 
 	"get.porter.sh/porter/pkg/runtime"
@@ -39,7 +39,7 @@ func New() *Mixin {
 
 func (m *Mixin) getPayloadData() ([]byte, error) {
 	reader := bufio.NewReader(m.In)
-	data, err := ioutil.ReadAll(reader)
+	data, err := io.ReadAll(reader)
 	if err != nil {
 		return nil, errors.Wrap(err, "could not read the payload from STDIN")
 	}

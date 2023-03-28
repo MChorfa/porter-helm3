@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"context"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"testing"
 
@@ -26,7 +25,7 @@ func TestMain(m *testing.M) {
 }
 
 func TestMixin_UnmarshalInstallStep(t *testing.T) {
-	b, err := ioutil.ReadFile("testdata/install-input.yaml")
+	b, err := os.ReadFile("testdata/install-input.yaml")
 	require.NoError(t, err)
 
 	var action InstallAction
@@ -47,7 +46,7 @@ func TestMixin_UnmarshalInstallStep(t *testing.T) {
 }
 
 func TestMixin_UnmarshalInstallAtomicFalse(t *testing.T) {
-	b, err := ioutil.ReadFile("testdata/install-input-atomic-false.yaml")
+	b, err := os.ReadFile("testdata/install-input-atomic-false.yaml")
 	require.NoError(t, err)
 
 	var action InstallAction
@@ -60,7 +59,7 @@ func TestMixin_UnmarshalInstallAtomicFalse(t *testing.T) {
 }
 
 func TestMixin_UnmarshalInstallAtomicExplicitTrue(t *testing.T) {
-	b, err := ioutil.ReadFile("testdata/install-input-atomic-true.yaml")
+	b, err := os.ReadFile("testdata/install-input-atomic-true.yaml")
 	require.NoError(t, err)
 
 	var action InstallAction
@@ -73,7 +72,7 @@ func TestMixin_UnmarshalInstallAtomicExplicitTrue(t *testing.T) {
 }
 
 func TestMixin_UnmarshalInstallCreateNamespaceFalse(t *testing.T) {
-	b, err := ioutil.ReadFile("testdata/install-input-create-namespace-false.yaml")
+	b, err := os.ReadFile("testdata/install-input-create-namespace-false.yaml")
 	require.NoError(t, err)
 
 	var action InstallAction
@@ -86,7 +85,7 @@ func TestMixin_UnmarshalInstallCreateNamespaceFalse(t *testing.T) {
 }
 
 func TestMixin_UnmarshalInstallCreateNamespaceExplicitTrue(t *testing.T) {
-	b, err := ioutil.ReadFile("testdata/install-input-create-namespace-true.yaml")
+	b, err := os.ReadFile("testdata/install-input-create-namespace-true.yaml")
 	require.NoError(t, err)
 
 	var action InstallAction

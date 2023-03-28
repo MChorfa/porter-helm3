@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"context"
 	"fmt"
-	"io/ioutil"
+	"os"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -28,7 +28,7 @@ RUN curl -o kubectl https://storage.googleapis.com/kubernetes-release/release/v1
 `
 
 	t.Run("build with a valid config", func(t *testing.T) {
-		b, err := ioutil.ReadFile("testdata/build-input-with-valid-config.yaml")
+		b, err := os.ReadFile("testdata/build-input-with-valid-config.yaml")
 		require.NoError(t, err)
 
 		m := NewTestMixin(t)
@@ -49,7 +49,7 @@ USER root
 	})
 
 	t.Run("build with a valid config and multiple repositories", func(t *testing.T) {
-		b, err := ioutil.ReadFile("testdata/build-input-with-valid-config-multi-repos.yaml")
+		b, err := os.ReadFile("testdata/build-input-with-valid-config-multi-repos.yaml")
 		require.NoError(t, err)
 
 		m := NewTestMixin(t)
@@ -72,7 +72,7 @@ USER root
 	})
 
 	t.Run("build with invalid config", func(t *testing.T) {
-		b, err := ioutil.ReadFile("testdata/build-input-with-invalid-config.yaml")
+		b, err := os.ReadFile("testdata/build-input-with-invalid-config.yaml")
 		require.NoError(t, err)
 
 		m := NewTestMixin(t)
@@ -92,7 +92,7 @@ USER root
 
 	t.Run("build with a defined helm client version", func(t *testing.T) {
 
-		b, err := ioutil.ReadFile("testdata/build-input-with-version.yaml")
+		b, err := os.ReadFile("testdata/build-input-with-version.yaml")
 		require.NoError(t, err)
 
 		m := NewTestMixin(t)
@@ -107,7 +107,7 @@ USER root
 
 	t.Run("build with a defined helm client version that does not meet the semver constraint", func(t *testing.T) {
 
-		b, err := ioutil.ReadFile("testdata/build-input-with-unsupported-client-version.yaml")
+		b, err := os.ReadFile("testdata/build-input-with-unsupported-client-version.yaml")
 		require.NoError(t, err)
 
 		m := NewTestMixin(t)
@@ -119,7 +119,7 @@ USER root
 
 	t.Run("build with a defined helm client version that does not parse as valid semver", func(t *testing.T) {
 
-		b, err := ioutil.ReadFile("testdata/build-input-with-invalid-client-version.yaml")
+		b, err := os.ReadFile("testdata/build-input-with-invalid-client-version.yaml")
 		require.NoError(t, err)
 
 		m := NewTestMixin(t)

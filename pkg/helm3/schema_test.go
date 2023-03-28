@@ -3,7 +3,7 @@ package helm3
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"os"
 	"testing"
 
 	"github.com/PaesslerAG/jsonpath"
@@ -21,7 +21,7 @@ func TestMixin_PrintSchema(t *testing.T) {
 
 	gotSchema := m.TestContext.GetOutput()
 
-	wantSchema, err := ioutil.ReadFile("schema/schema.json")
+	wantSchema, err := os.ReadFile("schema/schema.json")
 	require.NoError(t, err)
 
 	assert.Equal(t, string(wantSchema), gotSchema)
@@ -52,7 +52,7 @@ func TestMixin_ValidateSchema(t *testing.T) {
 	for _, tc := range testcases {
 		t.Run(tc.name, func(t *testing.T) {
 			// Read the mixin input as a go dump
-			mixinInputB, err := ioutil.ReadFile(tc.file)
+			mixinInputB, err := os.ReadFile(tc.file)
 			require.NoError(t, err)
 			mixinInputMap := make(map[string]interface{})
 			err = yaml.Unmarshal(mixinInputB, &mixinInputMap)
