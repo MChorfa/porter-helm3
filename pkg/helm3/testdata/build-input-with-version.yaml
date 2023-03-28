@@ -1,4 +1,4 @@
 config:
-  clientVersion: v3.11.1
+  clientVersion: v3.11.2
   clientPlatform: linux
   clientArchitecture: amd64

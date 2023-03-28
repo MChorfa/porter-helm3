@@ -98,3 +98,8 @@ install:
 
 clean:
 	-rm -fr bin/
+
+upgrade-packages:
+	$(GO) get -u ./...
+	$(GO) get -t -u ./...
+	$(GO) mod tidy

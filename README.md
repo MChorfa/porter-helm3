@@ -20,7 +20,7 @@ Helm client version configuration. You can define others minors and patch versio
 
 ```yaml
 - helm3:
-    clientVersion: v3.11.1
+    clientVersion: v3.11.2
 ```
 
 Repositories
